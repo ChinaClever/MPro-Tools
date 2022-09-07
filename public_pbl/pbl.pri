@@ -2,6 +2,7 @@
 INCLUDEPATH += $$PWD
 
 
+include(users/users.pri)
 include(excel/excel.pri)
 include(dbcom/dbcom.pri)
 include(sqlcom/sqlcom.pri)

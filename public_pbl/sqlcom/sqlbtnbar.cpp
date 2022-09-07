@@ -66,8 +66,7 @@ void SqlBtnBar::on_refreshBtn_clicked()
 
 bool SqlBtnBar::checkJur()
 {
-//    bool ret = usr_land_jur(); ////////=========
-     bool ret = true;
+    bool ret = usr_land_jur();
     if(!ret) {
         MsgBox::information(this, tr("您无权操作此功能！"));
     }
