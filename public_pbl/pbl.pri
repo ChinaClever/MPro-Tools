@@ -1,10 +1,8 @@
 
 INCLUDEPATH += $$PWD
 
-
 include(users/users.pri)
 include(excel/excel.pri)
-include(dbcom/dbcom.pri)
 include(sqlcom/sqlcom.pri)
 include(logcom/logcom.pri)
 include(cfgcom/cfgcom.pri)
@@ -12,6 +10,7 @@ include(msgcom/msgcom.pri)
 include(tabcom/tabcom.pri)
 include(printer/printer.pri)
 include(network/network.pri)
+include(compress/compress.pri)
 include(websocket/websocket.pri)
 include(smtpclient/smtpclient.pri)
 include(snmpclient/snmpclient.pri)

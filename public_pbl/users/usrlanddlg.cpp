@@ -8,7 +8,7 @@
 #include "usrlanddlg.h"
 #include "ui_usrlanddlg.h"
 #include <QApplication>
-#include "config.h"
+#include "cfgcom.h"
 
 UsrLandDlg::UsrLandDlg(QWidget *parent) :
     QDialog(parent),
@@ -17,7 +17,7 @@ UsrLandDlg::UsrLandDlg(QWidget *parent) :
     ui->setupUi(this);
     this->setWindowTitle(tr("用户登录"));
     groupBox_background_icon(this);
-    QString name = Cfg::bulid()->getLoginName();
+    QString name = CfgCom::bulid()->getLoginName();
 
     ui->nameLineEdit->setText(name);
     //ui->pwdLineEdit->setText("admin");
@@ -107,7 +107,7 @@ void UsrLandDlg::usrLand()
                     LandingUser::get()->sig();
                     this->accept();
                     emit sendUserNameSig(name);
-                    Cfg::bulid()->setLoginName(name);
+                    CfgCom::bulid()->setLoginName(name);
                 } else str = tr("密码错误");
             } else str = tr("密码不能为空");
         } else str = tr("账号有误");

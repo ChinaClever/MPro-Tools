@@ -12,6 +12,17 @@
 #include <sys/time.h>
 #include <unistd.h>
 
+QString cm_execute(const QString &cmd)
+{
+    QProcess pro;
+    pro.start(cmd);
+    pro.waitForFinished();
+    QByteArray bs = pro.readAllStandardOutput();
+    bs +=  pro.readAllStandardError();
+    return QString::fromLocal8Bit(bs);
+}
+
+
 bool cm_pingNet(const QString& ip)
 {
     QProcess pingProcess;

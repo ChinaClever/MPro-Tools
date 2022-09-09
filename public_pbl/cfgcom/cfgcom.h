@@ -1,20 +1,25 @@
 #ifndef CFGCOM_H
 #define CFGCOM_H
-#include <QtCore>
+#include "cfgserial.h"
 
-class CfgCom
+struct sCfgComIt
 {
-public:
-    QString pathOfData(const QString& name);
-    void write(const QString &key, const QVariant& v, const QString &g="Cfg");
-    QVariant read(const QString &key, const QVariant &v = QVariant(), const QString &g="Cfg");
+    QString user;
+    sSerial coms;
+    int logCount;
+    uchar pcNum;
+};
 
-protected:
-    CfgCom(QObject *parent = nullptr);
-    bool cfgOpen(QObject *parent = nullptr, const QString& fn = "cfg.ini");
+class CfgCom : public CfgSerial
+{
+    CfgCom(const QString& fn, QObject *parent);
+public:
+    static CfgCom* bulid(const QString& fn=CFG_FN, QObject *parent = nullptr);
+    sCfgComIt *item;
+    void writeCfgCom();
 
 private:
-    QSettings  *mCfgIni; //*mCfgIni;
+    void initCfgCom();
 };
 
 #endif // CFGCOM_H

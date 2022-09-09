@@ -1,7 +1,7 @@
 #ifndef CFGSERIAL_H
 #define CFGSERIAL_H
 
-#include "cfgcom.h"
+#include "cfg_app.h"
 #include "serialstatuswid.h"
 
 struct sSerial
@@ -12,10 +12,10 @@ struct sSerial
     SerialPort *ser; // 串口对象
 };
 
-class CfgSerial : public CfgCom
+class CfgSerial : public Cfg_Obj
 {
 public:
-    explicit CfgSerial(QObject *parent = nullptr);
+    explicit CfgSerial(const QString& fn, QObject *parent = nullptr);
 
     QString getSerialBr(const QString &com);
     QString getSerialName(const QString &key);

@@ -7,6 +7,7 @@
  *      Author: Lzy
  */
 #include "basicsql.h"
+#include "cfgcom.h"
 
 extern QString cm_pathOfData(const QString& name);
 
@@ -325,8 +326,7 @@ QSqlDatabase BasicSql::initDb()
     static QSqlDatabase db;
     if(!db.isOpen()){
         db = QSqlDatabase::addDatabase("QSQLITE");
-        CfgCom *cfg = Cfg::bulid();
-        db.setDatabaseName(cfg->pathOfData("logs.db"));
+        db.setDatabaseName(Cfg_Obj::pathOfCfg("logs.db"));
         if (!db.open()) { //打开数据库
             qDebug() << "init Db error !!!";
         }

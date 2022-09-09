@@ -3,7 +3,8 @@ INCLUDEPATH += $$PWD
 
 
 
-HEADERS += \	
+HEADERS += \
+    $$PWD/db_user.h \
     $$PWD/newusrdlg.h \
     $$PWD/landinguser.h \
     $$PWD/editusrdlg.h \
@@ -11,7 +12,8 @@ HEADERS += \
     $$PWD/usermainwid.h \
     $$PWD/userbtnbar.h
 	
-SOURCES += \	
+SOURCES += \
+    $$PWD/db_user.cpp \
     $$PWD/newusrdlg.cpp \
     $$PWD/landinguser.cpp \
     $$PWD/editusrdlg.cpp \

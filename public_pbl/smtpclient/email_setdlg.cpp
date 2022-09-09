@@ -40,13 +40,13 @@ Email_SetDlg::~Email_SetDlg()
  */
 void Email_SetDlg::initData(void)
 {
-    CfgCom *cfg = Cfg::bulid();
-    mSet->server = cfg->read("Server", Email_Server, "Email").toString();
-    mSet->usr = cfg->read("UsrName", Email_UsrName, "Email").toString();
-    mSet->pwd = cfg->read("Password", Email_Password, "Email").toString();
-    mSet->to = cfg->read("To", Email_ToUsrName, "Email").toString();
-    mSet->port = cfg->read("Port", Email_Port, "Email").toInt();
-    mSet->ssl = cfg->read("ssl", 0, "Email").toInt();
+    CfgCom *cfg = CfgCom::bulid();
+    mSet->server = cfg->readCfg("Server", Email_Server, "Email").toString();
+    mSet->usr = cfg->readCfg("UsrName", Email_UsrName, "Email").toString();
+    mSet->pwd = cfg->readCfg("Password", Email_Password, "Email").toString();
+    mSet->to = cfg->readCfg("To", Email_ToUsrName, "Email").toString();
+    mSet->port = cfg->readCfg("Port", Email_Port, "Email").toInt();
+    mSet->ssl = cfg->readCfg("ssl", 0, "Email").toInt();
 }
 
 /**
@@ -81,24 +81,24 @@ bool Email_SetDlg::dataCheck(void)
  */
 void Email_SetDlg::saveData(void)
 {
-    CfgCom *cfg = Cfg::bulid();
+    CfgCom *cfg = CfgCom::bulid();
     mSet->usr =  ui->usrEdit->text();
-    cfg->write("UsrName", mSet->usr, "Email");
+    cfg->writeCfg("UsrName", mSet->usr, "Email");
 
     mSet->pwd = ui->pwdEdit->text();
-    cfg->write("Password", mSet->pwd, "Email");
+    cfg->writeCfg("Password", mSet->pwd, "Email");
 
     mSet->server = ui->serEdit->text();
-    cfg->write("Server", mSet->server, "Email");
+    cfg->writeCfg("Server", mSet->server, "Email");
 
     mSet->to = ui->toEdit->text();
-    cfg->write("To", mSet->to, "Email");
+    cfg->writeCfg("To", mSet->to, "Email");
 
     mSet->port = ui->portEdit->text().toInt();
-    cfg->write("Port", mSet->port, "Email");
+    cfg->writeCfg("Port", mSet->port, "Email");
 
     mSet->ssl = ui->comboBox->currentIndex();
-    cfg->write("ssl", mSet->ssl, "Email");
+    cfg->writeCfg("ssl", mSet->ssl, "Email");
 }
 
 /**

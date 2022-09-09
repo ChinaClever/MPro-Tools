@@ -2,7 +2,7 @@
 #define EMAIL_SETDLG_H
 
 #include <QDialog>
-#include "config.h"
+#include "cfgcom.h"
 #include "print.h"
 
 namespace Ui {

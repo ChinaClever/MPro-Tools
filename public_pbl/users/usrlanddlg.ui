@@ -161,7 +161,7 @@
    <property name="geometry">
     <rect>
      <x>0</x>
-     <y>10</y>
+     <y>30</y>
      <width>561</width>
      <height>71</height>
     </rect>
@@ -178,7 +178,7 @@
     <string notr="true"/>
    </property>
    <property name="text">
-    <string>IMM 自动校准平台</string>
+    <string>软 件 登 陆</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignCenter</set>

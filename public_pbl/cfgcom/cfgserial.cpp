@@ -6,7 +6,7 @@
  */
 #include "cfgserial.h"
 
-CfgSerial::CfgSerial(QObject *parent) : CfgCom(parent)
+CfgSerial::CfgSerial(const QString &fn, QObject *parent) : Cfg_Obj(fn, parent)
 {
 
 }
@@ -17,7 +17,7 @@ CfgSerial::CfgSerial(QObject *parent) : CfgCom(parent)
  */
 QString CfgSerial::getSerialName(const QString &key)
 {
-    return read(key, "", "Serial").toString();
+    return readCfg(key, "", "Serial").toString();
 }
 
 /**
@@ -26,19 +26,19 @@ QString CfgSerial::getSerialName(const QString &key)
  */
 void CfgSerial::setSerialName(const QString &key, const QString &v)
 {
-    write(key, v, "Serial");
+    writeCfg(key, v, "Serial");
 }
 
 QString CfgSerial::getSerialBr(const QString &com)
 {
     QString key = QString("BR_%1").arg(com);
-    return read(key, "", "Serial").toString();
+    return readCfg(key, "", "Serial").toString();
 }
 
 void CfgSerial::setSerialBr(const QString &com, const QString &br)
 {
     QString key = QString("BR_%1").arg(com);
-    write(key, br, "Serial");
+    writeCfg(key, br, "Serial");
 }
 
 /**
@@ -47,7 +47,7 @@ void CfgSerial::setSerialBr(const QString &com, const QString &br)
  */
 QString CfgSerial::getLoginName()
 {
-    return read("name", "admin", "Login").toString();
+    return readCfg("name", "admin", "Login").toString();
 }
 
 /**
@@ -56,5 +56,5 @@ QString CfgSerial::getLoginName()
  */
 void CfgSerial::setLoginName(const QString &name)
 {
-    write("name", name, "Login");
+    writeCfg("name", name, "Login");
 }
