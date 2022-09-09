@@ -12,8 +12,8 @@ include(logs/logs.pri)
 include(home/home.pri)
 include(setups/setups.pri)
 
-CM_PATH = ../public_pbl
-include($$CM_PATH/pbl.pri)
+CM_PATH = ../com_pbl
+include($$CM_PATH/com_pbl.pri)
 
 SOURCES += \
     main.cpp \
