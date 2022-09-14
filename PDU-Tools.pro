@@ -2,5 +2,6 @@ TEMPLATE = subdirs
 
 SUBDIRS += \
 #    ota_updater \
-    app_pack
+    app_pack \
+    param_config
 

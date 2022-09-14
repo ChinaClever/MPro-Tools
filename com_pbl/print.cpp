@@ -12,6 +12,32 @@
 #include <sys/time.h>
 #include <unistd.h>
 
+
+void cm_mdelay(int msec)
+{
+    if (msec <= 0) {
+        return;
+    }
+
+#if 1
+    //非阻塞方式延时,现在很多人推荐的方法
+    QEventLoop loop;
+    QTimer::singleShot(msec, &loop, SLOT(quit()));
+    loop.exec();
+#else
+#if (QT_VERSION >= QT_VERSION_CHECK(5,0,0))
+    //阻塞方式延时,如果在主线程会卡住主界面
+    QThread::msleep(msec);
+#else
+    //非阻塞方式延时,不会卡住主界面,据说可能有问题
+    QTime endTime = QTime::currentTime().addMSecs(msec);
+    while (QTime::currentTime() < endTime) {
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+    }
+#endif
+#endif
+}
+
 QString cm_execute(const QString &cmd)
 {
     QProcess pro;

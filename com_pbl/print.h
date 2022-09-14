@@ -2,6 +2,7 @@
 #define COMMON_H
 #include "msgbox.h"
 
+void cm_mdelay(int msec);
 bool cm_pingNet(const QString& ip);
 bool cm_isDigitStr(const QString &src);
 bool cm_isIPaddress(const QString& ip);
