@@ -13,8 +13,7 @@ Ssdp_Obj::Ssdp_Obj(QObject *parent) : QObject(parent)
     mSocket = new QUdpSocket(this);
     qRegisterMetaType<sSdpIt>("sSdpIt");
     mAddress = QHostAddress("239.255.43.21");
-   // auto ok = mSocket->bind(QHostAddress::AnyIPv4, mPort, QUdpSocket::ShareAddress);
-    auto ok = mSocket->bind(QHostAddress("192.168.1.215"), mPort, QUdpSocket::ShareAddress);
+    auto ok = mSocket->bind(QHostAddress::AnyIPv4, mPort, QUdpSocket::ShareAddress);
     if(ok) ok = mSocket->joinMulticastGroup(mAddress);
     if(ok) connect(mSocket,SIGNAL(readyRead()),this,SLOT(readMsgSlot()));
     else cout << mSocket->errorString();
@@ -25,7 +24,7 @@ QString Ssdp_Obj::get_local_ip()
     QHostInfo info = QHostInfo::fromName(QHostInfo::localHostName());
     foreach(QHostAddress address,info.addresses()) {  // 找出一个IPv4地址即返回
         if(address.protocol() == QAbstractSocket::IPv4Protocol)
-            mIps << address.toString();
+            mIps << address.toString();        
     }
     return QHostAddress(QHostAddress::LocalHost).toString();
 }
@@ -37,7 +36,6 @@ void Ssdp_Obj::readMsgSlot()
         reply.resize(mSocket->pendingDatagramSize());
         mSocket->readDatagram(reply.data(), reply.size(), &host);
         if(!mIps.contains(host.toString())) recvMsg(reply);
-        qDebug() << "CCCCCCCCCC" << host.toString() << reply;
     }
 }
 
@@ -61,7 +59,7 @@ void Ssdp_Obj::recvMsg(QByteArray &array)
     QDataStream out(&array, QIODevice::ReadOnly); sSdpIt it;
     out >> it.version >> it.fc >> it.room >> it.ip >> it.target >> it.data >> it.crc;
     if(it.crc == END_CRC) {
-        if(it.fc) emit recvSig(it);
-        else rplySearchTarget(it);
+        /*if(it.fc)*/ emit recvSig(it);
+        //else rplySearchTarget(it);
     } else cout << it.fc << it.crc << array.size();
 }

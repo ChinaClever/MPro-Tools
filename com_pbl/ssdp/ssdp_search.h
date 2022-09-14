@@ -19,9 +19,8 @@ signals:
 private:
     QStringList respondList();
 
-protected slots:
-    void recvSlot(const sSdpIt &it);
-    bool rplySearchTarget(const sSdpIt &it);
+private slots:
+    void searchRecvSlot(const sSdpIt &it);
 
 private:
     QSet<QString> mSet;

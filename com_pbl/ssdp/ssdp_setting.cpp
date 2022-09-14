@@ -51,7 +51,7 @@ bool Ssdp_Setting::setJson(const QByteArray &data, const QString &room, const QS
     QString msg;
     if(ip.size()) msg += "IP:" + ip;
     if(room.size()) msg += "room:" + room;
-    msg += data; emit sendMsgSig(msg);
+    msg += "data:" + data; emit sendMsgSig(msg);
 
     return send(item);
 }

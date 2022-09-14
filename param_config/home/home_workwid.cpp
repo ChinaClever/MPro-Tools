@@ -28,10 +28,10 @@ void Home_WorkWid::on_findBtn_clicked()
     QStringList ips = mSsdp->searchAll();
     QString str = tr("未找到任何目标设备");
     if(ips.size()) {
-        str = tr("已找到 %1 目标IP:\n").arg(ips.size());
+        str = tr("已找到%1个目标IP:\t\n").arg(ips.size());
         int i=0; foreach(const auto &ip, ips) {
             str += "   " + ip; i++;
-            if(i%3==0) str += "\n";
+            if(i%4==0) str += "\n";
         }
     }
     MsgBox::information(this, str);

@@ -37,7 +37,7 @@ private:
 
 protected slots:
     virtual void readMsgSlot();
-    virtual bool rplySearchTarget(const sSdpIt &it)=0;
+    virtual bool rplySearchTarget(const sSdpIt &){return false;}
 
 private:
     int mPort;

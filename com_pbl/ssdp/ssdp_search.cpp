@@ -8,7 +8,7 @@
 
 Ssdp_Search::Ssdp_Search(QObject *parent) : Ssdp_Obj(parent)
 {
-    connect(this, &Ssdp_Obj::recvSig, this, &Ssdp_Search::recvSlot);
+    connect(this, &Ssdp_Obj::recvSig, this, &Ssdp_Search::searchRecvSlot);
 }
 
 
@@ -23,7 +23,7 @@ QStringList Ssdp_Search::searchRoom(const QString &room)
 }
 
 
-void Ssdp_Search::recvSlot(const sSdpIt &it)
+void Ssdp_Search::searchRecvSlot(const sSdpIt &it)
 {
     if(!it.fc) {
         mSet << it.ip;
@@ -60,7 +60,3 @@ QStringList Ssdp_Search::searchTarget(const QString &room, const QString &ip)
     return ls;
 }
 
-bool Ssdp_Search::rplySearchTarget(const sSdpIt &it)
-{
-    return true;
-}
