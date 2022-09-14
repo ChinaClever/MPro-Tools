@@ -14,6 +14,7 @@ Ssdp_Obj::Ssdp_Obj(QObject *parent) : QObject(parent)
     qRegisterMetaType<sSdpIt>("sSdpIt");
     mAddress = QHostAddress("239.255.43.21");
     auto ok = mSocket->bind(QHostAddress::AnyIPv4, mPort, QUdpSocket::ShareAddress);
+    //auto ok = mSocket->bind(QHostAddress("192.168.1.215"), mPort, QUdpSocket::ShareAddress);
     if(ok) ok = mSocket->joinMulticastGroup(mAddress);
     if(ok) connect(mSocket,SIGNAL(readyRead()),this,SLOT(readMsgSlot()));
     else cout << mSocket->errorString();
