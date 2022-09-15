@@ -1,9 +1,7 @@
 #ifndef SSDP_OBJ_H
 #define SSDP_OBJ_H
 
-#include <QtCore>
-#include <QUdpSocket>
-#include <QHostAddress>
+#include "net_udp.h"
 #include "print.h"
 
 #define START_HEAD ((ushort)0xC5C5)
@@ -25,23 +23,29 @@ class Ssdp_Obj : public QObject
     Q_OBJECT
 public:
     explicit Ssdp_Obj(QObject *parent = nullptr);
-     bool send(const sSdpIt &it);
+    bool udpSend(const QHostAddress &host, const sSdpIt &it);
+    bool ssdpSend(const sSdpIt &it);
 
 signals:
     void recvSig(const sSdpIt &it);
 
+protected:
+    bool udpBind();
+    bool ssdpBind();
+
 private:
-    QString get_local_ip();
-    bool write(const QVariant &var);
-    void recvMsg(QByteArray &array);
+    void recvMsg(const QByteArray &array);
+    QByteArray toArray(const sSdpIt &it);
+    bool toItem(const QByteArray &array, sSdpIt &it);
 
 protected slots:
     virtual void readMsgSlot();
+    void recvUdpSlot(const QByteArray &array) {recvMsg(array);}
     virtual bool rplySearchTarget(const sSdpIt &){return false;}
 
 private:
     int mPort;
-    QStringList mIps;
+    Net_Udp *mUdp;
     QUdpSocket *mSocket;
     QHostAddress mAddress;
 };

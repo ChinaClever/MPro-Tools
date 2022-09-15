@@ -8,7 +8,7 @@
 
 Ssdp_Setting::Ssdp_Setting(QObject *parent) : Ssdp_Search(parent)
 {
-
+     udpBind();
 }
 
 
@@ -52,6 +52,7 @@ bool Ssdp_Setting::setJson(const QByteArray &data, const QString &room, const QS
     if(ip.size()) msg += "IP:" + ip;
     if(room.size()) msg += "room:" + room;
     msg += "data:" + data; emit sendMsgSig(msg);
+    emit sendDataSig(data);
 
-    return send(item);
+    return ssdpSend(item);
 }

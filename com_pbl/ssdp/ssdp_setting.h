@@ -36,6 +36,7 @@ public:
     bool setJson(const QByteArray &data, const QString &room, const QString &ip);
 
 signals:
+    void sendDataSig(const QString &msg);
     void sendMsgSig(const QString &msg);
 };
 

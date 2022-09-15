@@ -13,8 +13,9 @@ Home_MainWid::Home_MainWid(QWidget *parent) :
     ui->setupUi(this); initWid();
     groupBox_background_icon(this);
     mWorkWid = new Home_WorkWid(ui->workWid);
+    Ssdp_Core *ssdp = Ssdp_Core::bulid(this);
+    connect(ssdp, &Ssdp_Core::sendMsgSig, this, &Home_MainWid::onDown);
     connect(mWorkWid, &Home_WorkWid::startSig, this, &Home_MainWid::onStart);
-    connect(mWorkWid, &Home_WorkWid::downSig, this, &Home_MainWid::onDown);
 }
 
 Home_MainWid::~Home_MainWid()
@@ -33,12 +34,12 @@ void Home_MainWid::initWid()
 void Home_MainWid::onStart()
 {
     ui->textEdit->clear();
+    mId = 0;
 }
 
-void Home_MainWid::onDown(const QString &dir)
+void Home_MainWid::onDown(const QString &msg)
 {
-    QFile file(dir +"/" + CFG_APP);
-    if(file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        ui->textEdit->setPlainText(file.readAll());
-    } file.close();
+    QString str = QString::number(++mId) + "、"+ msg + "\n";
+    ui->textEdit->moveCursor(QTextCursor::Start);
+    ui->textEdit->insertPlainText(str);
 }

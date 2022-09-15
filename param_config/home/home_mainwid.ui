@@ -12,7 +12,6 @@
   </property>
   <property name="font">
    <font>
-    <family>微软雅黑</family>
     <pointsize>11</pointsize>
    </font>
   </property>
@@ -32,7 +31,7 @@
       </size>
      </property>
      <property name="title">
-      <string>打包输出信息</string>
+      <string>输出信息</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="0" column="0">
