@@ -148,7 +148,7 @@ void Home_WorkWid::getInput(QString &room, QString &ip)
 
 void Home_WorkWid::on_findBtn_clicked()
 {
-     QString room, ip; getInput(room, ip);
+    QString room, ip; getInput(room, ip);
     QStringList ips = mSsdp->searchTarget(room, ip);
     QString str = tr("未找到任何目标设备");
     if(ips.size()) {
