@@ -14,7 +14,7 @@ struct sDataItem
     uchar txType; // 通讯类型 1 UDP  3:SNMP  4：Zebra
     uchar id; // 0 表示统一设置
     uchar rw; // 0 读  1 写
-    uint value;
+    double value;
 };
 
 struct sCfgItem {

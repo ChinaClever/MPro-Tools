@@ -42,7 +42,7 @@ void Home_WorkWid::setDataItem()
         it.type = ui->alarm_typeBox->value();
         it.topic = ui->alarm_topicBox->value();
         it.subtopic = ui->alarm_subBox->value();
-        it.value = ui->alarm_valueBox->value();
+        it.value = ui->alarm_valueSpinBox->value();
 
         QString room, ip; getInput(room, ip);
         mSsdp->setting(it, room, ip);
@@ -148,7 +148,8 @@ void Home_WorkWid::getInput(QString &room, QString &ip)
 
 void Home_WorkWid::on_findBtn_clicked()
 {
-    QStringList ips = mSsdp->searchAll();
+     QString room, ip; getInput(room, ip);
+    QStringList ips = mSsdp->searchTarget(room, ip);
     QString str = tr("未找到任何目标设备");
     if(ips.size()) {
         str = tr("已找到%1个目标IP:\t\n").arg(ips.size());
@@ -177,7 +178,7 @@ void Home_WorkWid::on_alarm_checkBox_clicked(bool en)
     ui->alarm_addrBox->setEnabled(en);
     ui->alarm_typeBox->setEnabled(en);
     ui->alarm_topicBox->setEnabled(en);
-    ui->alarm_valueBox->setEnabled(en);
+    ui->alarm_valueSpinBox->setEnabled(en);
 }
 
 void Home_WorkWid::on_batchCheck_clicked(bool checked)

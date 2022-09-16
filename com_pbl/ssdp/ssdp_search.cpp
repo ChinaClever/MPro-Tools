@@ -35,10 +35,10 @@ QStringList Ssdp_Search::respondList()
 {
     int cnt = 0; mSet.clear();
     QByteArray reply; QHostAddress host;
-    for(int i=0; i<100; i+=10) {
+    for(int i=0; i<150; i+=10) {
         if(mSet.size() != cnt) {
             cnt = mSet.size();
-            i = 70;
+            i = 100;
         } cm_mdelay(10);
     }
 
