@@ -3,5 +3,6 @@ TEMPLATE = subdirs
 SUBDIRS += \
 #    ota_updater \
     app_pack \
-    param_config
+    param_config \
+    rpc_debug
 
