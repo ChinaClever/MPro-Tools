@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>APP打包工具</string>
+   <string>参数配置工具</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../com_pbl/images/image.qrc">

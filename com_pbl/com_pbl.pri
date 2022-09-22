@@ -1,6 +1,7 @@
 
 INCLUDEPATH += $$PWD
 
+include(rpc/rpc.pri)
 include(ssdp/ssdp.pri)
 include(users/users.pri)
 include(excel/excel.pri)

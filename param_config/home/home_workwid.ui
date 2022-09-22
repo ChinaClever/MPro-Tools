@@ -459,7 +459,7 @@
             </size>
            </property>
            <property name="text">
-            <string>sub:</string>
+            <string>id:</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -467,7 +467,7 @@
           </widget>
          </item>
          <item row="1" column="5">
-          <widget class="QSpinBox" name="cfg_subBox">
+          <widget class="QSpinBox" name="cfg_idBox">
            <property name="maximum">
             <number>200</number>
            </property>
@@ -557,6 +557,7 @@
       <property name="font">
        <font>
         <pointsize>16</pointsize>
+        <weight>75</weight>
         <bold>true</bold>
        </font>
       </property>

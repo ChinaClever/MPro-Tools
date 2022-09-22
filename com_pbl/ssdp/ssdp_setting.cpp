@@ -34,7 +34,7 @@ bool Ssdp_Setting::setCfg(const sCfgItem &it, const QVariant &v, const QString &
     json.insert("addr", it.addr);
     json.insert("type", it.type);
     json.insert("fc", it.fc);
-    json.insert("sub", it.sub);
+    json.insert("id", it.id);
     json.insert("value", v.toJsonValue());
 
     QJsonObject obj;

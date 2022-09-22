@@ -55,7 +55,7 @@ void Home_WorkWid::setCfgItem()
         sCfgItem it;
         it.addr = ui->cfg_addrBox->value();
         it.type = ui->cfg_typeBox->value();
-        it.sub = ui->cfg_subBox->value();
+        it.id = ui->cfg_idBox->value();
         it.fc = ui->cfg_fcBox->value();
         QString v = ui->cfg_valueEdit->text();
         QString room, ip; getInput(room, ip);
@@ -166,7 +166,7 @@ void Home_WorkWid::on_cfg_checkBox_clicked(bool en)
     ui->cfg_valueEdit->setEnabled(en);
     ui->cfg_addrBox->setEnabled(en);
     ui->cfg_typeBox->setEnabled(en);
-    ui->cfg_subBox->setEnabled(en);
+    ui->cfg_idBox->setEnabled(en);
     ui->cfg_fcBox->setEnabled(en);
 }
 

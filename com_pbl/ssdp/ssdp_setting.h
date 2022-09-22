@@ -18,12 +18,12 @@ struct sDataItem
 };
 
 struct sCfgItem {
-    sCfgItem():addr(0),sub(0){}
+    sCfgItem():addr(0),id(0){}
     uchar txType; // 通讯类型 1 UDP  3:SNMP  4：Zebra
     uchar addr; // 地址
     uchar type; // 10 输出位  11 UUT信息
     uchar fc; // 功能码　0 表示统一设置
-    uchar sub;
+    uchar id;
 };
 
 class Ssdp_Setting : public Ssdp_Search
