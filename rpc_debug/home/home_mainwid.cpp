@@ -1,3 +1,8 @@
+/*
+ *
+ *  Created on: 2022年1月1日
+ *      Author: Lzy
+ */
 #include "home_mainwid.h"
 #include "ui_home_mainwid.h"
 #include "backcolourcom.h"
@@ -40,7 +45,6 @@ void Home_MainWid::on_alrmBtn_clicked()
     else mRpc->pduDataGet(addr, type, topic, sub, id);
 }
 
-
 void Home_MainWid::on_cfgBtn_clicked()
 {
     uchar addr = ui->addrSpinBox->value();
@@ -50,10 +54,27 @@ void Home_MainWid::on_cfgBtn_clicked()
     QVariant value = ui->cfgEdit->text();
 
     int index =  ui->cfgBox->currentIndex();
-    if(index) mRpc->pduCfgSet(type, fc, value, addr, id);
-    else mRpc->pduCfgGet(type, fc, addr, id);
+    if(index) mRpc->pduCfgSet(type, fc, value, id, addr);
+    else mRpc->pduCfgGet(type, fc, id, addr);
 }
 
+void Home_MainWid::on_logBtn_clicked()
+{
+    uchar type = ui->logTypeBox->value();
+    uchar fc = ui->logFcBox->value();
+    int id = ui->logIdBox->value();
+    int cnt = ui->logCntBox->value();
+    mRpc->pduLogFun(type, fc, id, cnt);
+}
+
+void Home_MainWid::on_swBtn_clicked()
+{
+    int addr = ui->addrSpinBox->value();
+    int start = ui->startBox->value();
+    int num = ui->numBox->value();
+    uchar on = ui->onBox->value();
+    mRpc->pduRelaysCtrl(addr, start, num, on);
+}
 
 void Home_MainWid::on_cmdBtn_clicked()
 {
@@ -114,4 +135,3 @@ void Home_MainWid::onDown(const QVariant &msg)
     ui->textEdit->clear();
     ui->textEdit->insertPlainText(msg.toString());
 }
-

@@ -16,23 +16,21 @@ public:
     explicit Home_MainWid(QWidget *parent = nullptr);
     ~Home_MainWid();
 
-
 private:
     void initWid();
     bool inputCheck();
     void enableWid(bool en);
 
 private slots:
-    void onDown(const QVariant &msg);
-    void on_connectBtn_clicked();
+    void on_swBtn_clicked();
+    void on_cfgBtn_clicked();
+    void on_cmdBtn_clicked();
+    void on_logBtn_clicked();
     void on_alrmBtn_clicked();
-
+    void on_connectBtn_clicked();
+    void onDown(const QVariant &msg);
     void on_cfgBox_currentIndexChanged(int index);
     void on_alarmBox_currentIndexChanged(int index);
-
-    void on_cfgBtn_clicked();
-
-    void on_cmdBtn_clicked();
 
 private:
     Ui::Home_MainWid *ui;

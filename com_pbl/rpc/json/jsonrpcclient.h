@@ -11,8 +11,8 @@ public:
     int pduDataGet(uchar addr,  uchar type, uchar topic, uchar sub, uchar id);
     bool pduDataSet(uchar addr,  uchar type, uchar topic, uchar sub, uchar id, uint value);
 
-    QVariant pduCfgGet(uchar type, uchar fc, uchar addr=0, uchar id=0);
-    bool pduCfgSet(uchar type, uchar fc, const QVariant &value, uchar addr=0, uchar id=0);
+    QVariant pduCfgGet(uchar type, uchar fc, uchar id=0, uchar addr=0);
+    bool pduCfgSet(uchar type, uchar fc, const QVariant &value, uchar id=0, uchar addr=0);
     bool pduRelaysCtrl(int addr, int start, int num, uchar on);
     QString pduLogFun(uchar type, uchar fc, int id, int cnt=30);
     QString pduMetaData(uchar addr);
