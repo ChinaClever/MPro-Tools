@@ -32,6 +32,8 @@ private slots:
     void on_cfgBox_currentIndexChanged(int index);
     void on_alarmBox_currentIndexChanged(int index);
 
+    void on_readBtn_clicked();
+
 private:
     Ui::Home_MainWid *ui;
     JsonRpcClient *mRpc;

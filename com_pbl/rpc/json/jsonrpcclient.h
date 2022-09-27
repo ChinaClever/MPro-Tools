@@ -8,8 +8,8 @@ class JsonRpcClient : public JsonRpcObj
     Q_OBJECT
 public:
     explicit JsonRpcClient(QObject *parent = nullptr);
-    int pduDataGet(uchar addr,  uchar type, uchar topic, uchar sub, uchar id);
-    bool pduDataSet(uchar addr,  uchar type, uchar topic, uchar sub, uchar id, uint value);
+    double pduDataGet(uchar addr,  uchar type, uchar topic, uchar sub, uchar id);
+    bool pduDataSet(uchar addr,  uchar type, uchar topic, uchar sub, uchar id, double value);
 
     QVariant pduCfgGet(uchar type, uchar fc, uchar id=0, uchar addr=0);
     bool pduCfgSet(uchar type, uchar fc, const QVariant &value, uchar id=0, uchar addr=0);

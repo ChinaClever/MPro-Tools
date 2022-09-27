@@ -38,7 +38,7 @@ void Home_MainWid::on_alrmBtn_clicked()
     uchar topic = ui->alrmTopicBox->value();
     uchar sub = ui->alarmSubBox->value();
     uchar id = ui->alarmIdBox->value();
-    uint value = ui->alarmValueBox->value();
+    double value = ui->alarmValueBox->value();
 
     int index =  ui->alarmBox->currentIndex();
     if(index) mRpc->pduDataSet(addr, type, topic, sub, id, value);
@@ -82,6 +82,11 @@ void Home_MainWid::on_cmdBtn_clicked()
     mRpc->execute(cmd);
 }
 
+void Home_MainWid::on_readBtn_clicked()
+{
+    int addr = ui->addrSpinBox->value();
+    mRpc->pduMetaData(addr);
+}
 
 void Home_MainWid::on_connectBtn_clicked()
 {
@@ -135,3 +140,4 @@ void Home_MainWid::onDown(const QVariant &msg)
     ui->textEdit->clear();
     ui->textEdit->insertPlainText(msg.toString());
 }
+

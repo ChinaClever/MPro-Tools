@@ -161,68 +161,6 @@
       <string>实时数据</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="2">
-       <widget class="QSpinBox" name="alarmTypeBox">
-        <property name="maximumSize">
-         <size>
-          <width>60</width>
-          <height>16777215</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="7">
-       <widget class="QLabel" name="label_5">
-        <property name="maximumSize">
-         <size>
-          <width>60</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>id</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="3">
-       <widget class="QLabel" name="label_3">
-        <property name="maximumSize">
-         <size>
-          <width>60</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>topic</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="8">
-       <widget class="QSpinBox" name="alarmIdBox">
-        <property name="maximumSize">
-         <size>
-          <width>60</width>
-          <height>16777215</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="4">
-       <widget class="QSpinBox" name="alrmTopicBox">
-        <property name="maximumSize">
-         <size>
-          <width>60</width>
-          <height>16777215</height>
-         </size>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="0">
        <widget class="QComboBox" name="alarmBox">
         <property name="minimumSize">
@@ -249,21 +187,8 @@
         </item>
        </widget>
       </item>
-      <item row="0" column="11">
-       <widget class="QPushButton" name="alrmBtn">
-        <property name="maximumSize">
-         <size>
-          <width>80</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>提交</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="6">
-       <widget class="QSpinBox" name="alarmSubBox">
+      <item row="0" column="8">
+       <widget class="QSpinBox" name="alarmIdBox">
         <property name="maximumSize">
          <size>
           <width>60</width>
@@ -272,35 +197,13 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="9">
-       <widget class="QLabel" name="label_6">
+      <item row="0" column="4">
+       <widget class="QSpinBox" name="alrmTopicBox">
         <property name="maximumSize">
          <size>
           <width>60</width>
           <height>16777215</height>
          </size>
-        </property>
-        <property name="text">
-         <string>value</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLabel" name="label_2">
-        <property name="maximumSize">
-         <size>
-          <width>60</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>type</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
@@ -320,10 +223,110 @@
         </property>
        </widget>
       </item>
+      <item row="0" column="7">
+       <widget class="QLabel" name="label_5">
+        <property name="maximumSize">
+         <size>
+          <width>60</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>id</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="9">
+       <widget class="QLabel" name="label_6">
+        <property name="maximumSize">
+         <size>
+          <width>60</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>value</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="11">
+       <widget class="QPushButton" name="alrmBtn">
+        <property name="maximumSize">
+         <size>
+          <width>80</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>提交</string>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="10">
-       <widget class="QSpinBox" name="alarmValueBox">
+       <widget class="QDoubleSpinBox" name="alarmValueBox">
         <property name="enabled">
          <bool>false</bool>
+        </property>
+        <property name="maximum">
+         <double>99999.990000000005239</double>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="6">
+       <widget class="QSpinBox" name="alarmSubBox">
+        <property name="maximumSize">
+         <size>
+          <width>60</width>
+          <height>16777215</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="label_2">
+        <property name="maximumSize">
+         <size>
+          <width>60</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>type</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QSpinBox" name="alarmTypeBox">
+        <property name="maximumSize">
+         <size>
+          <width>60</width>
+          <height>16777215</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QLabel" name="label_3">
+        <property name="maximumSize">
+         <size>
+          <width>60</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>topic</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
@@ -801,7 +804,6 @@
   <tabstop>alarmBox</tabstop>
   <tabstop>alrmBtn</tabstop>
   <tabstop>alarmSubBox</tabstop>
-  <tabstop>alarmValueBox</tabstop>
   <tabstop>cfgBox</tabstop>
   <tabstop>cfgTypeBox</tabstop>
   <tabstop>cfgFcBox</tabstop>
