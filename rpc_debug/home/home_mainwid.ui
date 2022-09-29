@@ -89,7 +89,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>192.168.1.182</string>
+       <string>192.168.1.199</string>
       </property>
      </widget>
      <widget class="QPushButton" name="connectBtn">
