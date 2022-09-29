@@ -25,8 +25,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::initFunSlot()
 {
-//    mHomeWid = new Home_MainWid(ui->stackedWid);
-//    ui->stackedWid->addWidget(mHomeWid);
+    mHomeWid = new Home_MainWid(ui->stackedWid);
+    ui->stackedWid->addWidget(mHomeWid);
 
 //    mSetupWid = new Setup_MainWid(ui->stackedWid);
 //    ui->stackedWid->addWidget(mSetupWid);
