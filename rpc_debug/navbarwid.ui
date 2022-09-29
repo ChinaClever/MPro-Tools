@@ -46,7 +46,6 @@
      </property>
      <property name="font">
       <font>
-       <family>微软雅黑</family>
        <pointsize>20</pointsize>
       </font>
      </property>
@@ -54,7 +53,7 @@
       <string notr="true">color: rgb(255, 255, 255);</string>
      </property>
      <property name="text">
-      <string>远程调用</string>
+      <string>远程调用工具</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
