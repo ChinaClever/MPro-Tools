@@ -18,13 +18,25 @@ public:
     explicit Home_MainWid(QWidget *parent = nullptr);
     ~Home_MainWid();
 
-protected:
+protected:    
     void initWid();
+    void devMode();
+    void webLogin();
+    void location();
+    void netAddr();
+    void integrate();
+    void send(const sCfgItem &it, const QVariant &v);
 
 private slots:
-    void onDown(const QString &msg);
-
     void on_findBtn_clicked();
+    void on_startBtn_clicked();
+    void onDown(const QString &msg);
+    void on_dhcpBox_currentIndexChanged(int index);
+    void on_pushBox_currentIndexChanged(int index);
+
+    void on_modeBox_currentIndexChanged(int index);
+
+    void on_checkBox_stateChanged(int arg1);
 
 private:
     Ui::Home_MainWid *ui;
