@@ -17,19 +17,8 @@ public:
     explicit NavBarWid(QWidget *parent = nullptr);
     ~NavBarWid();
 
-signals:
-    void navBarSig(int);
-
-private slots:
-    void on_homeBtn_clicked();
-    void on_setBtn_clicked();
-    void on_logBtn_clicked();
-    void on_loginBtn_clicked();
-    void recvUserNameSlot(QString str);
-
 private:
     Ui::NavBarWid *ui;
-    UsrLandDlg* mUserLand;
 };
 
 #endif // NAVBARWID_H

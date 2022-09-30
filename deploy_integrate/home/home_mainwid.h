@@ -2,7 +2,8 @@
 #define HOME_MAINWID_H
 
 #include <QWidget>
-#include "home_workwid.h"
+#include "cfg_app.h"
+#include "ssdp_core.h"
 #include "backcolourcom.h"
 
 namespace Ui {
@@ -21,13 +22,13 @@ protected:
     void initWid();
 
 private slots:
-    void onStart();
     void onDown(const QString &msg);
+
+    void on_findBtn_clicked();
 
 private:
     Ui::Home_MainWid *ui;
-    Home_WorkWid *mWorkWid;
-    //Td_MainWid *mTabWid;
+    Ssdp_Core *mSsdp;
     int mId = 0;
 };
 
