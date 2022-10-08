@@ -5,6 +5,7 @@
  */
 #include "home_mainwid.h"
 #include "ui_home_mainwid.h"
+#include <QFileDialog>
 
 Home_MainWid::Home_MainWid(QWidget *parent) :
     QWidget(parent),
@@ -22,9 +23,19 @@ Home_MainWid::~Home_MainWid()
 
 void Home_MainWid::webLogin()
 {
+    sCfgItem it; it.type = 14;
+    QString v = ui->usrEdit->text();
+    if(v.size()) {
+        it.fc = 1;
+        send(it, v);
+    }
 
+    v = ui->pwdEdit->text();
+    if(v.size()) {
+        it.fc =2;
+        send(it, v);
+    }
 }
-
 
 void Home_MainWid::initWid()
 {
@@ -62,20 +73,24 @@ void Home_MainWid::send(const sCfgItem &it, const QVariant &v)
     mSsdp->setCfg(it, v, room, ip);
 }
 
+void Home_MainWid::reboot()
+{
+    sCfgItem it; it.type = 111;
+    QString cmd = "reboot";
+    if(ui->resetCheck->isChecked()) {
+        cm_mdelay(150); send(it, cmd);
+    }
+}
+
 void Home_MainWid::on_startBtn_clicked()
 {
-    sCfgItem it; it.type = 14;
-    QString v = ui->usrEdit->text();
-    if(v.size()) {
-        it.fc = 1;
-        send(it, v);
-    }
-
-    v = ui->pwdEdit->text();
-    if(v.size()) {
-        it.fc =2;
-        send(it, v);
-    }
+    webLogin();
+    devMode();
+    location();
+    netAddr();
+    integrate();
+    setWorkDown();
+    reboot();
 }
 
 void Home_MainWid::devMode()
@@ -132,8 +147,75 @@ void Home_MainWid::netAddr()
 
 void Home_MainWid::integrate()
 {
-    ///////////=============
+    sCfgItem it; it.type = 15; it.fc = 1; int fc;
+    int index = ui->modbusBox->currentIndex();
+    if(index == 2) fc = 1; else fc = 0;
+    send(it, fc);
 
+    it.type = 15; it.fc = 11;
+    if(index == 1) fc = 1; else fc = 0;
+    send(it, fc);
+
+    it.type = 17; it.fc = 1;
+    index = ui->rpcBox->currentIndex();
+    if(index == 1) fc = 1; else fc = 0;
+    send(it, fc);
+
+    it.type = 17; it.fc = 4;
+    if(index == 2) fc = 1; else fc = 0;
+    send(it, fc);
+
+    it.type = 18;
+    index = ui->pushBox->currentIndex();
+    if(index == 1) {
+        it.fc = 2; send(it, ui->hostEdit->text());
+        it.fc = 3; send(it, ui->portEdit->text());
+        it.fc = 1; fc = 1;
+    } else fc = 0;
+    send(it, fc);
+
+    index = ui->ctrlBox->currentIndex();
+    it.fc = 8; send(it, index);
+}
+
+QByteArray Home_MainWid::readFile(const QString &fn)
+{
+    QFile file(fn); QByteArray res;
+    bool ret = file.open(QIODevice::ReadOnly | QIODevice::Text);
+    if(ret) res = file.readAll();
+    else cout << file.errorString();
+    file.close();
+    return res;
+}
+
+bool Home_MainWid::checkFile(const QByteArray &msg)
+{
+    QJsonObject obj;
+    QJsonParseError jsonerror; bool ret = false;
+    QJsonDocument doc = QJsonDocument::fromJson(msg, &jsonerror);
+    if (!doc.isNull() && jsonerror.error == QJsonParseError::NoError) {
+        if(doc.isObject()) {
+            obj = doc.object();
+            ret = true;
+        }
+    }
+    return ret;
+}
+
+
+void Home_MainWid::setWorkDown()
+{
+    QString dir = ui->pathEdit->text();
+    QString room, ip; //getInput(room, ip);
+    if(ui->checkBox->isChecked()) ip = ui->dstEdit->text();
+    if(dir.size() && ui->batchCheck->isChecked()) {
+        QStringList ls = File::entryList(dir);
+        foreach(const auto &f, ls) {
+            QString fn = dir + "/" + f;
+            QByteArray res = readFile(fn);
+            if(checkFile(res)) mSsdp->setJson(res, room, ip);
+        }
+    }
 }
 
 void Home_MainWid::on_dhcpBox_currentIndexChanged(int index)
@@ -143,7 +225,6 @@ void Home_MainWid::on_dhcpBox_currentIndexChanged(int index)
     ui->gwEdit->setDisabled(index);
     ui->dnsEdit->setDisabled(index);
 }
-
 
 void Home_MainWid::on_pushBox_currentIndexChanged(int index)
 {
@@ -163,4 +244,19 @@ void Home_MainWid::on_checkBox_stateChanged(int arg1)
 {
     ui->dstEdit->setEnabled(arg1);
 }
+
+void Home_MainWid::on_batchCheck_clicked(bool checked)
+{
+    ui->pathEdit->setEnabled(checked);
+    ui->selectBtn->setEnabled(checked);
+}
+
+void Home_MainWid::on_selectBtn_clicked()
+{
+    QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
+                                                    QStandardPaths::writableLocation(QStandardPaths::DesktopLocation),
+                                                    QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    ui->pathEdit->setText(dir);
+}
+
 

@@ -25,7 +25,11 @@ protected:
     void location();
     void netAddr();
     void integrate();
+    void setWorkDown();
+    bool checkFile(const QByteArray &msg);
+    QByteArray readFile(const QString &fn);
     void send(const sCfgItem &it, const QVariant &v);
+    void reboot();
 
 private slots:
     void on_findBtn_clicked();
@@ -33,10 +37,10 @@ private slots:
     void onDown(const QString &msg);
     void on_dhcpBox_currentIndexChanged(int index);
     void on_pushBox_currentIndexChanged(int index);
-
     void on_modeBox_currentIndexChanged(int index);
-
+    void on_batchCheck_clicked(bool checked);
     void on_checkBox_stateChanged(int arg1);
+    void on_selectBtn_clicked();
 
 private:
     Ui::Home_MainWid *ui;
