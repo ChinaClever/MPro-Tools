@@ -26,6 +26,7 @@ protected:
     void netAddr();
     void integrate();
     void setWorkDown();
+    void setDateTime();
     bool checkFile(const QByteArray &msg);
     QByteArray readFile(const QString &fn);
     void send(const sCfgItem &it, const QVariant &v);

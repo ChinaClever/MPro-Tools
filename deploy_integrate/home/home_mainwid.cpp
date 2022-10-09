@@ -90,6 +90,7 @@ void Home_MainWid::on_startBtn_clicked()
     location();
     netAddr();
     integrate();
+    setDateTime();
     setWorkDown();
     reboot();
 }
@@ -109,6 +110,14 @@ void Home_MainWid::devMode()
 
     v = ui->addrBox->value();
     send(it, v);
+}
+
+void Home_MainWid::setDateTime()
+{
+    sCfgItem it; it.type = 43;  it.fc = 1;
+    QDateTime dateTime = QDateTime::currentDateTime();
+    QString v = dateTime.toString("yyyy-MM-dd hh:mm:ss");
+    if(ui->timeCheckBox->isChecked()) send(it, v);
 }
 
 void Home_MainWid::location()
