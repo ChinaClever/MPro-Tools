@@ -486,11 +486,6 @@
         <string>JSON-RPC</string>
        </property>
       </item>
-      <item>
-       <property name="text">
-        <string>XML-RPC</string>
-       </property>
-      </item>
      </widget>
      <widget class="QLabel" name="label_11">
       <property name="geometry">
@@ -660,6 +655,7 @@
       <property name="font">
        <font>
         <pointsize>16</pointsize>
+        <weight>75</weight>
         <bold>true</bold>
        </font>
       </property>

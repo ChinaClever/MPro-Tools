@@ -78,7 +78,8 @@ void Home_MainWid::reboot()
     sCfgItem it; it.type = 111;
     QString cmd = "reboot";
     if(ui->resetCheck->isChecked()) {
-        cm_mdelay(150); send(it, cmd);
+        if(ui->batchCheck->isChecked()) cm_mdelay(465);
+        cm_mdelay(255); send(it, cmd);
     }
 }
 
@@ -153,16 +154,13 @@ void Home_MainWid::integrate()
     send(it, fc);
 
     it.type = 15; it.fc = 11;
-    if(index == 1) fc = 1; else fc = 0;
+    int v = ui->modeBox->currentIndex();
+    if((index == 1)&&(v==3)) fc = 1; else fc = 0;
     send(it, fc);
 
     it.type = 17; it.fc = 1;
     index = ui->rpcBox->currentIndex();
     if(index == 1) fc = 1; else fc = 0;
-    send(it, fc);
-
-    it.type = 17; it.fc = 4;
-    if(index == 2) fc = 1; else fc = 0;
     send(it, fc);
 
     it.type = 18;
