@@ -153,8 +153,8 @@ void Home_WorkWid::initData(sFileTrans &it)
 {
     mId = 1; mResult = true;
     it.file = ui->fnLab->text().split("/").last();
-    it.size = File::Size(ui->fnLab->text());
-    it.md5 = File::Md5(ui->fnLab->text());
+    it.size = File::fileSize(ui->fnLab->text());
+    it.md5 = File::md5(ui->fnLab->text());
     it.fc = ui->modeBox->currentIndex();
     it.dev = ui->modeBox->currentText();
     it.path = ui->pathEdit->text();
@@ -178,7 +178,7 @@ bool Home_WorkWid::inputIpCheck()
     if(1 == index) {
         if(str.isEmpty()) MsgBox::critical(this, tr("机房名称，未指定。")); else ret = true;
     } else if(2 == index) {
-        ret = cm::isIPaddress(str);  if(!ret) MsgBox::critical(this, tr("目标设备IP出错！"));
+        ret = cm_isIPaddress(str);  if(!ret) MsgBox::critical(this, tr("目标设备IP出错！"));
     } else ret = true;
 
     return ret;
@@ -205,8 +205,8 @@ QStringList Home_WorkWid::getIpList()
 {
     QStringList ips;
     switch (ui->searchBox->currentIndex()) {
-    case 0: ips = mSsdp->searchTarget(); break;
-    case 1: ips = mSsdp->searchTarget(ui->targetEdit->text()); break;
+//    case 0: ips = mSsdp->searchTarget(); break;
+//    case 1: ips = mSsdp->searchTarget(ui->targetEdit->text()); break;
     case 2: ips << ui->targetEdit->text(); break;
     }
 
@@ -231,8 +231,8 @@ bool Home_WorkWid::fileCrc(const QString &fn)
     bool ret = false;
     int index = ui->modeBox->currentIndex();
     switch (index) {
-    case 0: ret = File::CheckMd5(fn); break;
-    case 1: ret = File::CheckCrc(fn); break;
+//    case 0: ret = File::CheckMd5(fn); break;
+//    case 1: ret = File::CheckCrc(fn); break;
     default: MsgBox::critical(this, tr("请选择需要选择的设备类型")); return ret;
     }
 

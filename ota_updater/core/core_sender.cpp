@@ -50,7 +50,7 @@ void Core_Sender::appendSender()
     QString host = mHosts.takeFirst();
     Dtls_Sender *sender = new Dtls_Sender();
     sender->sendData(host, mFileTrans, mArray);
-    initSender(sender); cm::mdelay(1);
+    initSender(sender); cm_mdelay(1);
     QThreadPool::globalInstance()->start(sender);
 }
 

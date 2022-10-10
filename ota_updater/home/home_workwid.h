@@ -1,6 +1,6 @@
 #ifndef HOME_WORKWID_H
 #define HOME_WORKWID_H
-#include "file.h"
+#include "cfg_file.h"
 #include "home_statewid.h"
 #include "core_sender.h"
 

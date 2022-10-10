@@ -6,9 +6,9 @@
 #include "core_ssdp.h"
 
 Core_Ssdp::Core_Ssdp(QObject *parent)
-    : Ssdp_Server{parent}
+    : Ssdp_Search{parent}
 {
-    bind();
+//    bind();
 }
 
 

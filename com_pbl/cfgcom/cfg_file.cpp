@@ -50,6 +50,19 @@ QString File::md5(const QString &fn)
 }
 
 
+bool File::CheckMd5(const sFileTrans &it)
+{
+    QString crc = md5(it.path + it.file);
+    return it.md5 == crc;
+}
+
+bool File::CheckMd5(const QString &fn)
+{
+    QString ret = fn.split(".").last();
+    QString crc = md5(fn);
+    return ret == crc;
+}
+
 QString File::keyFile()
 {
     QString fn;
