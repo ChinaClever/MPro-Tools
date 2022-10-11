@@ -57,8 +57,7 @@ bool Dtls_Service::listen(const QHostAddress &address, quint16 port)
     if (address != serverSocket.localAddress() || port != serverSocket.localPort()) {
         shutdown();
         listening = serverSocket.bind(address, port);
-        if (!listening)
-            emit errorMessage(serverSocket.errorString());
+        if (!listening) emit errorMessage(serverSocket.errorString());
     } else {
         listening = true;
     }
@@ -103,7 +102,7 @@ void Dtls_Service::readyRead()
     const auto client = std::find_if(knownClients.begin(), knownClients.end(),
                                      [&](const std::unique_ptr<QDtls> &connection){
         return connection->peerAddress() == peerAddress
-               && connection->peerPort() == peerPort;
+                && connection->peerPort() == peerPort;
     });
 
     if (client == knownClients.end())
@@ -129,7 +128,7 @@ void Dtls_Service::pskRequired(QSslPreSharedKeyAuthenticator *auth)
 }
 
 void Dtls_Service::handleNewConnection(const QHostAddress &peerAddress,
-                                     quint16 peerPort, const QByteArray &clientHello)
+                                       quint16 peerPort, const QByteArray &clientHello)
 {
     if (!listening)
         return;
