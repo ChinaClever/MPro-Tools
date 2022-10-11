@@ -22,7 +22,7 @@ Core_Sender *Core_Sender::bulid(QObject *parent)
     return sington;
 }
 
-bool Core_Sender::sendFile(const QStringList &ips, const QString &fn, const sFileTrans &it)
+bool Core_Sender::sendFile(const QStringList &ips, const QString &fn, const sOtaFile &it)
 {
     bool ret = isRun = true; emit devListSig(ips);
     mHosts = ips; mFileTrans = it; QFile file(fn);

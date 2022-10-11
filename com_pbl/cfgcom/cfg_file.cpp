@@ -50,7 +50,7 @@ QString File::md5(const QString &fn)
 }
 
 
-bool File::CheckMd5(const sFileTrans &it)
+bool File::CheckMd5(const sOtaFile &it)
 {
     QString crc = md5(it.path + it.file);
     return it.md5 == crc;

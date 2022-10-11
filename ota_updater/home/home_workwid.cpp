@@ -38,7 +38,7 @@ void Home_WorkWid::initFunSlot()
 {
     initLayout(); isStart = false;
     ui->targetEdit->setHidden(true);
-    mSsdp = Core_Ssdp::bulid(this);
+    mSsdp = Ssdp_Core::bulid(this);
     mSender = Core_Sender::bulid(this);
     connect(mSender, &Core_Sender::infoMessage, this, &Home_WorkWid::insertTextSlot);
     connect(mSender, &Core_Sender::finishSig, this, &Home_WorkWid::finishSlot);
@@ -149,7 +149,7 @@ void Home_WorkWid::timeoutDone()
 }
 
 
-void Home_WorkWid::initData(sFileTrans &it)
+void Home_WorkWid::initData(sOtaFile &it)
 {
     mId = 1; mResult = true;
     it.file = ui->fnLab->text().split("/").last();
@@ -203,11 +203,11 @@ bool Home_WorkWid::initWid()
 
 QStringList Home_WorkWid::getIpList()
 {
-    QStringList ips;
+    QStringList ips; QString dst = ui->targetEdit->text();
     switch (ui->searchBox->currentIndex()) {
-//    case 0: ips = mSsdp->searchTarget(); break;
-//    case 1: ips = mSsdp->searchTarget(ui->targetEdit->text()); break;
-    case 2: ips << ui->targetEdit->text(); break;
+    case 0: ips = mSsdp->searchAll(); break;
+    case 1: ips = mSsdp->searchDev(dst); break;
+    case 2: ips = mSsdp->searchRoom(dst); break;
     }
 
     return ips;

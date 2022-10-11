@@ -17,7 +17,7 @@ public:
     void close() {udpSocket->close();}
 
 signals:
-    void recvSig(const QByteArray &array);
+    void recvSig(const QString &ip, const QByteArray &array);
 
 private slots:
     void recvSlot();

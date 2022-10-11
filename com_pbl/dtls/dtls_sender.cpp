@@ -58,7 +58,7 @@ void Dtls_Sender::run()
     }
 }
 
-bool Dtls_Sender::sendFile(const QString &ip, const QString &fn, const sFileTrans &it)
+bool Dtls_Sender::sendFile(const QString &ip, const QString &fn, const sOtaFile &it)
 {
     bool ret = true; QFile file(fn);
     QByteArray head; QDataStream in(&head, QIODevice::WriteOnly);
@@ -69,7 +69,7 @@ bool Dtls_Sender::sendFile(const QString &ip, const QString &fn, const sFileTran
     return ret;
 }
 
-void Dtls_Sender::sendData(const QString &ip, const sFileTrans &it, const QByteArray &data)
+void Dtls_Sender::sendData(const QString &ip, const sOtaFile &it, const QByteArray &data)
 {
     QByteArray head; QDataStream in(&head, QIODevice::WriteOnly);
     in << it.fc << it.dev << it.path << it.file << it.md5 << it.size <<END_CRC;

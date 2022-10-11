@@ -2,7 +2,7 @@
 #define CORE_SENDER_H
 
 #include "dtls_sender.h"
-#include "core_ssdp.h"
+#include "ssdp_core.h"
 
 class Core_Sender : public QThread
 {
@@ -10,7 +10,7 @@ class Core_Sender : public QThread
     explicit Core_Sender(QObject *parent = nullptr);
 public:
     static Core_Sender *bulid(QObject *parent = nullptr);
-    bool sendFile(const QStringList &ips, const QString &fn, const sFileTrans &it);
+    bool sendFile(const QStringList &ips, const QString &fn, const sOtaFile &it);
     bool isFinsh() {return !QThreadPool::globalInstance()->activeThreadCount();}
     void stopRun() {isRun=false; Dtls_Sender::setRunState(isRun);}
 
@@ -36,7 +36,7 @@ private:
     QTimer *timer;
     QByteArray mArray;
     QStringList mHosts;
-    sFileTrans mFileTrans;
+    sOtaFile mFileTrans;
 };
 
 #endif // CORE_SENDER_H

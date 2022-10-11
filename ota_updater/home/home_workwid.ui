@@ -453,12 +453,7 @@
       </property>
       <item>
        <property name="text">
-        <string>自动搜索</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>指定机房</string>
+        <string>自动发现</string>
        </property>
       </item>
       <item>
@@ -466,13 +461,18 @@
         <string>指定设备</string>
        </property>
       </item>
+      <item>
+       <property name="text">
+        <string>指定机房</string>
+       </property>
+      </item>
      </widget>
      <widget class="QLineEdit" name="targetEdit">
       <property name="geometry">
        <rect>
-        <x>90</x>
+        <x>20</x>
         <y>160</y>
-        <width>141</width>
+        <width>211</width>
         <height>25</height>
        </rect>
       </property>

@@ -17,7 +17,7 @@ public:
 
 signals:
     void messageSig(const QString &message);
-    void finishSig(const sFileTrans &it, bool);
+    void finishSig(const sOtaFile &it, bool);
 
 private:
     bool setFile(const QString &fn);
@@ -33,7 +33,7 @@ private slots:
 
 private:
     int mSize;
-    sFileTrans mIt;
+    sOtaFile mIt;
     QFile *mFile;
     bool isFinshed;
     Net_Udp *mNet;

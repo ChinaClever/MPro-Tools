@@ -29,7 +29,7 @@ protected:
     bool initWid();
     bool inputCheck();
     bool inputIpCheck();
-    void initData(sFileTrans &it);
+    void initData(sOtaFile &it);
     bool fileCrc(const QString &fn);
 
     QStringList getIpList();
@@ -55,8 +55,8 @@ private:
     bool mResult;
     QTimer *timer;
     QTime startTime;
-    Core_Ssdp *mSsdp;
-    sFileTrans mFileIt;
+    Ssdp_Core *mSsdp;
+    sOtaFile mFileIt;
     Core_Sender *mSender;
 
 };

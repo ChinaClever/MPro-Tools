@@ -8,8 +8,8 @@ class Dtls_Sender : public QObject, public QRunnable
     Q_OBJECT
 public:
     explicit Dtls_Sender(QObject *parent = nullptr);
-    bool sendFile(const QString &ip, const QString &fn, const sFileTrans &it);
-    void sendData(const QString &ip, const sFileTrans &it, const QByteArray &data);
+    bool sendFile(const QString &ip, const QString &fn, const sOtaFile &it);
+    void sendData(const QString &ip, const sOtaFile &it, const QByteArray &data);
     static void setRunState(bool run) {gRunState=run;}
 
 signals:

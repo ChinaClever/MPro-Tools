@@ -34,13 +34,13 @@ protected:
     bool ssdpBind();
 
 private:
-    void recvMsg(const QByteArray &array);
+    void recvMsg(const QString &ip, const QByteArray &array);
     QByteArray toArray(const sSdpIt &it);
     bool toItem(const QByteArray &array, sSdpIt &it);
 
 protected slots:
     virtual void readMsgSlot();
-    void recvUdpSlot(const QByteArray &array) {recvMsg(array);}
+    void recvUdpSlot(const QString &ip, const QByteArray &array) {recvMsg(ip, array);}
     virtual bool rplySearchTarget(const sSdpIt &){return false;}
 
 private:

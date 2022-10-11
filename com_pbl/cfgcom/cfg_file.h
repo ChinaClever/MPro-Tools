@@ -2,7 +2,8 @@
 #define CFG_FILE_H
 #include "cfg_obj.h"
 
-struct sFileTrans {
+struct sOtaFile {
+    sOtaFile():fc(1), path("/usr/data/clever/upload/"), size(0){}
     ushort fc;
     QString dev;
     QString path;
@@ -16,7 +17,7 @@ namespace File {
     QString md5(const QString &fn);
     QStringList entryList(const QString &fn);
     uint fileSize(const QString &fn);
-    bool CheckMd5(const sFileTrans &it);
+    bool CheckMd5(const sOtaFile &it);
     bool CheckMd5(const QString &fn);
 
     QString certFile();
