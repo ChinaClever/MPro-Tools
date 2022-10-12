@@ -28,13 +28,14 @@ void Remote_RecvWid::startSlot()
     ui->textEdit->clear();  mCnt = 0;
 }
 
-void Remote_RecvWid::insertText(const QString &str)
+void Remote_RecvWid::insertText(const QString &dst, const QString &str)
 {
-    if(str.size()>2) ui->textEdit->appendPlainText(str);
-    QTextCursor cursor = ui->textEdit->textCursor();
-    cursor.movePosition(QTextCursor::End);
-    ui->textEdit->setTextCursor(cursor);
-    if(mCnt++ > 500) startSlot();
+    ui->textEdit->moveCursor(QTextCursor::Start);
+    if(str.size()>2) ui->textEdit->insertPlainText(dst+" : "+str+"\n");
+//    QTextCursor cursor = ui->textEdit->textCursor();
+//    cursor.movePosition(QTextCursor::End);
+//    ui->textEdit->setTextCursor(cursor);
+    if(mCnt++ > 5000) startSlot();
 }
 
 void Remote_RecvWid::udpRecvSlot()
@@ -43,7 +44,7 @@ void Remote_RecvWid::udpRecvSlot()
     while(udpSocket->hasPendingDatagrams()) {
         datagram.resize(int(udpSocket->pendingDatagramSize()));
         int ret = udpSocket->readDatagram(datagram.data(), datagram.size(), &host);
-        if(ret > 0) insertText(datagram);
+        if(ret > 0) insertText(host.toString().remove("::ffff:"), QString(datagram).remove("::ffff:"));
         else qCritical() << udpSocket->errorString();
     }
 }

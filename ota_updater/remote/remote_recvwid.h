@@ -21,7 +21,7 @@ public slots:
     void startSlot();
 
 private:
-    void insertText(const QString &str);
+    void insertText(const QString &dst, const QString &str);
 
 private slots:
     void udpRecvSlot();

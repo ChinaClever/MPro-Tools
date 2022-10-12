@@ -57,7 +57,9 @@ void Home_MainWid::on_findBtn_clicked()
     QStringList ips = mSsdp->searchAll();
     QString str = tr("未找到任何目标设备");
     if(ips.size()) {
-        str = tr("已找到%1个目标IP:\t\n").arg(ips.size());
+        str = tr("已找到%1个设备，包含%2个主机，%3个副机\t\n")
+                .arg(ips.size() + mSsdp->getSlaveNum())
+                .arg(ips.size()).arg(mSsdp->getSlaveNum());
         int i=0; foreach(const auto &ip, ips) {
             str += "   " + ip; i++;
             if(i%4==0) str += "\n";

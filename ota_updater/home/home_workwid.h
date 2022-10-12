@@ -8,6 +8,15 @@ namespace Ui {
 class Home_WorkWid;
 }
 
+struct sCount
+{
+    int allCnt;
+    int dstCnt;
+    int slaveCnt;
+    int okCnt;
+    int errCnt;
+};
+
 class Home_WorkWid : public QWidget
 {
     Q_OBJECT
@@ -28,10 +37,9 @@ protected:
 
     bool initWid();
     bool inputCheck();
-    bool inputIpCheck();
     void initData(sOtaFile &it);
     bool fileCrc(const QString &fn);
-
+    void initCnt(int dst, int slave);
     QStringList getIpList();
 
 private slots:
@@ -51,6 +59,7 @@ private:
     Ui::Home_WorkWid *ui;
 
     int mId;
+    sCount mCnt;
     bool isStart;
     bool mResult;
     QTimer *timer;

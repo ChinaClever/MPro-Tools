@@ -27,13 +27,14 @@ void Ssdp_Search::searchRecvSlot(const sSdpIt &it)
 {
     if(!it.fc) {
         mSet << it.ip;
+        mSlaveNum += it.data.toInt();
         emit targetSig(it.ip);
     }
 }
 
 QStringList Ssdp_Search::respondList()
 {
-    int cnt = 0; mSet.clear();
+    int cnt = 0; mSet.clear(); mSlaveNum = 0;
     QByteArray reply; QHostAddress host;
     for(int i=0; i<150; i+=10) {
         if(mSet.size() != cnt) {

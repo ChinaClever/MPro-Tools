@@ -73,28 +73,41 @@ void Home_WorkWid::insertTextSlot(bool pass, const QString &msg)
 void Home_WorkWid::finishSlot(bool pass, const QString &msg)
 {
     QString str;
-    if(pass) str = tr(" 文件上传成功！");
-    else str = tr(" 文件上传失败！");
+    if(pass) {
+        mCnt.okCnt += 1;
+        str = tr(" 文件上传成功！");
+    } else {
+        mCnt.errCnt += 1;
+        str = tr(" 文件上传失败！");
+    }
     insertTextSlot(pass, msg+str);
+}
+
+void Home_WorkWid::initCnt(int dst, int slave)
+{
+    sCount *cnt = &(mCnt);
+    cnt->dstCnt = dst;
+    cnt->slaveCnt = slave;
+    cnt->allCnt = dst + slave;
+    cnt->okCnt = cnt->errCnt = 0;
 }
 
 void Home_WorkWid::updateCntSlot()
 {
-    //    sCount *cnt = &(mItem->cnts);
-    //    ui->okLcd->display(cnt->ok);
-    //    ui->allLcd->display(cnt->all);
-    //    ui->errLcd->display(cnt->err);
+    sCount *cnt = &mCnt;
+    ui->okLcd->display(cnt->okCnt);
+    ui->allLcd->display(cnt->allCnt);
+    ui->errLcd->display(cnt->errCnt);
 
-    //    ui->cntSpin->setValue(mItem->cnts.cnt);
-    //    if(mItem->cnts.cnt < 1)mItem->user.clear();
-    //    ui->userEdit->setText(mItem->user);
+    //ui->cntSpin->setValue(mItem->cnts.cnt);
+    //if(mItem->cnts.cnt < 1)mItem->user.clear();
+    //ui->userEdit->setText(mItem->user);
 
-    //    QString str = "0";
-    //    if(cnt->all) {
-    //        double value = cnt->ok*100.0 / cnt->all;
-    //        str = QString::number(value,'f',0) +"%";
-    //    }
-    //    ui->passLcd->display(str);
+    QString str = "0";
+    if(cnt->dstCnt) {
+        double value = cnt->okCnt*100.0 / cnt->dstCnt;
+        str = QString::number(value,'f',0) +"%";
+    } ui->passLcd->display(str);
 }
 
 QString Home_WorkWid::getTime()
@@ -116,7 +129,7 @@ void Home_WorkWid::updateTime()
 
 void Home_WorkWid::setWidEnabled(bool en)
 {
-    ui->modeBox->setEnabled(en);
+    ui->searchBtn->setEnabled(en);
     ui->groupBox_2->setEnabled(en);
 }
 
@@ -146,6 +159,7 @@ void Home_WorkWid::updateResult()
 void Home_WorkWid::timeoutDone()
 {
     updateTime();
+    updateCntSlot();
 }
 
 
@@ -155,23 +169,22 @@ void Home_WorkWid::initData(sOtaFile &it)
     it.file = ui->fnLab->text().split("/").last();
     it.size = File::fileSize(ui->fnLab->text());
     it.md5 = File::md5(ui->fnLab->text());
-    it.fc = ui->modeBox->currentIndex();
-    it.dev = ui->modeBox->currentText();
-    it.path = ui->pathEdit->text();
+    it.fc = ui->crcBox->currentIndex();
+    ui->mdLab->setText(it.md5);
+
+    QString suffix; double rate = 1;
+    if(it.size > 1024*1024) {rate = 1024*1024; suffix="Mb";}
+    else if(it.size > 1024) {rate = 1024; suffix="Kb";}
+    QString str = QString::number(it.size/rate, 'f', 1);
+    ui->sizeLab->setText(str + suffix);
+
+    //it.dev = ui->modeBox->currentText();
+    //it.path = "/usr/data/clever/upload/";
+    it.path = "/home/lzy/upload/";
 }
 
 bool Home_WorkWid::inputCheck()
-{
-    ui->textEdit->clear();
-    QString str = ui->pathEdit->text();
-    if(str.isEmpty()) {MsgBox::critical(this, tr("接收路径，未指定。")); return false;}
-    else if(str.right(1) != "/") ui->pathEdit->setText(str + "/");
-
-    return inputIpCheck();
-}
-
-bool Home_WorkWid::inputIpCheck()
-{
+{    
     bool ret = false;
     QString str = ui->targetEdit->text();
     int index = ui->searchBox->currentIndex();
@@ -188,13 +201,13 @@ bool Home_WorkWid::initWid()
 {
     bool ret = inputCheck();
     if(ret) {
-        initData(mFileIt);
         setWidEnabled(false);
         ui->startBtn->setText(tr("终 止"));
         startTime = QTime::currentTime(); emit startSig();
         QString str = startTime.toString("hh:mm:ss");
         ui->startLab->setText(str);
         ui->endLab->setText("---");
+        ui->textEdit->clear();
         isStart = true;
     }
 
@@ -218,6 +231,7 @@ void Home_WorkWid::on_startBtn_clicked()
     if(isStart == false) {
         if(initWid()) {
             timer->start(500); QStringList ips = getIpList();
+            initCnt(ips.size(), mSsdp->getSlaveNum());
             mSender->sendFile(ips, ui->fnLab->text(), mFileIt);
         }
     } else {
@@ -228,14 +242,9 @@ void Home_WorkWid::on_startBtn_clicked()
 
 bool Home_WorkWid::fileCrc(const QString &fn)
 {
-    bool ret = false;
-    int index = ui->modeBox->currentIndex();
-    switch (index) {
-//    case 0: ret = File::CheckMd5(fn); break;
-//    case 1: ret = File::CheckCrc(fn); break;
-    default: MsgBox::critical(this, tr("请选择需要选择的设备类型")); return ret;
-    }
-
+    bool ret = true;
+    int index = ui->crcBox->currentIndex();
+    if(index) ret = File::CheckMd5(fn);
     if(!ret) MsgBox::critical(this, tr("你选择的文件，未能通过检验。"));
     return ret;
 }
@@ -243,7 +252,8 @@ bool Home_WorkWid::fileCrc(const QString &fn)
 
 void Home_WorkWid::on_imgBtn_clicked()
 {
-    QString str = tr("请选择");  QString dir = QDir::home().absolutePath();
+    QString str = tr("请选择");  // QString dir = QDir::home().absolutePath();
+    QString dir = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
     QString fn = QFileDialog::getOpenFileName(this, tr("选择烧录文件"), dir, "镜像文件(*.*)");
     if(fn.isEmpty()) return;
 
@@ -251,6 +261,7 @@ void Home_WorkWid::on_imgBtn_clicked()
     if(en){
         str = tr("已选择");
         ui->fnLab->setText(fn);
+        initData(mFileIt);
     } else ui->fnLab->clear();
 
     ui->imgBtn->setText(str);
@@ -259,10 +270,12 @@ void Home_WorkWid::on_imgBtn_clicked()
 
 void Home_WorkWid::on_searchBtn_clicked()
 {
-    if(!inputIpCheck()) return;
+    if(!inputCheck()) return;
     QStringList res = getIpList();
     if(res.size()) {
-        QString str = tr("已找到%1个IP目标").arg(res.size());
+        QString str = tr("已找到%1个设备，包含%2个主机，%3个副机")
+                .arg(res.size() + mSsdp->getSlaveNum())
+                .arg(res.size()).arg(mSsdp->getSlaveNum());
         for(int i=0; i<res.size(); i++) {
             if(i%5) str += "\t"; else str += "\n";
             str += res.at(i);

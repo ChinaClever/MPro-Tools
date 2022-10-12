@@ -30,8 +30,6 @@ Dtls_Recver *Dtls_Recver::bulid(QObject *parent)
 
 bool Dtls_Recver::setFile(const QString &fn)
 {    
-
-
     mFile->setFileName(fn); isFinshed = false;
     bool ret = mFile->open(QIODevice::WriteOnly | QIODevice::Truncate);
     if(ret) mSize = 0; else throwMessage(tr("Error: Dtls Recver open file").arg(fn));

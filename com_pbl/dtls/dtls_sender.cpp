@@ -15,7 +15,7 @@ Dtls_Sender::Dtls_Sender(QObject *parent)
 
 bool Dtls_Sender::writeData(Dtls_Association *dtls)
 {    
-    QByteArray array; int max=20*1024;
+    QByteArray array; int max=8*1024;
     QString name = dtls->getName();
     bool ret = dtls->writeData(mHead); int pro=0;
     if(ret) emit infoMessage(ret, tr("%1 连接成功").arg(name));

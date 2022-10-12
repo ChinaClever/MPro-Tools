@@ -30,10 +30,6 @@ FORMS += \
     mainwindow.ui \
     navbarwid.ui
 
-RESOURCES += \
-    images/image.qrc
-
-
 contains(TARGET_ARCH, x86_64) {
     # Default rules for deployment.
     qnx: target.path = /tmp/$${TARGET}/bin

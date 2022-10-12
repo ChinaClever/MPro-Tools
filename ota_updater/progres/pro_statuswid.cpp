@@ -17,20 +17,20 @@ Pro_StatusWid::~Pro_StatusWid()
 
 void Pro_StatusWid::initFunSlot()
 {
-    mTable = new ComTableWid(ui->groupBox);
+    mTable = new Pro_TableWid(ui->groupBox);
     Core_Sender *sender = Core_Sender::bulid(this);
     connect(sender, &Core_Sender::devListSig, this, &Pro_StatusWid::updateIps);
     connect(sender, &Core_Sender::subProgress, this, &Pro_StatusWid::subProgressSlot);
 
     QStringList header;
     header << tr("目标设备") << tr("传输进度");
-//    mTable->initTableWid(header, 0);
+    mTable->initTableWid(header, 0);
 }
 
 void Pro_StatusWid::startSlot()
 {
     mMap.clear();
-//    mTable->delTable();
+    mTable->delTable();
 }
 
 void Pro_StatusWid::updateIps(const QStringList& ips)
@@ -38,7 +38,7 @@ void Pro_StatusWid::updateIps(const QStringList& ips)
     startSlot();
     for(int i=0; i<ips.size(); ++i) {
         mMap.insert(ips.at(i), i);
-//        mTable->setTableItem(i, 0, ips.at(i));
+        mTable->setTableItem(i, 0, ips.at(i));
     }
 }
 
@@ -46,6 +46,6 @@ void Pro_StatusWid::subProgressSlot(const QString &ip ,int v)
 {
     int id = mMap.value(ip);
     if(id >= 0) {
-//        mTable->setTableItem(id, 1, QString::number(v));
+        mTable->setTableItem(id, 1, QString::number(v));
     }
 }
