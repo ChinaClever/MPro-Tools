@@ -51,9 +51,10 @@ private slots:
     void on_imgBtn_clicked();
     void on_startBtn_clicked();
     void on_searchBtn_clicked();
-    void insertTextSlot(bool pass, const QString &msg);
+    void updateWidSlot(){initData(mFileIt);}
     void finishSlot(bool pass, const QString &msg);
     void on_searchBox_currentIndexChanged(int index);
+    void insertTextSlot(bool pass, const QString &msg);
 
 private:
     Ui::Home_WorkWid *ui;

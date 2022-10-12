@@ -535,12 +535,17 @@
         </property>
         <item>
          <property name="text">
-          <string>禁用</string>
+          <string>自动</string>
          </property>
         </item>
         <item>
          <property name="text">
           <string>启用</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>禁用</string>
          </property>
         </item>
        </widget>
@@ -577,7 +582,7 @@
         </property>
         <item>
          <property name="text">
-          <string>自动发现</string>
+          <string>自动搜索</string>
          </property>
         </item>
         <item>

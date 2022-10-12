@@ -180,7 +180,7 @@ void Home_WorkWid::initData(sOtaFile &it)
 
     //it.dev = ui->modeBox->currentText();
     //it.path = "/usr/data/clever/upload/";
-    it.path = "/home/lzy/upload/";
+    it.path = "/home/lzy/work/upload/";
 }
 
 bool Home_WorkWid::inputCheck()
@@ -241,32 +241,33 @@ void Home_WorkWid::on_startBtn_clicked()
 }
 
 bool Home_WorkWid::fileCrc(const QString &fn)
-{
-    bool ret = true;
+{    
     int index = ui->crcBox->currentIndex();
-    if(index) ret = File::CheckMd5(fn);
+    bool ret = true; if(index == 0) {
+        if(fn.split(".").last().size() == 32) index =1;
+    } if(index == 1) ret = File::CheckMd5(fn);
     if(!ret) MsgBox::critical(this, tr("你选择的文件，未能通过检验。"));
     return ret;
 }
-
 
 void Home_WorkWid::on_imgBtn_clicked()
 {
     QString str = tr("请选择");  // QString dir = QDir::home().absolutePath();
     QString dir = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
-    QString fn = QFileDialog::getOpenFileName(this, tr("选择烧录文件"), dir, "镜像文件(*.*)");
+    QString fn = QFileDialog::getOpenFileName(this, tr("选择烧录文件"), dir, "镜像文件(*.zip)");
     if(fn.isEmpty()) return;
 
     bool en = fileCrc(fn);
     if(en){
         str = tr("已选择");
         ui->fnLab->setText(fn);
-        initData(mFileIt);
+        QTimer::singleShot(5,this,SLOT(updateWidSlot()));
     } else ui->fnLab->clear();
 
     ui->imgBtn->setText(str);
     ui->startBtn->setEnabled(en);
 }
+
 
 void Home_WorkWid::on_searchBtn_clicked()
 {

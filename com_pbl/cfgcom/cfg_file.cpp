@@ -31,7 +31,7 @@ QString File::md5(const QString &fn)
 {
     QFile sourceFile(fn);
     qint64 fileSize = sourceFile.size();
-    const qint64 bufferSize = 8*1024;
+    const qint64 bufferSize = 100*1024;
 
     if (sourceFile.open(QIODevice::ReadOnly)) {
         char buffer[bufferSize]; int bytesRead;
