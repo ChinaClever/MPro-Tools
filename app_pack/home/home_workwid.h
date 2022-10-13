@@ -24,8 +24,9 @@ signals:
 private:
     bool workDown();
     bool checkInput();
+    void startZip();
     void writeLog(const sAppVerIt &app);
-    bool packing(Cfg_App &cfg, const QString &fn);
+    bool packing(Cfg_App &cfg, const QStringList &apps);
 
 private slots:
     void on_selectBtn_clicked();

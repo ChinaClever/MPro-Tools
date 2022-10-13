@@ -23,7 +23,7 @@ QStringList File::entryList(const QString &fn)
     QDir dir(path); QStringList filename;
     //filename << "*.png" << "*.jpg";//可叠加，可使用通配符筛选
     QStringList results;
-    results = dir.entryList(filename, QDir::Files|QDir::Readable, QDir::Name);
+    results = dir.entryList(filename, QDir::Dirs|QDir::Files|QDir::Readable, QDir::Name);
     return results;
 }
 

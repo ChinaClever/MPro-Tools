@@ -2,14 +2,14 @@
 #define CFG_APP_H
 #include "cfg_file.h"
 
-#define CFG_APP  "app.ini"
+#define CFG_APP  "ver.ini"
 
 struct sAppVerIt {
-    QString app; // 程序名称
     QString usr; // 客户名称
     QString md5; // 校验码
     QString ver; // 版本号
     QString remark; // 发布说明
+    QStringList apps; // 程序名称
     QString oldVersion; // 旧版本号
     QString compileDate; // 编译时间
     QString releaseDate; // 发布时间
@@ -22,6 +22,9 @@ public:
     bool app_check(const QString &fn);
     bool app_pack(sAppVerIt &it);
     bool app_unpack(sAppVerIt &it);
+
+private:
+    void app_dir(const QString &dir);
 
 private:
     QString mDir;
