@@ -22,6 +22,7 @@ protected:
 
 private slots:
     void onStart();
+    void onMsg(const QString &msg);
     void onDown(const QString &dir);
 
 private:

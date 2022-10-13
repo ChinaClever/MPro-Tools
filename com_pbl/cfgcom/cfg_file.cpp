@@ -16,6 +16,12 @@ uint File::fileSize(const QString &fn)
     return size;
 }
 
+bool File::AppendMd5(const QString &fn)
+{
+    QString crc = md5(fn);
+    return QFile::rename(fn, fn+"."+crc);
+}
+
 QStringList File::entryList(const QString &fn)
 {
     QString path = QDir::currentPath();//获取当前工程目录

@@ -89,13 +89,23 @@ bool Home_WorkWid::packing(Cfg_App &cfg, const QStringList &apps)
     return ret;
 }
 
-void Home_WorkWid::startZip()
+bool Home_WorkWid::startZip()
 {
+    QString dir = ui->pathEdit->text();
     QString cmd = "gzipFile.exe ";
     cmd += ui->pathEdit->text();
-    QProcess::startDetached(cmd);
+    QProcess pro; pro.start(cmd);
+    MsgBox::information(this, tr("正在打包软件，请等待压缩完成！！\n%1").arg(dir));
+    pro.waitForFinished();
+    QByteArray bs = pro.readAllStandardOutput();
+    bs +=  pro.readAllStandardError();
+    QString str = QString::fromLocal8Bit(bs);
+    if(str.size()) {
+        emit msgSig(str);
+        File::AppendMd5(dir+".zip");
+    }
 
-//   qDebug() << cm_execute(cmd);
+    return str.size();
 }
 
 bool Home_WorkWid::workDown()
@@ -104,7 +114,7 @@ bool Home_WorkWid::workDown()
     Cfg_App cfg(dir, this); emit startSig();
     QStringList fs = File::entryList(dir+"/app");
     fs.removeOne(CFG_APP); packing(cfg, fs);
-    if(fs.size()){startZip(); emit downSig(dir);}
+    if(fs.size()) emit downSig(dir);
     return fs.size();
 }
 
@@ -115,8 +125,8 @@ void Home_WorkWid::on_startBtn_clicked()
     if(ret) {
         ret = workDown();
         if(ret) {
-            QString dir = ui->pathEdit->text();
-            MsgBox::information(this, tr("发布成功！！ %1").arg(dir));
+            if(startZip())MsgBox::information(this, tr("打包发布完成！"));
+            else MsgBox::critical(this, tr("压缩错误，未正常打包软件！！"));
         } else  MsgBox::critical(this, tr("发布错误，未发现文件！！"));
     }
 }

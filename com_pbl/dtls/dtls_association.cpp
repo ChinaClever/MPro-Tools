@@ -115,6 +115,7 @@ bool Dtls_Association::writeData(const QByteArray &array)
 {
     isRecved = false; cm_mdelay(1);
     if (waitForConnected()) {
+        //qDebug() << array.size() << qCompress(array).size();
         const qint64 written = crypto.writeDatagramEncrypted(&socket, qCompress(array));
         if (written > 0) {
             for(int i=0; i<1000; ++i) if(isRecved) break; else cm_mdelay(1);

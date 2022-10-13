@@ -135,9 +135,9 @@ void Home_WorkWid::setWidEnabled(bool en)
 
 void Home_WorkWid::updateResult()
 {
-    QString style;
+    QString style; mId = 1;
     QString str = tr("---");
-    if(mResult) {
+    if(mResult && mCnt.dstCnt) {
         str = tr("成功"); style = "background-color:green; color:rgb(255, 255, 255);";
     } else {
         str = tr("失败"); style = "background-color:red; color:rgb(255, 255, 255);";
@@ -177,10 +177,9 @@ void Home_WorkWid::initData(sOtaFile &it)
     else if(it.size > 1024) {rate = 1024; suffix="Kb";}
     QString str = QString::number(it.size/rate, 'f', 1);
     ui->sizeLab->setText(str + suffix);
-
     //it.dev = ui->modeBox->currentText();
-    //it.path = "/usr/data/clever/upload/";
-    it.path = "/home/lzy/work/upload/";
+    it.path = "/usr/data/clever/upload/";
+    //it.path = "/home/lzy/work/upload/";
 }
 
 bool Home_WorkWid::inputCheck()
@@ -200,7 +199,7 @@ bool Home_WorkWid::inputCheck()
 bool Home_WorkWid::initWid()
 {
     bool ret = inputCheck();
-    if(ret) {
+    if(ret && QFile::exists(ui->fnLab->text())) {
         setWidEnabled(false);
         ui->startBtn->setText(tr("终 止"));
         startTime = QTime::currentTime(); emit startSig();
@@ -230,7 +229,8 @@ void Home_WorkWid::on_startBtn_clicked()
 {
     if(isStart == false) {
         if(initWid()) {
-            timer->start(500); QStringList ips = getIpList();
+            timer->start(500);
+            QStringList ips = getIpList();
             initCnt(ips.size(), mSsdp->getSlaveNum());
             mSender->sendFile(ips, ui->fnLab->text(), mFileIt);
         }
@@ -254,7 +254,7 @@ void Home_WorkWid::on_imgBtn_clicked()
 {
     QString str = tr("请选择");  // QString dir = QDir::home().absolutePath();
     QString dir = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
-    QString fn = QFileDialog::getOpenFileName(this, tr("选择烧录文件"), dir, "镜像文件(*.zip)");
+    QString fn = QFileDialog::getOpenFileName(this, tr("选择烧录文件"), dir, "升级包文件(*.zip*)");
     if(fn.isEmpty()) return;
 
     bool en = fileCrc(fn);

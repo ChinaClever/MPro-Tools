@@ -20,11 +20,12 @@ public:
 signals:
     void startSig();
     void downSig(const QString &dir);
+    void msgSig(const QString &msg);
 
 private:
     bool workDown();
     bool checkInput();
-    void startZip();
+    bool startZip();
     void writeLog(const sAppVerIt &app);
     bool packing(Cfg_App &cfg, const QStringList &apps);
 

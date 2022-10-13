@@ -19,7 +19,7 @@ namespace File {
     uint fileSize(const QString &fn);
     bool CheckMd5(const sOtaFile &it);
     bool CheckMd5(const QString &fn);
-
+    bool AppendMd5(const QString &fn);
     QString certFile();
     QString keyFile();
 };
