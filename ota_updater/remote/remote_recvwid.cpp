@@ -6,6 +6,7 @@
 #include "remote_recvwid.h"
 #include "ui_remote_recvwid.h"
 #include "backcolourcom.h"
+#include <QDateTime>
 
 Remote_RecvWid::Remote_RecvWid(QWidget *parent) :
     QWidget(parent),
@@ -31,7 +32,8 @@ void Remote_RecvWid::startSlot()
 void Remote_RecvWid::insertText(const QString &dst, const QString &str)
 {
     ui->textEdit->moveCursor(QTextCursor::Start);
-    if(str.size()>2) ui->textEdit->insertPlainText(dst+" : "+str+"\n");
+    QString t = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz\t");
+    if(str.size()>2) ui->textEdit->insertPlainText(t + dst+"\t: "+str+"\n");
 //    QTextCursor cursor = ui->textEdit->textCursor();
 //    cursor.movePosition(QTextCursor::End);
 //    ui->textEdit->setTextCursor(cursor);
