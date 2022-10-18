@@ -34,6 +34,7 @@ public:
     bool setting(const sDataItem &it, const QString &room, const QString &ip);
     bool setCfg(const sCfgItem &it, const QVariant &v, const QString &room, const QString &ip);
     bool setJson(const QByteArray &data, const QString &room, const QString &ip);
+    bool swVersion(const QString &room="", const QString &ip="");
 
 signals:
     void sendDataSig(const QString &msg);
