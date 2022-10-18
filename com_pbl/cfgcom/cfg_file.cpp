@@ -19,7 +19,8 @@ uint File::fileSize(const QString &fn)
 bool File::AppendMd5(const QString &fn)
 {
     QString crc = md5(fn);
-    return QFile::rename(fn, fn+"."+crc);
+    QString str = fn+"."+crc;
+    return QFile::rename(fn, str.remove(".zip"));
 }
 
 QStringList File::entryList(const QString &fn)

@@ -46,7 +46,7 @@ void Home_WorkWid::initFunSlot()
 
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(timeoutDone()));
-    //    QTimer::singleShot(450,this,SLOT(updateCntSlot()));
+    // QTimer::singleShot(450,this,SLOT(updateCntSlot()));
 }
 
 void Home_WorkWid::setTextColor(bool pass)
@@ -254,7 +254,7 @@ void Home_WorkWid::on_imgBtn_clicked()
 {
     QString str = tr("请选择");  // QString dir = QDir::home().absolutePath();
     QString dir = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
-    QString fn = QFileDialog::getOpenFileName(this, tr("选择烧录文件"), dir, "升级包文件(*.zip*)");
+    QString fn = QFileDialog::getOpenFileName(this, tr("选择烧录文件"), dir, "升级包文件(*.*)");
     if(fn.isEmpty()) return;
 
     bool en = fileCrc(fn);
