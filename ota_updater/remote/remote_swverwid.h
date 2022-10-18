@@ -23,6 +23,7 @@ private slots:
 private:
     Ui::Remote_SwVerWid *ui;
     Ssdp_Core *mSsdp;
+    int mId;
 };
 
 #endif // REMOTE_SWVERWID_H

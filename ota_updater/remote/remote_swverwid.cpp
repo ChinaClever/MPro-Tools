@@ -25,7 +25,8 @@ void Remote_SwVerWid::recvSlot(const sSdpIt &it)
     if(it.fc == 11) {
         QString data = it.data;
         QString fmd = "room:%1; ip:%2; %3";
-        QString str = fmd.arg(it.room, it.ip, it.data);
+        QString str = QString::number(++mId) +"、";
+        str += fmd.arg(it.room, it.ip, it.data);
         ui->textEdit->appendPlainText(str);
         QString ct = ui->lineEdit->text();
         if(ct.size() && str.contains(ct)) {
@@ -40,6 +41,6 @@ void Remote_SwVerWid::on_startBtn_clicked()
 {
     ui->textEdit->clear();
     ui->errTextEdit->clear();
-    mSsdp->swVersion();
+    mId = 0; mSsdp->swVersion();
 }
 
