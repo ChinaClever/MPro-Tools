@@ -111,6 +111,7 @@ bool Home_WorkWid::startZip()
 bool Home_WorkWid::workDown()
 {    
     QString dir = ui->pathEdit->text();
+    QFile::remove(dir+"/"+CFG_APP);
     Cfg_App cfg(dir, this); emit startSig();
     QStringList fs = File::entryList(dir+"/app");
     fs.removeOne(CFG_APP); packing(cfg, fs);
