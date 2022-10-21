@@ -38,7 +38,7 @@ void Home_MainWid::onStart()
 
 void Home_MainWid::onDown(const QString &dir)
 {
-    QFile file(dir +"/" + CFG_APP);
+    QFile file(dir +"/" + CFG_APP);cm_mdelay(5);
     if(file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         ui->textEdit->setPlainText(file.readAll());
     } file.close();
