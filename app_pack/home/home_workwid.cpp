@@ -8,7 +8,6 @@
 #include <QStandardPaths>
 #include <QFileDialog>
 
-
 Home_WorkWid::Home_WorkWid(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Home_WorkWid)
@@ -101,8 +100,15 @@ bool Home_WorkWid::startZip()
     bs +=  pro.readAllStandardError();
     QString str = QString::fromLocal8Bit(bs);
     if(str.size()) {
-        emit msgSig(str);
-        File::AppendMd5(dir+".zip");
+        QString fn = dir+".zip"; QString fmd = "%1_%2_%3.zip";  emit msgSig(str);
+        QString name = fmd.arg(ui->usrEdit->text()).arg(ui->versionEdit->text())
+                .arg(QDate::currentDate().toString("yyyy-MM-dd"));
+        int index = dir.lastIndexOf("/");
+        int size = dir.size() - index;
+        dir.remove(index, size);
+        name = dir + "/" + name;
+        QFile::rename(fn, name);
+        File::AppendMd5(name);
     }
 
     return str.size();

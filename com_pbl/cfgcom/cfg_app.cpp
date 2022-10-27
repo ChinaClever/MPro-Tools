@@ -35,7 +35,7 @@ bool Cfg_App::app_pack(sAppVerIt &it)
     QString g = "app_pack";
     app_dir("app");
     app_dir("bin");
-
+    app_dir("outlet");
     writeCfg("usr", it.usr, g);
     writeCfg("md5", it.md5, g);
     writeCfg("ver", it.ver, g);
