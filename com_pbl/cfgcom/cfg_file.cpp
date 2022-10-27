@@ -16,6 +16,13 @@ uint File::fileSize(const QString &fn)
     return size;
 }
 
+bool File::AppendMd5(const QString &fn)
+{
+    QString crc = md5(fn);
+    QString str = fn+"."+crc;
+    return QFile::rename(fn, str.remove(".zip"));
+}
+
 QStringList File::entryList(const QString &fn)
 {
     QString path = QDir::currentPath();//获取当前工程目录
@@ -23,7 +30,7 @@ QStringList File::entryList(const QString &fn)
     QDir dir(path); QStringList filename;
     //filename << "*.png" << "*.jpg";//可叠加，可使用通配符筛选
     QStringList results;
-    results = dir.entryList(filename, QDir::Files|QDir::Readable, QDir::Name);
+    results = dir.entryList(filename, QDir::Dirs|QDir::Files|QDir::Readable, QDir::Name);
     return results;
 }
 
@@ -31,7 +38,7 @@ QString File::md5(const QString &fn)
 {
     QFile sourceFile(fn);
     qint64 fileSize = sourceFile.size();
-    const qint64 bufferSize = 8*1024;
+    const qint64 bufferSize = 100*1024;
 
     if (sourceFile.open(QIODevice::ReadOnly)) {
         char buffer[bufferSize]; int bytesRead;
@@ -49,6 +56,19 @@ QString File::md5(const QString &fn)
     return QString();
 }
 
+
+bool File::CheckMd5(const sOtaFile &it)
+{
+    QString crc = md5(it.path + it.file);
+    return it.md5 == crc;
+}
+
+bool File::CheckMd5(const QString &fn)
+{
+    QString ret = fn.split(".").last();
+    QString crc = md5(fn);
+    return ret == crc;
+}
 
 QString File::keyFile()
 {

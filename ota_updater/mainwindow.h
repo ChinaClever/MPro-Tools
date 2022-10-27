@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include "navbarwid.h"
 #include "home_mainwid.h"
-#include "remote_recvwid.h"
+#include "remote_swverwid.h"
 #include "pro_resultwid.h"
 
 QT_BEGIN_NAMESPACE
@@ -28,6 +28,7 @@ private:
     NavBarWid *mNavBarWid;
     Home_MainWid *mHomeWid;
     Remote_RecvWid *mRecvWid;
+    Remote_SwVerWid *mSwWid;
     Pro_StatusWid *mStatus;
     Pro_ResultWid *mResult;
 };

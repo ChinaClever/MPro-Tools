@@ -20,12 +20,14 @@ public:
 signals:
     void startSig();
     void downSig(const QString &dir);
+    void msgSig(const QString &msg);
 
 private:
     bool workDown();
     bool checkInput();
+    bool startZip();
     void writeLog(const sAppVerIt &app);
-    bool packing(Cfg_App &cfg, const QString &fn);
+    bool packing(Cfg_App &cfg, const QStringList &apps);
 
 private slots:
     void on_selectBtn_clicked();

@@ -10,7 +10,8 @@ Core_Sender::Core_Sender(QObject *parent)
 {
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(timeoutDone()));
-    QThreadPool::globalInstance()->setMaxThreadCount(8);
+    int cnt = QThreadPool::globalInstance()->maxThreadCount();
+    QThreadPool::globalInstance()->setMaxThreadCount(3*cnt);
 }
 
 Core_Sender *Core_Sender::bulid(QObject *parent)
@@ -22,7 +23,7 @@ Core_Sender *Core_Sender::bulid(QObject *parent)
     return sington;
 }
 
-bool Core_Sender::sendFile(const QStringList &ips, const QString &fn, const sFileTrans &it)
+bool Core_Sender::sendFile(const QStringList &ips, const QString &fn, const sOtaFile &it)
 {
     bool ret = isRun = true; emit devListSig(ips);
     mHosts = ips; mFileTrans = it; QFile file(fn);
@@ -50,7 +51,7 @@ void Core_Sender::appendSender()
     QString host = mHosts.takeFirst();
     Dtls_Sender *sender = new Dtls_Sender();
     sender->sendData(host, mFileTrans, mArray);
-    initSender(sender); cm::mdelay(1);
+    initSender(sender); cm_mdelay(1);
     QThreadPool::globalInstance()->start(sender);
 }
 

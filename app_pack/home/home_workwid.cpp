@@ -53,45 +53,69 @@ bool Home_WorkWid::checkInput()
         MsgBox::critical(this, tr("发布说明信息太过简单！！"));
         return false;
     }
+
+    if(!QFile::exists("gzipFile.exe")) {
+        MsgBox::critical(this, tr("缺少压缩程序 gzipFile.exe ！！"));
+        return false;
+    }
+
     return true;
 }
 
 void Home_WorkWid::writeLog(const sAppVerIt &app)
 {
     sLogItem it;
-    it.fn = app.app;
+    it.fn =  ui->pathEdit->text();
     it.sw = app.ver;
     it.md5 = app.md5;
     it.user = app.usr;
-    it.old = app.oldVersion;
     it.remark = app.remark;
+    it.old = app.oldVersion;
     DbLogs::bulid()->insertItem(it);
 }
 
-bool Home_WorkWid::packing(Cfg_App &cfg, const QString &fn)
+bool Home_WorkWid::packing(Cfg_App &cfg, const QStringList &apps)
 {
-    sAppVerIt it; it.app = fn;
+    sAppVerIt it; it.apps = apps;
     it.usr = ui->usrEdit->text();
     it.ver = ui->versionEdit->text();
     it.remark = ui->textEdit->toPlainText();
     it.oldVersion = ui->oldVerEdit->text();
+    it.releaseDate = QDate::currentDate().toString("yyyy-MM-dd");
+    QString str = it.usr + it.ver + it.remark + it.oldVersion + it.releaseDate;
+    it.md5 = QCryptographicHash::hash(str.toLatin1(),QCryptographicHash::Md5).toHex();
     bool ret = cfg.app_pack(it);
     if(ret) writeLog(it);
     return ret;
 }
 
+bool Home_WorkWid::startZip()
+{
+    QString dir = ui->pathEdit->text();
+    QString cmd = "gzipFile.exe ";
+    cmd += ui->pathEdit->text();
+    QProcess pro; pro.start(cmd);
+    MsgBox::information(this, tr("正在打包软件，请等待压缩完成！！\n%1").arg(dir));
+    pro.waitForFinished();
+    QByteArray bs = pro.readAllStandardOutput();
+    bs +=  pro.readAllStandardError();
+    QString str = QString::fromLocal8Bit(bs);
+    if(str.size()) {
+        emit msgSig(str);
+        File::AppendMd5(dir+".zip");
+    }
+
+    return str.size();
+}
+
 bool Home_WorkWid::workDown()
 {    
     QString dir = ui->pathEdit->text();
-    QStringList fs = File::entryList(dir);
+    QFile::remove(dir+"/"+CFG_APP); cm_mdelay(1);
     Cfg_App cfg(dir, this); emit startSig();
-    QString res; foreach(const auto &fn, fs) {
-        if(fn == CFG_APP) continue;
-        if(packing(cfg, fn)) res += "\n\t" + fn;
-    }
-
-    if(fs.size()) MsgBox::information(this, tr("发布成功！！ %1").arg(res));
-    else  MsgBox::critical(this, tr("发布错误，未发现文件！！"));
+    QStringList fs = File::entryList(dir+"/app");
+    fs.removeOne(CFG_APP); packing(cfg, fs);
+    if(fs.size()) emit downSig(dir);
     return fs.size();
 }
 
@@ -102,9 +126,9 @@ void Home_WorkWid::on_startBtn_clicked()
     if(ret) {
         ret = workDown();
         if(ret) {
-            QString dir = ui->pathEdit->text();
-            emit downSig(dir);
-        }
+            if(startZip())MsgBox::information(this, tr("打包发布完成！"));
+            else MsgBox::critical(this, tr("压缩错误，未正常打包软件！！"));
+        } else  MsgBox::critical(this, tr("发布错误，未发现文件！！"));
     }
 }
 
@@ -120,20 +144,13 @@ void Home_WorkWid::on_seeBtn_clicked()
 
 void Home_WorkWid::on_checkBtn_clicked()
 {
-    bool ret = false; QString res, ok;
+    bool ret = false;
     QString dir = ui->pathEdit->text();
     Cfg_App cfg(dir, this); emit downSig(dir);
-    QStringList fs = File::entryList(dir);
-    foreach(const auto &fn, fs) {
-        if(fn == CFG_APP) continue;
-        ret = cfg.app_check(fn);
-        if(ret)ok += "\n\t" + fn;
-        else res += "\n\t" + fn;
-    }
+    sAppVerIt it; ret = cfg.app_unpack(it);
 
-    if(res.size()) {
-        MsgBox::critical(this, tr("验证错误，%1").arg(res));
-    }else MsgBox::information(this, tr("验证成功！！").arg(ok));
+    if(ret) MsgBox::information(this, tr("验证成功！！"));
+    else MsgBox::critical(this, tr("验证错误，%1"));
 }
 
 

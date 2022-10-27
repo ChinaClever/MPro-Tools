@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>集成布署工具</string>
+   <string>集成布暑工具</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../com_pbl/images/image.qrc">

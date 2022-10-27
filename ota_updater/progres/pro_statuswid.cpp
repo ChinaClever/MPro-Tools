@@ -17,7 +17,7 @@ Pro_StatusWid::~Pro_StatusWid()
 
 void Pro_StatusWid::initFunSlot()
 {
-    mTable = new ComTableWid(ui->groupBox);
+    mTable = new Pro_TableWid(ui->groupBox);
     Core_Sender *sender = Core_Sender::bulid(this);
     connect(sender, &Core_Sender::devListSig, this, &Pro_StatusWid::updateIps);
     connect(sender, &Core_Sender::subProgress, this, &Pro_StatusWid::subProgressSlot);

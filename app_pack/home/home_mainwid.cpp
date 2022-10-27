@@ -15,6 +15,7 @@ Home_MainWid::Home_MainWid(QWidget *parent) :
     mWorkWid = new Home_WorkWid(ui->workWid);
     connect(mWorkWid, &Home_WorkWid::startSig, this, &Home_MainWid::onStart);
     connect(mWorkWid, &Home_WorkWid::downSig, this, &Home_MainWid::onDown);
+    connect(mWorkWid, &Home_WorkWid::msgSig, this, &Home_MainWid::onMsg);
 }
 
 Home_MainWid::~Home_MainWid()
@@ -37,8 +38,15 @@ void Home_MainWid::onStart()
 
 void Home_MainWid::onDown(const QString &dir)
 {
-    QFile file(dir +"/" + CFG_APP);
+    QFile file(dir +"/" + CFG_APP);cm_mdelay(5);
     if(file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         ui->textEdit->setPlainText(file.readAll());
     } file.close();
+}
+
+void Home_MainWid::onMsg(const QString &msg)
+{
+    QString str = tr("压缩信息:");
+    ui->textEdit->appendPlainText(str);
+    ui->textEdit->appendPlainText(msg);
 }

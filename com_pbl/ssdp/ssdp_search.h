@@ -12,6 +12,7 @@ public:
     QStringList searchAll(){return  searchTarget("", "");}
     QStringList searchRoom(const QString &room);
     QStringList searchDev(const QString &ip);
+    int getSlaveNum() {return mSlaveNum;}
 
 signals:
     void targetSig(const QString &);
@@ -24,6 +25,7 @@ private slots:
 
 private:
     QSet<QString> mSet;
+    int mSlaveNum=0;
 };
 
 #endif // SSDP_SEARCH_H

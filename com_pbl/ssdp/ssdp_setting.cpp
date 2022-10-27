@@ -56,3 +56,17 @@ bool Ssdp_Setting::setJson(const QByteArray &data, const QString &room, const QS
 
     return ssdpSend(item);
 }
+
+bool Ssdp_Setting::swVersion(const QString &room, const QString &ip)
+{
+    sSdpIt item; item.fc = 11;
+    item.room = room; item.ip = ip;
+
+    QString msg;
+    if(ip.size()) msg += "IP:" + ip;
+    if(room.size()) msg += "room:" + room;
+    msg += "sw version"; emit sendMsgSig(msg);
+    //emit sendDataSig(data);
+
+    return ssdpSend(item);
+}

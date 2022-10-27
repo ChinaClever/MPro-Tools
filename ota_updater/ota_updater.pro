@@ -10,10 +10,12 @@ CONFIG += c++17
 
 include(core/core.pri)
 include(home/home.pri)
-include(rpcs/rpcs.pri)
-include(common/common.pri)
+#include(common/common.pri)
 include(remote/remote.pri)
 include(progres/progres.pri)
+
+CM_PATH = ../com_pbl
+include($$CM_PATH/com_pbl.pri)
 
 SOURCES += \
     main.cpp \
@@ -27,10 +29,6 @@ HEADERS += \
 FORMS += \
     mainwindow.ui \
     navbarwid.ui
-
-RESOURCES += \
-    images/image.qrc
-
 
 contains(TARGET_ARCH, x86_64) {
     # Default rules for deployment.

@@ -11,7 +11,11 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>批量升级工具</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../com_pbl/images/image.qrc">
+    <normaloff>:/image/logo.jpg</normaloff>:/image/logo.jpg</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
@@ -26,6 +30,9 @@
     </property>
     <property name="bottomMargin">
      <number>0</number>
+    </property>
+    <property name="horizontalSpacing">
+     <number>5</number>
     </property>
     <property name="verticalSpacing">
      <number>0</number>
@@ -52,6 +59,8 @@
    </layout>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="../com_pbl/images/image.qrc"/>
+ </resources>
  <connections/>
 </ui>

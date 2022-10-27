@@ -43,5 +43,8 @@ void NavBarWid::on_logBtn_clicked()
     emit navBarSig(3);
 }
 
-
+void NavBarWid::on_swBtn_clicked()
+{
+    emit navBarSig(4);
+}
 

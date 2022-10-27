@@ -37,7 +37,7 @@ void Ssdp_Obj::readMsgSlot()
     while (mSocket->hasPendingDatagrams()) {
         reply.resize(mSocket->pendingDatagramSize());
         mSocket->readDatagram(reply.data(), reply.size(), &host);
-        recvMsg(reply); // qDebug() << host.toString();
+        recvMsg(host.toString(), reply); // qDebug() << host.toString();
     }
 }
 
@@ -71,9 +71,12 @@ bool Ssdp_Obj::udpSend(const QHostAddress &host, const sSdpIt &it)
     return mUdp->writeDatagram(array, host, mPort+1);
 }
 
-void Ssdp_Obj::recvMsg(const QByteArray &array)
+void Ssdp_Obj::recvMsg(const QString &ip, const QByteArray &array)
 {
-    sSdpIt it; if(toItem(array, it)) emit recvSig(it);
-    else cout << it.fc << it.crc << array.size();
+    sSdpIt it;
+    if(toItem(array, it)) {
+        if(!ip.contains(it.ip)) {it.ip = ip; it.ip.remove("::ffff:");}
+        emit recvSig(it);
+    } else cout << it.fc << it.crc << array.size();
 }
 

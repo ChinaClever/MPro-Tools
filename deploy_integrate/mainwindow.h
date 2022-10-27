@@ -3,8 +3,6 @@
 
 #include <QMainWindow>
 #include "navbarwid.h"
-//#include "logmainwid.h"
-//#include "setup_mainwid.h"
 #include "home_mainwid.h"
 
 QT_BEGIN_NAMESPACE
@@ -19,16 +17,12 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-private slots:
+protected slots:
     void initFunSlot();
-    void navBarSlot(int);
 
 private:
     Ui::MainWindow *ui;
-
-//    LogMainWid *mLog;
     NavBarWid *mNavBarWid;
     Home_MainWid *mHomeWid;
-//    Setup_MainWid *mSetupWid;
 };
 #endif // MAINWINDOW_H

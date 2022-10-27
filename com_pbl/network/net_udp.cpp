@@ -45,5 +45,5 @@ void Net_Udp::recvSlot()
 {
     QHostAddress host;
     QByteArray res = readDatagram(&host);
-    if(res.size()) emit recvSig(res);
+    if(res.size()) emit recvSig(host.toString(), res);
 }

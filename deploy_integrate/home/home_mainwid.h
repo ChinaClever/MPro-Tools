@@ -2,7 +2,8 @@
 #define HOME_MAINWID_H
 
 #include <QWidget>
-#include "home_workwid.h"
+#include "cfg_app.h"
+#include "ssdp_core.h"
 #include "backcolourcom.h"
 
 namespace Ui {
@@ -17,17 +18,34 @@ public:
     explicit Home_MainWid(QWidget *parent = nullptr);
     ~Home_MainWid();
 
-protected:
+protected:    
     void initWid();
+    void devMode();
+    void webLogin();
+    void location();
+    void netAddr();
+    void integrate();
+    void setWorkDown();
+    void setDateTime();
+    bool checkFile(const QByteArray &msg);
+    QByteArray readFile(const QString &fn);
+    void send(const sCfgItem &it, const QVariant &v);
+    void reboot();
 
 private slots:
-    void onStart();
+    void on_findBtn_clicked();
+    void on_startBtn_clicked();
     void onDown(const QString &msg);
+    void on_dhcpBox_currentIndexChanged(int index);
+    void on_pushBox_currentIndexChanged(int index);
+    void on_modeBox_currentIndexChanged(int index);
+    void on_batchCheck_clicked(bool checked);
+    void on_checkBox_stateChanged(int arg1);
+    void on_selectBtn_clicked();
 
 private:
     Ui::Home_MainWid *ui;
-    Home_WorkWid *mWorkWid;
-    //Td_MainWid *mTabWid;
+    Ssdp_Core *mSsdp;
     int mId = 0;
 };
 

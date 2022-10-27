@@ -1,7 +1,7 @@
 #ifndef PRO_STATUSWID_H
 #define PRO_STATUSWID_H
 #include "home_mainwid.h"
-#include "comtablewid.h"
+#include "pro_tablewid.h"
 
 namespace Ui {
 class Pro_StatusWid;
@@ -24,7 +24,7 @@ public slots:
 private:
     Ui::Pro_StatusWid *ui;
     QMap<QString, int> mMap;
-    ComTableWid *mTable;
+    Pro_TableWid *mTable;
 };
 
 #endif // PRO_STATUSWID_H
