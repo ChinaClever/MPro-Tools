@@ -11,7 +11,7 @@ DbLogs::DbLogs()
     createTable();
     tableTile = tr("打包日志");
     //hiddens <<  9;
-    headList << tr("客户名称") << tr("程序名称") << tr("发布版本") << tr("依赖版本") << tr("MD5校验码") << tr("发布说明");
+    headList << tr("客户名称") << tr("设备类型") << tr("程序名称") << tr("发布版本") << tr("依赖版本") << tr("MD5校验码") << tr("发布说明");
 }
 
 void DbLogs::createTable()
@@ -22,6 +22,7 @@ void DbLogs::createTable()
             "date           VCHAR,"
             "time           VCHAR,"
             "user           VCHAR,"
+            "dev            VCHAR,"
             "fn             VCHAR,"
             "sw             VCHAR,"
             "old            VCHAR,"
@@ -44,8 +45,8 @@ DbLogs *DbLogs::bulid()
 
 bool DbLogs::insertItem(const sLogItem &item)
 {
-    QString cmd = "insert into %1 (date,time,fn,md5,user,sw,old,remark) "
-                  "values(:date,:time,:fn,:md5,:user,:sw,:old,:remark)";
+    QString cmd = "insert into %1 (date,time,fn,md5,user,dev,sw,old,remark) "
+                  "values(:date,:time,:fn,:md5,:user,:dev,:sw,:old,:remark)";
     bool ret = modifyItem(item,cmd.arg(tableName()));
     if(ret) emit itemChanged(item.id, Insert);
     return ret;
@@ -59,6 +60,7 @@ bool DbLogs::modifyItem(const sLogItem &item, const QString &cmd)
     query.bindValue(":date",item.date);
     query.bindValue(":time",item.time);
     query.bindValue(":user",item.user);
+    query.bindValue(":dev",item.dev);
     query.bindValue(":fn",item.fn);
     query.bindValue(":sw",item.sw);
     query.bindValue(":old",item.old);

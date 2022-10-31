@@ -6,6 +6,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <QSslSocket>
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -14,6 +16,12 @@ MainWindow::MainWindow(QWidget *parent)
     mNavBarWid = new NavBarWid(ui->barWid);
     QTimer::singleShot(50,this,SLOT(initFunSlot())); //延时初始化
     connect(mNavBarWid, SIGNAL(navBarSig(int)), this, SLOT(navBarSlot(int)));
+
+    // 查詢Qt支持的版本
+    bool bSupp = QSslSocket::supportsSsl();
+    QString buildVersion = QSslSocket::sslLibraryBuildVersionString();
+    QString version = QSslSocket::sslLibraryVersionString();
+    qDebug() << bSupp << buildVersion << version;
 }
 
 MainWindow::~MainWindow()
@@ -40,6 +48,9 @@ void MainWindow::initFunSlot()
 
     mSwWid = new Remote_SwVerWid(ui->stackedWid);
     ui->stackedWid->addWidget(mSwWid);
+
+    bool bSupp = QSslSocket::supportsSsl();
+    if(!bSupp) MsgBox::critical(this, tr("缺少ssl库，无法进行升级"));
 }
 
 void MainWindow::navBarSlot(int id)

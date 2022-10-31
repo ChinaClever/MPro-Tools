@@ -64,12 +64,16 @@ bool Home_WorkWid::checkInput()
 void Home_WorkWid::writeLog(const sAppVerIt &app)
 {
     sLogItem it;
-    it.fn =  ui->pathEdit->text();
+    //it.fn =  ui->pathEdit->text();
     it.sw = app.ver;
+    it.dev = app.dev;
     it.md5 = app.md5;
     it.user = app.usr;
     it.remark = app.remark;
     it.old = app.oldVersion;
+
+    QString fmd = "%1_%2";
+    it.fn = fmd.arg(it.user, it.sw);
     DbLogs::bulid()->insertItem(it);
 }
 
@@ -78,10 +82,11 @@ bool Home_WorkWid::packing(Cfg_App &cfg, const QStringList &apps)
     sAppVerIt it; it.apps = apps;
     it.usr = ui->usrEdit->text();
     it.ver = ui->versionEdit->text();
+    it.dev = ui->devBox->currentText();
     it.remark = ui->textEdit->toPlainText();
     it.oldVersion = ui->oldVerEdit->text();
     it.releaseDate = QDate::currentDate().toString("yyyy-MM-dd");
-    QString str = it.usr + it.ver + it.remark + it.oldVersion + it.releaseDate;
+    QString str = it.dev + it.usr + it.ver + it.remark + it.oldVersion + it.releaseDate;
     it.md5 = QCryptographicHash::hash(str.toLatin1(),QCryptographicHash::Md5).toHex();
     bool ret = cfg.app_pack(it);
     if(ret) writeLog(it);
