@@ -52,8 +52,13 @@ QString cm_execute(const QString &cmd)
 bool cm_pingNet(const QString& ip)
 {
     QProcess pingProcess;
+#if (QT_VERSION > QT_VERSION_CHECK(6,0,0))
+    QStringList strArg; strArg << ip << " -n 1 -i 2";  //strPingIP 为设备IP地址
+    pingProcess.start("ping", strArg, QIODevice::ReadOnly);
+#else
     QString strArg = "ping " + ip + " -n 1 -i 2";  //strPingIP 为设备IP地址
-    pingProcess.start(strArg,QIODevice::ReadOnly);
+    pingProcess.start(strArg, QIODevice::ReadOnly);
+#endif
     pingProcess.waitForFinished(-1);
 
     QString p_stdout = QString::fromLocal8Bit(pingProcess.readAllStandardOutput());
@@ -87,10 +92,15 @@ bool cm_isDigitStr(const QString &src)
  */
 bool cm_isIPaddress(const QString& ip)
 {
+#if (QT_VERSION > QT_VERSION_CHECK(6,0,0))
+    QString exp = "\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b";
+    QRegularExpression v(exp);
+    QRegularExpressionMatch match = v.match(ip);
+    if(match.hasMatch())  return true;
+#else
     QRegExp regExp("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b");
-    if(regExp.exactMatch(ip))
-        return true ;
-
+    if(regExp.exactMatch(ip)) return true ;
+#endif
     return false;
 }
 

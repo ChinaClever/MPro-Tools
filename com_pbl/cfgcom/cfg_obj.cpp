@@ -46,7 +46,9 @@ bool Cfg_Obj::openCfg(QObject *parent, const QString& fn)
     bool ret = QFileInfo::exists(fn);
     if(mCfgIni == nullptr) {
         mCfgIni = new QSettings(fn, QSettings::IniFormat, parent);
+#if (QT_VERSION < QT_VERSION_CHECK(6,0,0))
         mCfgIni->setIniCodec(QTextCodec::codecForName("utf-8"));
+#endif
     }
 
     return ret;

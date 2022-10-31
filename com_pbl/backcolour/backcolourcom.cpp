@@ -4,7 +4,7 @@
  *      Author: Lzy
  */
 #include "backcolourcom.h"
-
+#include <QPalette>
 
 /* 窗口背景色 */
 #define     WIDGET_BACK_COLOR   232,249,255
@@ -70,7 +70,7 @@ void set_background_icon(QWidget *widget, const QString &icon)
 {
     QPalette palette;
     QPixmap map = QPixmap(icon);
-    palette.setBrush(QPalette::Background, QBrush(map));
+    palette.setBrush(QPalette::Window, QBrush(map));
     widget->setAutoFillBackground(true);
     widget->setPalette(palette);
 }
@@ -83,7 +83,7 @@ void set_background_icon(QWidget *widget, const QString &icon)
 void set_background_color(QWidget *widget, const QColor &color)
 {
     QPalette palette;
-    palette.setColor(QPalette::Background, color);
+    palette.setColor(QPalette::Window, color);
     widget->setAutoFillBackground(true);
     widget->setPalette(palette);
 }
@@ -99,7 +99,7 @@ void set_background_icon(QWidget *widget, const QString &icon,const QSize &size)
 {
     QPalette palette;
     QPixmap map = QPixmap(icon).scaled(size);
-    palette.setBrush(QPalette::Background, QBrush(map));
+    palette.setBrush(QPalette::Window, QBrush(map));
     widget->setAutoFillBackground(true);
     widget->setPalette(palette);
 }

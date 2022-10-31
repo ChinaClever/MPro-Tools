@@ -78,13 +78,16 @@ QtLocalPeer::QtLocalPeer(QObject* parent, const QString &appId)
 #endif
         prefix = id.section(QLatin1Char('/'), -1);
     }
+
+#if (QT_VERSION < QT_VERSION_CHECK(6,0,0))
     prefix.remove(QRegExp("[^a-zA-Z]"));
+#endif
     prefix.truncate(6);
 
     QByteArray idc = id.toUtf8();
     quint16 idNum = qChecksum(idc.constData(), idc.size());
     socketName = QLatin1String("qtsingleapp-") + prefix
-                 + QLatin1Char('-') + QString::number(idNum, 16);
+            + QLatin1Char('-') + QString::number(idNum, 16);
 
 #if defined(Q_OS_WIN)
     if (!pProcessIdToSessionId) {
@@ -102,8 +105,8 @@ QtLocalPeer::QtLocalPeer(QObject* parent, const QString &appId)
 
     server = new QLocalServer(this);
     QString lockName = QDir(QDir::tempPath()).absolutePath()
-                       + QLatin1Char('/') + socketName
-                       + QLatin1String("-lockfile");
+            + QLatin1Char('/') + socketName
+            + QLatin1String("-lockfile");
     lockFile.setFileName(lockName);
     lockFile.open(QIODevice::ReadWrite);
 }

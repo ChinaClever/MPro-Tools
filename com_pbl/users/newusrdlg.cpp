@@ -15,10 +15,11 @@ NewUsrDlg::NewUsrDlg(QWidget *parent) :
 {
     ui->setupUi(this);
     groupBox_background_icon(this);
-
+#if (QT_VERSION < QT_VERSION_CHECK(6,0,0))
     QRegExp regx("[0-9]+$");
     QValidator *validator = new QRegExpValidator(regx, ui->TelephonelineEdit);
     ui->TelephonelineEdit->setValidator( validator );
+#endif
 }
 
 NewUsrDlg::~NewUsrDlg()

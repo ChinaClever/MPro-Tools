@@ -20,7 +20,7 @@ LOG_DateWidget::LOG_DateWidget(QWidget *parent) :
 
     QStringList headers;
     headers << tr("日期列表");
-     ui->treeWidget->setHeaderLabels(headers);
+    ui->treeWidget->setHeaderLabels(headers);
 
     QGridLayout *gridLayout = new QGridLayout(parent);
     gridLayout->setContentsMargins(0, 0, 0, 0);
@@ -120,7 +120,11 @@ void LOG_DateWidget::updateSlot()
 bool LOG_DateWidget::isDate(const QString &date)
 {
     bool ret = false;
+#if (QT_VERSION > QT_VERSION_CHECK(6,0,0))
+    QStringList list = date.split("-");
+#else
     QStringList list = date.split("-", QString::SkipEmptyParts);
+#endif
     if(list.size() == 3) {
         ret = true;
     }

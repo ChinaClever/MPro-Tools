@@ -12,9 +12,9 @@
 #include <QMetaMethod>
 
 namespace {
-    QString logInvoke(const QMetaMethod& meta_method,
-                      const QVariantList& args,
-                      const QVariant& return_value);
+QString logInvoke(const QMetaMethod& meta_method,
+                  const QVariantList& args,
+                  const QVariant& return_value);
 }
 
 namespace jcon {
@@ -42,7 +42,7 @@ void JsonRpcServer::registerServices(const QObjectList& services)
 
     // unsolicited notification signature
     QByteArray signature = QMetaObject::normalizedSignature(
-        "sendUnsolicitedNotification(QString,QVariant)");
+                "sendUnsolicitedNotification(QString,QVariant)");
 
     for (auto s : services) {
         m_services[s] = "";
@@ -71,7 +71,7 @@ void JsonRpcServer::registerServices(const ServiceMap& services,
 
     // unsolicited notification signature
     QByteArray signature = QMetaObject::normalizedSignature(
-        "sendUnsolicitedNotification(QString,QVariant)");
+                "sendUnsolicitedNotification(QString,QVariant)");
 
     /*
      * If the server allows sending unsolicited notifications,
@@ -130,9 +130,9 @@ void JsonRpcServer::jsonRequestReceived(const QJsonObject& request,
         // send error response if request had valid ID
         if (request_id != InvalidRequestId) {
             QJsonDocument error =
-                createErrorResponse(request_id,
-                                    JsonRpcError::EC_MethodNotFound,
-                                    msg);
+                    createErrorResponse(request_id,
+                                        JsonRpcError::EC_MethodNotFound,
+                                        msg);
 
             if (!sm_client_endpoint) {
                 logError("invalid client socket, cannot send response");
@@ -166,7 +166,7 @@ bool JsonRpcServer::dispatch(const QString& method_name,
     QString method_ns;
     QString method_name_without_ns;
     std::tie(method_ns, method_name_without_ns) =
-        namespaceAndMethodName(method_name);
+            namespaceAndMethodName(method_name);
 
     QObjectList services;
     for (auto it = m_services.begin(); it != m_services.end(); ++it) {
@@ -186,7 +186,7 @@ bool JsonRpcServer::dispatch(const QString& method_name,
             auto meta_method = meta_obj->method(i);
             if (meta_method.name() == method_name_without_ns) {
                 if (params.type() == QVariant::List ||
-                    params.type() == QVariant::StringList)
+                        params.type() == QVariant::StringList)
                 {
                     if (call(s, meta_method, params.toList(), return_value)) {
                         return true;
@@ -368,40 +368,49 @@ bool JsonRpcServer::doCall(QObject* object,
         // A const_cast is needed because calling data() would detach the
         // QVariant.
         QGenericArgument generic_argument(
-            QMetaType::typeName(argument.userType()),
-            const_cast<void*>(argument.constData())
-        );
+                    QMetaType::typeName(argument.userType()),
+                    const_cast<void*>(argument.constData())
+                    );
 
         arguments << generic_argument;
     }
 
+#if (QT_VERSION > QT_VERSION_CHECK(6,2,0))  ////////////==========
+    const char* return_type_name = meta_method.typeName();
+    int return_type = QMetaType::type(return_type_name);
+    if (return_type != QMetaType::Void) {
+        return_value = QVariant(QMetaType(return_type));
+    }
+#else
     const char* return_type_name = meta_method.typeName();
     int return_type = QMetaType::type(return_type_name);
     if (return_type != QMetaType::Void) {
         return_value = QVariant(return_type, nullptr);
     }
+#endif
+
 
     QGenericReturnArgument return_argument(
-        return_type_name,
-        const_cast<void*>(return_value.constData())
-    );
+                return_type_name,
+                const_cast<void*>(return_value.constData())
+                );
 
     // perform the call
     bool ok = meta_method.invoke(
-        object,
-        Qt::DirectConnection,
-        return_argument,
-        arguments.value(0),
-        arguments.value(1),
-        arguments.value(2),
-        arguments.value(3),
-        arguments.value(4),
-        arguments.value(5),
-        arguments.value(6),
-        arguments.value(7),
-        arguments.value(8),
-        arguments.value(9)
-    );
+                object,
+                Qt::DirectConnection,
+                return_argument,
+                arguments.value(0),
+                arguments.value(1),
+                arguments.value(2),
+                arguments.value(3),
+                arguments.value(4),
+                arguments.value(5),
+                arguments.value(6),
+                arguments.value(7),
+                arguments.value(8),
+                arguments.value(9)
+                );
 
     if (!ok) {
         // qDebug() << "calling" << meta_method.methodSignature() << "failed.";
@@ -442,9 +451,9 @@ QJsonDocument JsonRpcServer::createResponse(const QString& request_id,
         res_json_obj["result"] = return_value.toString();
     } else {
         auto msg =
-            QString("method '%1' has unknown return type: %2")
-            .arg(method_name)
-            .arg(return_value.type());
+                QString("method '%1' has unknown return type: %2")
+                .arg(method_name)
+                .arg(return_value.type());
         logError(msg);
         return createErrorResponse(request_id,
                                    JsonRpcError::EC_InvalidRequest,
@@ -499,7 +508,7 @@ QJsonDocument JsonRpcServer::createNotification(const QString& key,
         noti_json_obj["params"] = value.toString();
     } else {
         auto msg =
-            QString("unknown return type: %1")
+                QString("unknown return type: %1")
                 .arg(value.type());
         logError(msg);
         return QJsonDocument();
@@ -547,19 +556,19 @@ QString logInvoke(const QMetaMethod& meta_method,
     std::transform(ns.begin(), ns.end(), ps.begin(),
                    std::back_inserter(args_sl),
                    [](auto x, auto y) -> QString {
-                       return static_cast<QString>(x) + ": " + y;
-                   }
-        );
+        return static_cast<QString>(x) + ": " + y;
+    }
+    );
 
     auto msg = QString("%1 invoked ")
-        .arg(static_cast<QString>(meta_method.name()));
+            .arg(static_cast<QString>(meta_method.name()));
 
     if (args_sl.empty()) {
         msg += "without arguments";
     } else {
         msg += QString("with argument%1: %2")
-            .arg(args_sl.size() == 1 ? "" : "s")
-            .arg(args_sl.join(", "));
+                .arg(args_sl.size() == 1 ? "" : "s")
+                .arg(args_sl.join(", "));
     }
 
     if (return_value.isValid()) {

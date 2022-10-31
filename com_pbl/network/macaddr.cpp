@@ -5,7 +5,9 @@
  */
 #include "macaddr.h"
 #include "print.h"
+#if (QT_VERSION < QT_VERSION_CHECK(6,0,0))
 #include <QRegExpValidator>
+#endif
 #define MAC_ADDR_LEN 6
 
 MacAddr::MacAddr()
@@ -23,6 +25,13 @@ MacAddr *MacAddr::bulid()
 
 bool MacAddr::isMacAddress(const QString &mac)
 {
+#if (QT_VERSION > QT_VERSION_CHECK(6,0,0))
+    QString mac_addr = mac;
+    QRegularExpression v(QLatin1String("^([A-Fa-f0-9]{2}[-,:]){5}[A-Fa-f0-9]{2}$"));
+    QRegularExpressionMatch match = v.match(mac_addr);
+    if(match.hasMatch())  return true;
+    return false;
+#else
     QString mac_addr = mac;
     QRegExp rx("^([A-Fa-f0-9]{2}[-,:]){5}[A-Fa-f0-9]{2}$");
     QRegExpValidator v(rx, 0);
@@ -31,6 +40,7 @@ bool MacAddr::isMacAddress(const QString &mac)
         return true;
 
     return false;
+#endif
 }
 
 /**
