@@ -14,8 +14,10 @@ include(tabcom/tabcom.pri)
 include(printer/printer.pri)
 include(network/network.pri)
 include(websocket/websocket.pri)
-#include(smtpclient/smtpclient.pri)
-#include(snmpclient/snmpclient.pri)
+lessThan(QT_MAJOR_VERSION, 6) {
+include(smtpclient/smtpclient.pri)
+include(snmpclient/snmpclient.pri)
+}
 include(serialport/serialport.pri)
 include(backcolour/backcolour.pri)
 include(qtsingleapplication/qtsingleapplication.pri)
