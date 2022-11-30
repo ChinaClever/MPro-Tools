@@ -62,7 +62,7 @@ bool Dtls_Sender::sendFile(const QString &ip, const QString &fn, const sOtaFile 
 {
     bool ret = true; QFile file(fn);
     QByteArray head; QDataStream in(&head, QIODevice::WriteOnly);
-    in << it.fc << it.dev << it.path << it.file << it.md5 << it.size << END_CRC;
+    in << it.fc << it.dev << it.path << it.file << it.md5 << it.sig << it.size << END_CRC;
     if(file.exists() && file.open(QIODevice::ReadOnly)) {
         mHost = ip; mHead = head; mArray = file.readAll(); //mThread->onceRun();
     } else {ret = false;} file.close();
@@ -72,7 +72,7 @@ bool Dtls_Sender::sendFile(const QString &ip, const QString &fn, const sOtaFile 
 void Dtls_Sender::sendData(const QString &ip, const sOtaFile &it, const QByteArray &data)
 {
     QByteArray head; QDataStream in(&head, QIODevice::WriteOnly);
-    in << it.fc << it.dev << it.path << it.file << it.md5 << it.size <<END_CRC;
+    in << it.fc << it.dev << it.path << it.file << it.md5 << it.sig << it.size <<END_CRC;
     mHost = ip; mHead = head; mArray = data; //mThread->onceRun();
 }
 

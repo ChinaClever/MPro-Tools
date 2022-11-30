@@ -40,6 +40,7 @@ protected:
     void initData(sOtaFile &it);
     bool fileCrc(const QString &fn);
     void initCnt(int dst, int slave);
+    bool readRsaSig(const QString &name);
     QStringList getIpList();
 
 private slots:

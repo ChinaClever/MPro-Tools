@@ -46,7 +46,7 @@ void Home_MainWid::onDown(const QString &dir)
 
 void Home_MainWid::onMsg(const QString &msg)
 {
-    QString str = tr("压缩信息:");
+    QString str = tr("输出信息:");
     ui->textEdit->appendPlainText(str);
     ui->textEdit->appendPlainText(msg);
 }

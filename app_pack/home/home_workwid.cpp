@@ -58,6 +58,11 @@ bool Home_WorkWid::checkInput()
         return false;
     }
 
+    if(!QFile::exists("sign.exe")) {
+        MsgBox::critical(this, tr("缺少签名程序 sign.exe ！！"));
+        return false;
+    }
+
     return true;
 }
 
@@ -93,6 +98,27 @@ bool Home_WorkWid::packing(Cfg_App &cfg, const QStringList &apps)
     return ret;
 }
 
+bool Home_WorkWid::rsaSig(const QString &fn)
+{
+    QByteArray  sig;
+    cm_execute("sign.exe " +fn);
+    QFile file("signature.sig");
+    if(file.open(QIODevice::ReadOnly)) {
+        sig = file.readAll();
+    } file.close();
+
+    QString str = "sig:" + sig;
+    emit msgSig(str); QString name = fn;
+    name = name.replace(".zip", ".sig");
+    QFile filesig(name);
+    if(filesig.open(QIODevice::WriteOnly|QIODevice::Text)) {
+        QString md5 = File::md5(fn) +"\n";
+        filesig.write(md5.toLocal8Bit());
+        filesig.write(sig); emit msgSig(md5);
+    }filesig.close();
+    return sig.size();
+}
+
 bool Home_WorkWid::startZip()
 {
     QString dir = ui->pathEdit->text();
@@ -113,7 +139,7 @@ bool Home_WorkWid::startZip()
         dir.remove(index, size);
         name = dir + "/" + name;
         QFile::rename(fn, name);
-        File::AppendMd5(name);
+        rsaSig(name);
     }
 
     return str.size();

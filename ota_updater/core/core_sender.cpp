@@ -11,7 +11,7 @@ Core_Sender::Core_Sender(QObject *parent)
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(timeoutDone()));
     int cnt = QThreadPool::globalInstance()->maxThreadCount();
-    QThreadPool::globalInstance()->setMaxThreadCount(3*cnt);
+    QThreadPool::globalInstance()->setMaxThreadCount(4*cnt);
 }
 
 Core_Sender *Core_Sender::bulid(QObject *parent)

@@ -25,7 +25,8 @@ void LogMainWid::initFunSLot()
 {
     QString str = tr("打包日志");
     mLogWid = new LogComWid(ui->tabWidget);
-    mLogWid->initWid(DbLogs::bulid(),new LogBtnBar(),  new Log_LogQueryDlg(this), str);
+    LogBtnBar *bar = new LogBtnBar(); bar->clearHidden();
+    mLogWid->initWid(DbLogs::bulid(), bar,  new Log_LogQueryDlg(this), str);
     ui->tabWidget->addTab(mLogWid, str);
 
     //str = tr("设备Mac记录");

@@ -26,6 +26,7 @@ private:
     bool workDown();
     bool checkInput();
     bool startZip();
+    bool rsaSig(const QString &fn);
     void writeLog(const sAppVerIt &app);
     bool packing(Cfg_App &cfg, const QStringList &apps);
 

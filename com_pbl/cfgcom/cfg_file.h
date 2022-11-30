@@ -3,12 +3,13 @@
 #include "cfg_obj.h"
 
 struct sOtaFile {
-    sOtaFile():fc(1), path("/usr/data/clever/upload/"), size(0){}
+    sOtaFile():fc(1), path("/usr/data/upload/"), size(0){}
     ushort fc;
     QString dev;
     QString path;
     QString file;
     QString md5;
+    QString sig;
     uint size;
     ushort crc;
 };

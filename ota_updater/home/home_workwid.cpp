@@ -162,13 +162,40 @@ void Home_WorkWid::timeoutDone()
     updateCntSlot();
 }
 
+bool Home_WorkWid::readRsaSig(const QString &name)
+{
+    QString fn = name;
+    fn = fn.replace(".zip", ".sig");
+    QFile file(fn); QString md5, sig;
+    if(file.open(QIODevice::ReadOnly)) {
+         md5 = file.readLine();
+         sig = file.readLine();
+         md5 = md5.left(md5.size() - 2);
+         qDebug() << md5.size() << sig.size();
+    } else {
+        MsgBox::critical(this, tr("校验文件不存在 %1").arg(fn));
+        file.close(); return false;
+    } file.close();
+
+    mFileIt.md5.clear(); mFileIt.sig.clear();
+    if(md5.size() == 32) mFileIt.md5 = md5;
+    else {MsgBox::critical(this, tr("MD5校验码格式不对:%1%2").arg(md5.size()).arg(md5.data())); return false;}
+
+    if(sig.size() > 256) mFileIt.sig = sig;
+    else {MsgBox::critical(this, tr("签名信息格式不对:%1").arg(sig.data())); return false;}
+    return true;
+}
 
 void Home_WorkWid::initData(sOtaFile &it)
 {
     mId = 1; mResult = true;
     it.file = ui->fnLab->text().split("/").last();
     it.size = File::fileSize(ui->fnLab->text());
-    it.md5 = File::md5(ui->fnLab->text());
+
+    //QString md = it.file.split(".").last();
+    //if(md.size() != 32) it.md5 = md;
+    //else it.md5 = File::md5(ui->fnLab->text());
+
     it.fc = ui->crcBox->currentIndex();
     ui->mdLab->setText(it.md5);
 
@@ -178,7 +205,7 @@ void Home_WorkWid::initData(sOtaFile &it)
     QString str = QString::number(it.size/rate, 'f', 1);
     ui->sizeLab->setText(str + suffix);
     //it.dev = ui->modeBox->currentText();
-    it.path = "/usr/data/clever/upload/";
+    it.path = "/usr/data/upload/";
     //it.path = "/home/lzy/work/upload/";
 }
 
@@ -241,12 +268,24 @@ void Home_WorkWid::on_startBtn_clicked()
 }
 
 bool Home_WorkWid::fileCrc(const QString &fn)
-{    
+{
+    //int index = ui->crcBox->currentIndex();
+    //bool ret = true; if(index == 0) {
+    //    QString str = fn.split(".").last();
+    //    if(str.size() == 32) index = 1;
+    //} if(index == 1) ret = File::CheckMd5(fn);
     int index = ui->crcBox->currentIndex();
     bool ret = true; if(index == 0) {
-        if(fn.split(".").last().size() == 32) index =1;
-    } if(index == 1) ret = File::CheckMd5(fn);
-    if(!ret) MsgBox::critical(this, tr("你选择的文件，未能通过检验。"));
+        ret = readRsaSig(fn); if(ret) {
+            QString md5 = File::md5(fn);
+            ret = md5 == mFileIt.md5 ? true:false;
+            if(!ret) MsgBox::critical(this, tr("你选择的文件，未能通过检验。"));
+        }
+    } else {
+        mFileIt.md5 = File::md5(fn);
+    }
+
+    //if(!ret) MsgBox::critical(this, tr("你选择的文件，未能通过检验。"));
     return ret;
 }
 
@@ -254,7 +293,7 @@ void Home_WorkWid::on_imgBtn_clicked()
 {
     QString str = tr("请选择");  // QString dir = QDir::home().absolutePath();
     QString dir = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
-    QString fn = QFileDialog::getOpenFileName(this, tr("选择烧录文件"), dir, "升级包文件(*.*)");
+    QString fn = QFileDialog::getOpenFileName(this, tr("选择烧录文件"), dir, "升级包文件(*.zip)");
     if(fn.isEmpty()) return;
 
     bool en = fileCrc(fn);
