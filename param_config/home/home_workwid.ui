@@ -557,7 +557,6 @@
       <property name="font">
        <font>
         <pointsize>16</pointsize>
-        <weight>75</weight>
         <bold>true</bold>
        </font>
       </property>
@@ -590,7 +589,7 @@
       </property>
       <item>
        <property name="text">
-        <string>标准通道</string>
+        <string>加密通道</string>
        </property>
       </item>
      </widget>
