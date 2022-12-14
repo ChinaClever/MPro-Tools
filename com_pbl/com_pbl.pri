@@ -4,6 +4,7 @@ INCLUDEPATH += $$PWD
 include(rpc/rpc.pri)
 include(dtls/dtls.pri)
 include(ssdp/ssdp.pri)
+include(http/http.pri)
 include(users/users.pri)
 include(excel/excel.pri)
 include(sqlcom/sqlcom.pri)

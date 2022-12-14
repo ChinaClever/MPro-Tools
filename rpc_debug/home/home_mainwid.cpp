@@ -25,9 +25,9 @@ Home_MainWid::~Home_MainWid()
 
 void Home_MainWid::initWid()
 {
-    QPalette pl = ui->textEdit->palette();
-    pl.setBrush(QPalette::Base,QBrush(QColor(255,0,0,0)));
-    ui->textEdit->setPalette(pl);
+    //QPalette pl = ui->textEdit->palette();
+    //pl.setBrush(QPalette::Base,QBrush(QColor(255,0,0,0)));
+    //ui->textEdit->setPalette(pl);
     connect(mRpc, &JsonRpcClient::rpcSig, this, &Home_MainWid::onDown);
 }
 
