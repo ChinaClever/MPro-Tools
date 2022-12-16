@@ -168,10 +168,10 @@ bool Home_WorkWid::readRsaSig(const QString &name)
     fn = fn.replace(".zip", ".sig");
     QFile file(fn); QString md5, sig;
     if(file.open(QIODevice::ReadOnly)) {
-         md5 = file.readLine();
-         sig = file.readLine();
-         md5 = md5.left(md5.size() - 2);
-         qDebug() << md5.size() << sig.size();
+        md5 = file.readLine();
+        sig = file.readLine();
+        md5 = md5.left(md5.size() - 2);
+        qDebug() << md5.size() << sig.size();
     } else {
         MsgBox::critical(this, tr("校验文件不存在 %1").arg(fn));
         file.close(); return false;
@@ -316,9 +316,11 @@ void Home_WorkWid::on_searchBtn_clicked()
         QString str = tr("已找到%1个设备，包含%2个主机，%3个副机")
                 .arg(res.size() + mSsdp->getSlaveNum())
                 .arg(res.size()).arg(mSsdp->getSlaveNum());
-        for(int i=0; i<res.size(); i++) {
-            if(i%5) str += "\t"; else str += "\n";
-            str += res.at(i);
+        if(res.size() + mSsdp->getSlaveNum() < 50) {
+            for(int i=0; i<res.size(); i++) {
+                if(i%5) str += "\t"; else str += "\n";
+                str += res.at(i);
+            }
         } MsgBox::information(this, str);
     } else {
         MsgBox::critical(this, tr("未找到任何目标设备"));

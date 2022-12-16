@@ -101,7 +101,7 @@
       <string notr="true">color: rgb(255, 255, 255);</string>
      </property>
      <property name="text">
-      <string>APP批量上传</string>
+      <string>APP批量升级</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
