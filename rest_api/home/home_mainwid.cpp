@@ -103,10 +103,10 @@ void Home_MainWid::on_alrmBtn_clicked()
     int index =  ui->alarmBox->currentIndex();
     if(index) {
         obj.insert("setDataItem", json);
-        http_post("setDataItem", obj);
+        http_post("pduSetting", obj);
     } else {
         obj.insert("getDataItem", json);
-        http_get("getDataItem", obj);
+        http_get("pduGetting", obj);
     }
 }
 
@@ -121,10 +121,10 @@ void Home_MainWid::on_cfgBtn_clicked()
     int index =  ui->cfgBox->currentIndex();
     if(index) {
         obj.insert("setCfgItem", json);
-        http_post("setCfgItem", obj);
+        http_post("pduSetting", obj);
     } else {
         obj.insert("getCfgItem", json);
-        http_get("getCfgItem", obj);
+        http_get("pduGetting", obj);
     }
 }
 
@@ -138,7 +138,7 @@ void Home_MainWid::on_swBtn_clicked()
     json.insert("id", ui->numBox->value());
     json.insert("value", ui->onBox->value());
     obj.insert("setDataItem", json);
-    http_post("setDataItem", obj);
+    http_post("pduSetting", obj);
 }
 
 void Home_MainWid::on_cmdBtn_clicked()
@@ -151,7 +151,7 @@ void Home_MainWid::on_cmdBtn_clicked()
 void Home_MainWid::on_readBtn_clicked()
 {
     QJsonObject json;
-    json.insert("id", ui->addrSpinBox->value());
+    json.insert("addr", ui->addrSpinBox->value());
     http_get("pduMetaData", json);
 }
 
