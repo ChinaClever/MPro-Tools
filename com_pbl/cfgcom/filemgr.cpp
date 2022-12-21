@@ -20,6 +20,18 @@ bool FileMgr::isFileExist(const QString &sFilePath)
     return QFile().exists(sFilePath);
 }
 
+bool FileMgr::mkpath(const QString &path)
+{
+    QDir dir;
+    return dir.mkpath(path);
+}
+
+bool FileMgr::rmpath(const QString &path)
+{
+    QDir dir;
+    return dir.rmpath(path);
+}
+
 // 创建文件夹
 bool FileMgr::createDir(QString sDirPath)
 {
@@ -131,19 +143,19 @@ bool FileMgr::copyDir(const QString &sSrcDir, const QString &sDestDir, const boo
         // 当为目录时，递归的进行copy
         if(fileInfo.isDir()) {
             if(!copyDir(fileInfo.filePath(),
-                destDir.filePath(fileInfo.fileName()),
-                bCover))
+                        destDir.filePath(fileInfo.fileName()),
+                        bCover))
                 return false;
         }
         else { // 当允许覆盖操作时，将旧文件进行删除操作
             if(bCover && destDir.exists(fileInfo.fileName())){
                 destDir.remove(fileInfo.fileName());
-             }
+            }
 
             // 进行文件copy
             if(!QFile::copy(fileInfo.filePath(),
-                destDir.filePath(fileInfo.fileName()))){
-                    return false;
+                            destDir.filePath(fileInfo.fileName()))){
+                return false;
             }
         }
     }

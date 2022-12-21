@@ -14,6 +14,8 @@ public:
         return m_fileMgr;
     }
 
+    bool rmpath(const QString &path);
+    bool mkpath(const QString &path);
     bool isFileExist(const QString &sFilePath); // 文件是否存在
     bool createDir(QString sDirPath); // 创建文件夹
     bool copyFile(const QString &sSrcFile, const QString &sDestFile, const bool &bCover); // 复制文件

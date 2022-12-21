@@ -23,11 +23,11 @@ protected:
 private slots:
     void onStart();
     void onMsg(const QString &msg);
-    void onDown(const QString &dir);
 
 private:
     Ui::Home_MainWid *ui;
     Home_WorkWid *mWorkWid;
+    int mId=0;
     //Td_MainWid *mTabWid;
 };
 

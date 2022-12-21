@@ -9,10 +9,12 @@ class Core_HttpObj : public QObject
     explicit Core_HttpObj(QObject *parent = nullptr);
 public:
     static Core_HttpObj *bulid(QObject *parent = nullptr);
-    void downFile(const QStringList fs, const QString &ip="192.168.1.99", int port=3166);
-    void uploadFile(const QStringList fs, const QString &ip="192.168.1.99", int port=3166);
-    void setting(const sDataItem &it, const QString &ip="192.168.1.99", int port=3166);
-    void setting(const sCfgItem &it, const QVariant &value, const QString &ip="192.168.1.99", int port=3166);
+    void initHost(const QString &ip="192.168.1.99", int port=3166);
+    void downFile(const QStringList fs);
+    void uploadFile(const QStringList fs);
+    void setting(const sDataItem &it);
+    void setting(const sCfgItem &it, const QVariant &value);
+    void execute(const QString cmd);
 
 signals:
     void httpSig(const QString &msg);
@@ -27,6 +29,7 @@ private:
 
 private:
     AeaQt::HttpClient mHttp;
+    QString m_ip; int m_port;
 };
 
 #endif // CORE_HTTPOBJ_H
