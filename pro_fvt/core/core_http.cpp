@@ -3,36 +3,36 @@
  *  Created on: 2022年10月1日
  *      Author: Lzy
  */
-#include "core_httpobj.h"
+#include "core_http.h"
 
 
-Core_HttpObj::Core_HttpObj(QObject *parent)
+Core_Http::Core_Http(QObject *parent)
     : QObject{parent}
 {
     initHost();
 }
 
-Core_HttpObj *Core_HttpObj::bulid(QObject *parent)
+Core_Http *Core_Http::bulid(QObject *parent)
 {
-    static Core_HttpObj* sington = nullptr;
-    if(!sington) sington = new Core_HttpObj(parent);
+    static Core_Http* sington = nullptr;
+    if(!sington) sington = new Core_Http(parent);
     return sington;
 }
 
-void Core_HttpObj::initHost(const QString &ip, int port)
+void Core_Http::initHost(const QString &ip, int port)
 {
     m_ip = ip;
     m_port = port;
 }
 
-void Core_HttpObj::execute(const QString cmd)
+void Core_Http::execute(const QString cmd)
 {
     QJsonObject json;
     json.insert("cmd", cmd);
     http_put("execute", json, m_ip, m_port);
 }
 
-void Core_HttpObj::setting(const sDataItem &it)
+void Core_Http::setting(const sDataItem &it)
 {
     QJsonObject json, obj;
     json.insert("addr",  it.addr);
@@ -46,7 +46,7 @@ void Core_HttpObj::setting(const sDataItem &it)
     http_post("pduSetting", obj, m_ip, m_port);
 }
 
-void Core_HttpObj::setting(const sCfgItem &it, const QVariant &value)
+void Core_Http::setting(const sCfgItem &it, const QVariant &value)
 {
     QJsonObject json, obj;
     json.insert("addr", it.addr);
@@ -59,7 +59,7 @@ void Core_HttpObj::setting(const sCfgItem &it, const QVariant &value)
     http_post("pduSetting", obj, m_ip, m_port);
 }
 
-void Core_HttpObj::uploadFile(const QStringList fs)
+void Core_Http::uploadFile(const QStringList fs)
 {
     foreach (const auto &fn, fs) {
         if(QFile::exists(fn)) {
@@ -69,7 +69,7 @@ void Core_HttpObj::uploadFile(const QStringList fs)
     }
 }
 
-void Core_HttpObj::downFile(const QStringList fs)
+void Core_Http::downFile(const QStringList fs)
 {
     foreach (const auto &fn, fs) {
         QJsonObject json;
@@ -78,7 +78,7 @@ void Core_HttpObj::downFile(const QStringList fs)
     }
 }
 
-auto Core_HttpObj::sslConfig()
+auto Core_Http::sslConfig()
 {
     QSslConfiguration SSLConfig;
     SSLConfig = QSslConfiguration::defaultConfiguration();
@@ -87,7 +87,7 @@ auto Core_HttpObj::sslConfig()
     return SSLConfig;
 }
 
-void Core_HttpObj::http_get(const QString &method, QJsonObject &json, const QString &ip, int port)
+void Core_Http::http_get(const QString &method, QJsonObject &json, const QString &ip, int port)
 {
     QString url = "https://%1:%2/%3";
     mHttp.get(url.arg(ip).arg(port).arg(method))
@@ -102,7 +102,7 @@ void Core_HttpObj::http_get(const QString &method, QJsonObject &json, const QStr
 }
 
 
-void Core_HttpObj::http_post(const QString &method, QJsonObject &json, const QString &ip, int port)
+void Core_Http::http_post(const QString &method, QJsonObject &json, const QString &ip, int port)
 {
     QString url = "https://%1:%2/%3";
     mHttp.post(url.arg(ip).arg(port).arg(method))
@@ -117,7 +117,7 @@ void Core_HttpObj::http_post(const QString &method, QJsonObject &json, const QSt
 }
 
 
-void Core_HttpObj::http_put(const QString &method, QJsonObject &json, const QString &ip, int port)
+void Core_Http::http_put(const QString &method, QJsonObject &json, const QString &ip, int port)
 {
     QString url = "https://%1:%2/%3";
     mHttp.put(url.arg(ip).arg(port).arg(method))
@@ -132,7 +132,7 @@ void Core_HttpObj::http_put(const QString &method, QJsonObject &json, const QStr
 }
 
 
-void Core_HttpObj::http_down(const QString &method, QJsonObject &json, const QString &file, const QString &ip, int port)
+void Core_Http::http_down(const QString &method, QJsonObject &json, const QString &file, const QString &ip, int port)
 {
     QString url = "https://%1:%2/%3";
     mHttp.get(url.arg(ip).arg(port).arg(method))
@@ -146,7 +146,7 @@ void Core_HttpObj::http_down(const QString &method, QJsonObject &json, const QSt
             .exec();
 }
 
-void Core_HttpObj::http_upload(const QString &method, const QString &file, const QString &ip, int port)
+void Core_Http::http_upload(const QString &method, const QString &file, const QString &ip, int port)
 {
     QString url = "https://%1:%2/%3";
     mHttp.post(url.arg(ip).arg(port).arg(method)).body(file, file)

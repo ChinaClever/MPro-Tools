@@ -2,11 +2,22 @@
 #define AD_MACADDR_H
 #include <QtCore>
 
+struct sMac
+{
+    sMac() {cntMac=0;}
+    int cntMac;
+    QString mac;
+    QString user;
+    QString startMac;
+    QString endMac;
+};
+
 class MacAddr
 {
     MacAddr();
 public:
     static MacAddr *bulid();
+    sMac *macItem;
     bool isMacAddress(const QString &mac);
 
     QString macAdd(const QString &in, int step);

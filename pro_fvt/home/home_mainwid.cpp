@@ -13,8 +13,8 @@ Home_MainWid::Home_MainWid(QWidget *parent) :
     ui->setupUi(this); //initWid();
     groupBox_background_icon(this);
     mWorkWid = new Home_WorkWid(ui->workWid);
-    Core_HttpObj *http = Core_HttpObj::bulid(this);
-    connect(http, &Core_HttpObj::httpSig, this, &Home_MainWid::onMsg);
+    Core_Http *http = Core_Http::bulid(this);
+    connect(http, &Core_Http::httpSig, this, &Home_MainWid::onMsg);
     connect(mWorkWid, &Home_WorkWid::startSig, this, &Home_MainWid::onStart);
 }
 

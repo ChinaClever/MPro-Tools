@@ -12,7 +12,7 @@
 
 MacAddr::MacAddr()
 {
-
+    macItem = new sMac;
 }
 
 MacAddr *MacAddr::bulid()

@@ -19,22 +19,27 @@ public:
 
 protected:
     //void initSerial();
-
+    void initMac();
+    void updateMac();
     void initLogCount();
     void writeLogCount();
+    void initCfgMac();
+    void wirteCfgMac();
 
 protected slots:
     void initFunSlot();
     void checkPcNumSlot();
     void on_pcBtn_clicked();
     void on_verBtn_clicked();
+    void updateSlot(int,int);
+    void timeoutDone();
     //void on_saveBtn_clicked();
 
 private:
     Ui::Setup_MainWid *ui;
-
-    sCfgComIt *mItem;
     UserMainWid *mUserWid;
+    sCfgComIt *mItem;
+    QTimer *timer;
     //SerialStatusWid *mComWid;
     //SerialStatusWid *mSourceWid;
 };

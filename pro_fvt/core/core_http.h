@@ -1,14 +1,18 @@
-#ifndef CORE_HTTPOBJ_H
-#define CORE_HTTPOBJ_H
+#ifndef CORE_HTTP_H
+#define CORE_HTTP_H
 #include "ssdp_core.h"
 #include "http/httpclient.h"
+#include <QFileDialog>
+#include "filemgr.h"
+#include "macaddr.h"
+#include "cfg_app.h"
 
-class Core_HttpObj : public QObject
+class Core_Http : public QObject
 {
     Q_OBJECT
-    explicit Core_HttpObj(QObject *parent = nullptr);
+    explicit Core_Http(QObject *parent = nullptr);
 public:
-    static Core_HttpObj *bulid(QObject *parent = nullptr);
+    static Core_Http *bulid(QObject *parent = nullptr);
     void initHost(const QString &ip="192.168.1.99", int port=3166);
     void downFile(const QStringList fs);
     void uploadFile(const QStringList fs);
@@ -32,4 +36,4 @@ private:
     QString m_ip; int m_port;
 };
 
-#endif // CORE_HTTPOBJ_H
+#endif // CORE_HTTP_H

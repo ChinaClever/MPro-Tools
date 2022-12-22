@@ -7,6 +7,7 @@
 #include "ui_setup_mainwid.h"
 #include "versiondlg.h"
 #include "macaddr.h"
+#include "dblogs.h"
 
 Setup_MainWid::Setup_MainWid(QWidget *parent) :
     QWidget(parent),
@@ -15,7 +16,7 @@ Setup_MainWid::Setup_MainWid(QWidget *parent) :
     ui->setupUi(this);
     groupBox_background_icon(this);
     QTimer::singleShot(rand()%13,this,SLOT(initFunSlot()));
-    mItem = CfgCom::bulid()->item;
+    mItem = CfgCom::bulid()->item; initCfgMac();
     //initSerial();
 }
 
@@ -33,6 +34,12 @@ void Setup_MainWid::initFunSlot()
     QTimer::singleShot(2*1000,this,SLOT(checkPcNumSlot()));
     QDate buildDate = QLocale(QLocale::English ).toDate( QString(__DATE__).replace("  ", " 0"), "MMM dd yyyy");
     ui->label_date->setText(buildDate.toString("yyyy-MM-dd"));
+
+    initMac();
+    timer = new QTimer(this);
+    timer->start(3*1000);
+    connect(timer, SIGNAL(timeout()),this, SLOT(timeoutDone()));
+    connect(DbLogs::bulid(), SIGNAL(itemChanged(int, int)),this, SLOT(updateSlot(int,int)));
 }
 
 
@@ -106,6 +113,53 @@ void Setup_MainWid::on_verBtn_clicked()
     dlg.exec();
 }
 
+void Setup_MainWid::initCfgMac()
+{
+    sMac *it = MacAddr::bulid()->macItem;
+    CfgCom *cfg = CfgCom::bulid();
+    QString str = "2C:26:5F:38:00:00";
+    it->mac = cfg->readCfg("mac", str, "Mac").toString();
+    it->cntMac = cfg->readCfg("cnt", 5*1000, "Mac").toInt();
+    it->startMac = cfg->readCfg("start", str, "Mac").toString();
+    it->endMac = cfg->readCfg("end", str, "Mac").toString();
+}
+
+void Setup_MainWid::wirteCfgMac()
+{
+    sMac *it = MacAddr::bulid()->macItem;
+    CfgCom *cfg = CfgCom::bulid();
+    cfg->writeCfg("mac", it->mac, "Mac");
+    cfg->writeCfg("cnt", it->cntMac, "Mac");
+    cfg->writeCfg("start", it->startMac, "Mac");
+    cfg->writeCfg("end", it->endMac, "Mac");
+}
+
+void Setup_MainWid::updateMac()
+{
+    sMac *it = MacAddr::bulid()->macItem;
+    int ret =  MacAddr::bulid()->macCnt(it->mac, it->endMac);
+    ui->cntMacLab->setNum(ret);
+}
+
+
+void Setup_MainWid::initMac()
+{
+    updateMac();
+    sMac *it = MacAddr::bulid()->macItem;
+    //ui->spinBox->setValue(it->cntMac);
+    ui->startMacLab->setText(it->startMac);
+    ui->endMacLab->setText(it->endMac);
+}
+
+void Setup_MainWid::updateSlot(int,int)
+{
+    initMac();
+}
+
+void Setup_MainWid::timeoutDone()
+{
+    updateMac();
+}
 
 //void Setup_MainWid::on_saveBtn_clicked()
 //{

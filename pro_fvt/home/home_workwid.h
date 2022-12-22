@@ -3,11 +3,21 @@
 
 #include <QWidget>
 #include "logmainwid.h"
-#include "core_httpobj.h"
+#include "core_thread.h"
 
 namespace Ui {
 class Home_WorkWid;
 }
+
+struct sCount
+{
+    sCount() {all=ok=err=cnt=0;}
+
+    int cnt;
+    int all;
+    int ok;
+    int err;
+};
 
 class Home_WorkWid : public QWidget
 {
@@ -21,19 +31,44 @@ signals:
     void startSig();
 
 private:
-    void initFun();
+    auto initFun();
+    bool initMac();
+    bool initWid();
+    bool initUser();
+    bool inputCheck();
+    void initData();
+
+    QString getTime();
+    void initLayout();
+    void updateTime();
+    bool updateWid();
+    void setWidEnabled(bool en);
+    void setTextColor(bool pass);
     void writeMac(const QByteArray &mac);
 
 private slots:
+    void timeoutDone();
+    void initFunSlot();
+    void updateCntSlot();
+    void updateResult();
     void on_startBtn_clicked();
     void on_findBtn_clicked();
     void on_downBtn_clicked();
+    void finishSlot(bool pass, const QString &msg);
+    void insertTextSlot(const QString &msg, bool pass);
 
 private:
     Ui::Home_WorkWid *ui;
-    Core_HttpObj *mHttp;
+    Core_Http *mHttp;
+    Core_Thread *mCoreThread;
     QStringList m_fs;
     QString mDir;
+    QTimer *timer;
+    sCount mCnt;
+    bool isStart;
+    bool mResult;
+    QTime startTime;
+    int mId=1;
 };
 
 #endif // HOME_WORKWID_H
