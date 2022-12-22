@@ -37,6 +37,7 @@ bool Cfg_App::app_pack(sAppVerIt &it)
     app_dir("bin");
     app_dir("rootfs");
     app_dir("outlet");
+    writeCfg("hw", it.hw, g);
     writeCfg("usr", it.usr, g);
     writeCfg("md5", it.md5, g);
     writeCfg("ver", it.ver, g);
@@ -47,10 +48,18 @@ bool Cfg_App::app_pack(sAppVerIt &it)
     return it.md5.size();
 }
 
+void Cfg_App::app_serialNumber(const QString &sn)
+{
+    QString g = "app_pack";
+    writeCfg("sn", sn, g);
+}
+
 bool Cfg_App::app_unpack(sAppVerIt &it)
 {
     QString g = "app_pack";
     //it.apps = File::entryList(mDir+ "/app/");
+    it.sn = readCfg("sn", "", g).toString();
+    it.hw = readCfg("hw", "", g).toString();
     it.usr = readCfg("usr", "", g).toString();
     it.md5 = readCfg("md5", "", g).toString();
     it.ver = readCfg("ver", "", g).toString();

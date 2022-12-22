@@ -12,8 +12,7 @@ Home_WorkWid::Home_WorkWid(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Home_WorkWid)
 {
-    ui->setupUi(this); initFun();
-    mHttp = Core_Http::bulid(this);
+    ui->setupUi(this);
     mCoreThread = new Core_Thread(this);
     QTimer::singleShot(450,this,SLOT(initFunSlot()));
     //mHttp->initHost("192.168.1.89");
@@ -187,7 +186,11 @@ bool Home_WorkWid::inputCheck()
 
 void Home_WorkWid::initData()
 {
+    QStringList ips;
     mId = 1; mResult = true;
+    if(!ui->adCheckBox->isChecked()) {
+        ips << ui->ipEdit->text();
+    } mCoreThread->setIps(ips);
 }
 
 
@@ -197,9 +200,9 @@ bool Home_WorkWid::initWid()
     bool ret = true;
     if(ret) ret = initUser();
     if(ret) ret = inputCheck();
+    if(ret) ret = updateWid();
     if(ret) {
         initData();
-        updateWid();
         setWidEnabled(false);
         ui->startBtn->setText(tr("终 止"));
         startTime = QTime::currentTime(); emit startSig();
@@ -220,44 +223,29 @@ bool Home_WorkWid::updateWid()
     QString dir = "usr/data/clever";
     Cfg_App cfg(dir, this); sAppVerIt it;
     bool ret = cfg.app_unpack(it);
+    if(ret && it.sn.isEmpty()) it.sn = mCoreThread->createSn();
 
-
-
-/*
-    QString str = mDt->serialNumber;
+    QString str = it.sn;
     if(str.isEmpty()) str = "--- ---";
     ui->snLab->setText(str);
 
-    str = mDt->manufacturer;
+    str = it.dev;
     if(str.isEmpty()) str = "--- ---";
-    ui->mfLab->setText(str);
+    ui->devLab->setText(str);
 
-    str = mDt->model;
-    if(str.isEmpty()) str = "--- ---";
-    ui->modelLab->setText(str);
-
-    str = mDt->hwRevision;
+    str = it.hw;
     if(str.isEmpty()) str = "--- ---";
     ui->hwLab->setText(str);
 
-    str = mDt->fwRevision;
+    str = it.ver;
     if(str.isEmpty()) str = "--- ---";
     ui->fwLab->setText(str);
 
-    str = mDt->ctrlBoardSerial;
-    if(str.isEmpty()) str = "--- ---";
-    ui->ctrlSnLab->setText(str);
-
-    str = mDt->macAddress;
+    str = mCoreThread->updateMacAddr();
     if(str.isEmpty()) str = "--- ---";
     ui->macLab->setText(str);
 
-    if(mPro->step < Test_Over) {
-        updateTime();
-    } else if(mPro->step < Test_End){
-        updateResult();
-    }
-    */
+    return ret;
 }
 
 
@@ -282,13 +270,6 @@ void Home_WorkWid::on_startBtn_clicked()
     }
 }
 
-void Home_WorkWid::writeMac(const QByteArray &mac)
-{
-    QFile file(mDir+"mac.ini");
-    if(file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-        file.write(mac); file.close();
-    }
-}
 
 
 void Home_WorkWid::on_findBtn_clicked()
@@ -327,7 +308,12 @@ void Home_WorkWid::on_downBtn_clicked()
     if(MsgBox::question(this, str)) {
         QStringList fs = initFun();  emit startSig();
         FileMgr::build().delFileOrDir("usr/data/clever");
-        cm_mdelay(10); mHttp->downFile(fs);
+        cm_mdelay(10); Core_Http::bulid(this)->downFile(fs);
     }
 }
 
+
+void Home_WorkWid::on_adCheckBox_clicked(bool checked)
+{
+    ui->ipEdit->setDisabled(checked);
+}

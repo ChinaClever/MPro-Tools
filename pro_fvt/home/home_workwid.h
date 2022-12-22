@@ -44,7 +44,6 @@ private:
     bool updateWid();
     void setWidEnabled(bool en);
     void setTextColor(bool pass);
-    void writeMac(const QByteArray &mac);
 
 private slots:
     void timeoutDone();
@@ -56,13 +55,11 @@ private slots:
     void on_downBtn_clicked();
     void finishSlot(bool pass, const QString &msg);
     void insertTextSlot(const QString &msg, bool pass);
+    void on_adCheckBox_clicked(bool checked);
 
 private:
     Ui::Home_WorkWid *ui;
-    Core_Http *mHttp;
     Core_Thread *mCoreThread;
-    QStringList m_fs;
-    QString mDir;
     QTimer *timer;
     sCount mCnt;
     bool isStart;

@@ -5,6 +5,8 @@
 #define CFG_APP  "ver.ini"
 
 struct sAppVerIt {
+    QString sn;
+    QString hw;
     QString usr; // 客户名称
     QString md5; // 校验码
     QString sig; // 签名信息
@@ -24,6 +26,7 @@ public:
     bool app_check(const QString &fn);
     bool app_pack(sAppVerIt &it);
     bool app_unpack(sAppVerIt &it);
+    void app_serialNumber(const QString &sn);
 
 private:
     void app_dir(const QString &dir);
