@@ -3,7 +3,7 @@
 
 #include <QDialog>
 #include "logcomwid.h"
-#include "dblogs.h"
+#include "dbmacs.h"
 
 namespace Ui {
 class Log_LogQueryDlg;

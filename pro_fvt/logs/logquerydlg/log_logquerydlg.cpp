@@ -27,14 +27,14 @@ QString Log_LogQueryDlg::getCmd()
     QString str = ui->userEdit->text();
     if(!str.isEmpty()) cmd += QString(" and user like '%%1%'").arg(str);
 
-    str = ui->fnEdit->text();
-    if(!str.isEmpty()) cmd += QString(" and fn like '%%1%'").arg(str);
+    str = ui->snEdit->text();
+    if(!str.isEmpty()) cmd += QString(" and sn like '%%1%'").arg(str);
 
     str = ui->swEdit->text();
     if(!str.isEmpty()) cmd += QString(" and sw like '%%1%'").arg(str);
 
-    str = ui->md5Edit->text();
-    if(!str.isEmpty()) cmd += QString(" and md5 like '%%1%'").arg(str);
+    str = ui->devEdit->text();
+    if(!str.isEmpty()) cmd += QString(" and dev like '%%1%'").arg(str);
 
     return cmd;
 }
@@ -49,9 +49,9 @@ bool Log_LogQueryDlg::inputCheck()
 {
     bool ret = true;
 
-    QString str = ui->md5Edit->text();
+    QString str = ui->snEdit->text();
     if(!str.isEmpty()) {
-        if(str.size() != 32) ret = false;
+        if(str.size() < 3) ret = false;
         if(!ret) {
             MsgBox::critical(this, tr("校验码输入有误，请重新输入!!!"));
         }

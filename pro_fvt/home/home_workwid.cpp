@@ -6,7 +6,7 @@
 #include "home_workwid.h"
 #include "ui_home_workwid.h"
 #include <QStandardPaths>
-
+#include "dbmacs.h"
 
 Home_WorkWid::Home_WorkWid(QWidget *parent) :
     QWidget(parent),
@@ -48,6 +48,27 @@ void Home_WorkWid::initFunSlot()
     //QTimer::singleShot(450,this,SLOT(updateCntSlot()));
 }
 
+void Home_WorkWid::logWrite()
+{
+    sLogItem logIt;
+    logIt.dev = ui->devLab->text();
+    logIt.user = ui->userEdit->text();
+    logIt.sw = ui->fwLab->text();
+    logIt.sn = ui->snLab->text();
+    if(mResult) logIt.result = tr("通过");
+    else logIt.result = tr("失败");
+    DbLogs::bulid()->insertItem(logIt);
+
+    if(mResult) {
+        sMacItem macIt;
+        macIt.dev = ui->devLab->text();
+        macIt.user = ui->userEdit->text();
+        macIt.sn = ui->snLab->text();
+        macIt.mac = ui->macLab->text();
+        DbMacs::bulid()->insertItem(macIt);
+    }
+}
+
 void Home_WorkWid::finishSlot(bool pass, const QString &msg)
 {
     QString str = msg + tr(" 配置文件上传");;
@@ -58,8 +79,8 @@ void Home_WorkWid::finishSlot(bool pass, const QString &msg)
         mCnt.err += 1;
         str += tr("失败！");
     } mCnt.all += 1;
-    updateCntSlot();
     insertTextSlot(str, pass);
+    updateCntSlot(); logWrite();
 }
 
 void Home_WorkWid::setTextColor(bool pass)
@@ -208,8 +229,7 @@ void Home_WorkWid::initData()
 
 bool Home_WorkWid::initWid()
 {
-    //bool ret = initMac(); ////======
-    bool ret = true;
+    bool ret = initMac();
     if(ret) ret = initUser();
     if(ret) ret = inputCheck();
     if(ret) ret = updateWid();

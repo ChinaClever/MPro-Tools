@@ -15,7 +15,13 @@ public:
 private:
     void wirteCfgMac();
     void writeMac(const QByteArray &mac);
+    void initCurrentNum();
+    void setCurrentNum();
+    bool getDate();
+    void setDate();
 
+private:
+    ushort mCurrentNum=0;
 };
 
 #endif // CORE_SERIALNUMBER_H

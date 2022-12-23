@@ -35,6 +35,7 @@ private:
     bool initUser();
     bool inputCheck();
     void initData();
+    void logWrite();
 
     QString getTime();
     void initLayout();

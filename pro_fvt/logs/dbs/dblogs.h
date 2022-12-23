@@ -3,7 +3,7 @@
 #include "basicsql.h"
 
 struct sLogItem : public DbBasicItem{
-    QString dev, fn, md5, user, sw, old, remark;
+    QString dev, user, sw, result, sn;
 };
 
 class DbLogs : public SqlBasic<sLogItem>
@@ -11,7 +11,7 @@ class DbLogs : public SqlBasic<sLogItem>
     DbLogs();
 public:
     static DbLogs* bulid();
-    QString tableName(){return "packs";}
+    QString tableName(){return "logs";}
     bool insertItem(const sLogItem& item);
 
 protected:
