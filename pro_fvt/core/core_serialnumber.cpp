@@ -47,7 +47,7 @@ QString Core_SerialNumber::updateMacAddr(int step)
 
 QString Core_SerialNumber::createSn()
 {
-    QString cmd = "3I2"; mCurrentNum +=1;
+    QString cmd = "2I3"; mCurrentNum +=1;
     int m = QDate::currentDate().month();
     int y = QDate::currentDate().year() - 2020;
     for(int i=0; i<3; ++i) cmd += "%" + QString::number(i+1);
