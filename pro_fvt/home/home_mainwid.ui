@@ -24,25 +24,16 @@
     <widget class="QWidget" name="workWid" native="true"/>
    </item>
    <item row="1" column="0">
-    <widget class="QGroupBox" name="groupBox">
+    <widget class="QPlainTextEdit" name="textEdit">
      <property name="maximumSize">
       <size>
        <width>16777215</width>
-       <height>260</height>
+       <height>180</height>
       </size>
      </property>
-     <property name="title">
-      <string>信息输出</string>
+     <property name="readOnly">
+      <bool>true</bool>
      </property>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="0">
-       <widget class="QPlainTextEdit" name="textEdit">
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-     </layout>
     </widget>
    </item>
   </layout>

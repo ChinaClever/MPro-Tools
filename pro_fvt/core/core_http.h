@@ -14,8 +14,9 @@ class Core_Http : public QObject
 public:
     static Core_Http *bulid(QObject *parent = nullptr);
     void initHost(const QString &ip="192.168.1.99", int port=3166);
-    void downFile(const QStringList fs);
-    void uploadFile(const QStringList fs);
+    void downFile(const QStringList &fs);
+    void uploadFile(const QStringList &fs);
+    bool uploadFile(const QString &fn);
     void setting(const sDataItem &it);
     void setting(const sCfgItem &it, const QVariant &value);
     void execute(const QString cmd);

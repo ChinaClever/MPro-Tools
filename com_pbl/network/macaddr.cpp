@@ -4,15 +4,14 @@
  *      Author: Lzy
  */
 #include "macaddr.h"
-#include "print.h"
-#if (QT_VERSION < QT_VERSION_CHECK(6,0,0))
 #include <QRegExpValidator>
-#endif
+#include "print.h"
 #define MAC_ADDR_LEN 6
+
 
 MacAddr::MacAddr()
 {
-    macItem = new sMac;
+    macItem = new sMac();
 }
 
 MacAddr *MacAddr::bulid()
@@ -25,13 +24,6 @@ MacAddr *MacAddr::bulid()
 
 bool MacAddr::isMacAddress(const QString &mac)
 {
-#if (QT_VERSION > QT_VERSION_CHECK(6,0,0))
-    QString mac_addr = mac;
-    QRegularExpression v(QLatin1String("^([A-Fa-f0-9]{2}[-,:]){5}[A-Fa-f0-9]{2}$"));
-    QRegularExpressionMatch match = v.match(mac_addr);
-    if(match.hasMatch())  return true;
-    return false;
-#else
     QString mac_addr = mac;
     QRegExp rx("^([A-Fa-f0-9]{2}[-,:]){5}[A-Fa-f0-9]{2}$");
     QRegExpValidator v(rx, 0);
@@ -40,7 +32,6 @@ bool MacAddr::isMacAddress(const QString &mac)
         return true;
 
     return false;
-#endif
 }
 
 /**
@@ -115,7 +106,7 @@ QString MacAddr::intToMac(quint64 v)
 {
     QByteArray array = toLittleEndian(v);
     QString str = cm_ByteArrayToHexStr(array);
-    QString mac = str.left(str.size()-1);
+    QString mac = str.left(str.size());
     return mac.replace(QString(" "), QString("-"));
 }
 
@@ -144,7 +135,7 @@ QString MacAddr::macAdd(const QString &in, int step)
 {
     QString ret = in;
     quint64 mac = macToInt(ret.replace(":","-")) + step;
-    if(mac > 0) ret = intToMac(mac);
+    if(mac > 0) ret = intToMac(mac).toUpper();
 
     return ret.replace("-",":");
 }

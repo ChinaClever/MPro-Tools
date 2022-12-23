@@ -6,57 +6,39 @@
 #include "core_thread.h"
 
 Core_Thread::Core_Thread(QObject *parent)
-    : QThread{parent}
+    : Core_SerialNumber{parent}
 {
     Ssdp_Core::bulid(this);
 }
 
-void Core_Thread::writeMac(const QByteArray &mac)
+QStringList Core_Thread::getFs()
 {
-    QFile file("usr/data/clever/cfg/mac.ini");
-    if(file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
-        file.write(mac); file.close();
-    }
+    QString dir = "usr/data/clever/cfg/";
+    FileMgr::build().mkpath(dir); QStringList fs; fs << "usr/data/clever/ver.ini";
+    fs << dir+"alarm.cfg" << dir+"devParam.ini" << dir+"cfg.ini" << dir+"logo.png";
+    fs << dir+"inet.ini" << dir+"alarm.df" << dir+"snmpd.conf" << dir+"mac.ini";
+    return fs;
 }
 
-QString Core_Thread::updateMacAddr(int step)
+bool Core_Thread::fsCheck()
 {
-    sMac *it = MacAddr::bulid()->macItem;
-    if(it->mac.size() > 5) {
-        MacAddr *mac = MacAddr::bulid();
-        it->mac = mac->macAdd(it->mac, step); writeMac(it->mac.toLatin1());
-        ///BaseLogs::bulid()->writeMac(it->mac);  ////////==============
-        CfgCom::bulid()->writeCfg("mac", it->mac, "Mac");
-    } else {
-        qDebug() << "updateMacAddr err" << it->mac;
-    }
-
-    return it->mac;
+    bool ret = true;
+    QStringList fs = getFs();
+    foreach (const auto fn, fs) {
+        if(!QFile::exists(fn)) {
+            ret = false;
+            emit msgSig(tr("文件未找到")+fn, ret);
+        }
+    } if(ret) emit msgSig(tr("文件未检查 OK!"), ret);
+    return ret;
 }
-
-QString Core_Thread::createSn()
-{
-    static int currentNum = 1;
-    QString cmd = "2I3";
-    //mItem->currentNum +=1;  ///////==========
-    int m = QDate::currentDate().month();
-    int y = QDate::currentDate().year() - 2020;
-    for(int i=0; i<3; ++i) cmd += "%" + QString::number(i+1);
-    QString sn  = QString(cmd).arg(m, 1, 16).arg(y)
-            .arg(currentNum, 5, 10, QLatin1Char('0'));
-    //Cfg::bulid()->setCurrentNum(); ////==========
-    return sn.toUpper();
-}
-
 
 
 bool Core_Thread::searchDev()
 {
-    bool ret = true;
-    if(m_ips.isEmpty()) {
-        QString room, ip;
+    bool ret = true; if(m_ips.isEmpty()) {
         Ssdp_Core *ssdp = Ssdp_Core::bulid(this);
-        QStringList ips = ssdp->searchTarget(room, ip);
+        cm_mdelay(15); QStringList ips = ssdp->searchAll();
         QString str = tr("未找到任何目标设备");
         if(ips.size()) str = tr("已找到%1个设备").arg(ips.size());
         else {ret = false;} m_ips = ips;
@@ -65,14 +47,33 @@ bool Core_Thread::searchDev()
     return ret;
 }
 
-void Core_Thread::workDown()
+bool Core_Thread::workDown(const QString &ip)
 {
-    bool ret = searchDev();
+    bool res = true;
+    emit msgSig(tr("目标设备:")+ip, true);
+    Core_Http *http = Core_Http::bulid(this);
+    http->initHost(ip); QStringList fs = getFs();
+    foreach (const auto fn, fs) {
+        bool ret = http->uploadFile(fn);
+        if(!ret) res = false;
+        emit msgSig(fn, ret);
+        cm_mdelay(120);
+    }
 
+    if(res) {
+        emit msgSig(tr("重启主程序，设备有响声"), true);
+        http->execute("killall cores");
+    }
+    return res;
 }
 
 void Core_Thread::run()
 {
-    workDown();
-    emit overSig();
+    bool ret = searchDev();
+    if(ret && fsCheck()) {
+        foreach (const auto &ip, m_ips) {
+            ret = workDown(ip); cm_mdelay(10);
+            emit finshSig(ret, ip+" ");
+        }
+    } emit overSig();
 }

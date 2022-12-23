@@ -11,8 +11,7 @@ class Home_WorkWid;
 
 struct sCount
 {
-    sCount() {all=ok=err=cnt=0;}
-
+    sCount() {all=ok=err=0; cnt=100;}
     int cnt;
     int all;
     int ok;
@@ -31,7 +30,6 @@ signals:
     void startSig();
 
 private:
-    auto initFun();
     bool initMac();
     bool initWid();
     bool initUser();
@@ -60,11 +58,11 @@ private slots:
 private:
     Ui::Home_WorkWid *ui;
     Core_Thread *mCoreThread;
-    QTimer *timer;
-    sCount mCnt;
-    bool isStart;
-    bool mResult;
+    QTimer *timer=nullptr;
+    bool isStart=false;
+    bool mResult=true;
     QTime startTime;
+    sCount mCnt;
     int mId=1;
 };
 

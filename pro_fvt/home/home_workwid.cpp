@@ -15,7 +15,8 @@ Home_WorkWid::Home_WorkWid(QWidget *parent) :
     ui->setupUi(this);
     mCoreThread = new Core_Thread(this);
     QTimer::singleShot(450,this,SLOT(initFunSlot()));
-    //mHttp->initHost("192.168.1.89");
+    //Core_Http::bulid(this)->initHost("192.168.1.89");
+    //Core_Http::bulid(this)->execute("killall cores");
 }
 
 Home_WorkWid::~Home_WorkWid()
@@ -52,10 +53,10 @@ void Home_WorkWid::finishSlot(bool pass, const QString &msg)
     QString str = msg + tr(" 配置文件上传");;
     if(pass) {
         mCnt.ok += 1;
-        str = tr("成功！");
+        str += tr("成功！");
     } else {
         mCnt.err += 1;
-        str = tr("失败！");
+        str += tr("失败！");
     } mCnt.all += 1;
     updateCntSlot();
     insertTextSlot(str, pass);
@@ -86,7 +87,9 @@ void Home_WorkWid::updateCntSlot()
     ui->okLcd->display(cnt->ok);
     ui->allLcd->display(cnt->all);
     ui->errLcd->display(cnt->err);
-    ui->cntSpin->setValue(cnt->cnt);
+
+    int num = ui->cntSpin->value();
+    if(num) ui->cntSpin->setValue(num--);
 
     QString str = "0";
     if(cnt->all) {
@@ -174,10 +177,19 @@ bool Home_WorkWid::inputCheck()
     bool ret = false;
     QString str = ui->ipEdit->text();
     if(ui->adCheckBox->isChecked()) {
-
+        Ssdp_Core *ssdp = Ssdp_Core::bulid(this);
+        QStringList ips = ssdp->searchAll();
+        if(ips.size()) {
+            ret = true; //mCoreThread->setIps(ips);
+            Core_Http::bulid(this)->initHost(ips.first());
+        }else {
+            QString str = tr("未找到任何目标设备");
+            MsgBox::critical(this,str);
+        }
     } else {
         ret = cm_isIPaddress(str);
-        if(!ret) MsgBox::critical(this, tr("目标设备IP出错！"));
+        if(ret) Core_Http::bulid(this)->initHost(str);
+        else MsgBox::critical(this, tr("目标设备IP出错！"));
     }
 
     return ret;
@@ -261,8 +273,8 @@ void Home_WorkWid::on_startBtn_clicked()
     if(isStart == false) {
         if(initWid()) {
             timer->start(500);
-            mCoreThread->start();
-            //mHttp->uploadFile(m_fs);
+            //mCoreThread->start();
+            mCoreThread->run();
         }
     } else {
         bool ret = MsgBox::question(this, tr("确定需要提前结束？"));
@@ -274,9 +286,8 @@ void Home_WorkWid::on_startBtn_clicked()
 
 void Home_WorkWid::on_findBtn_clicked()
 {
-    QString room, ip; //getInput(room, ip);
     Ssdp_Core *ssdp = Ssdp_Core::bulid(this);
-    QStringList ips = ssdp->searchTarget(room, ip);
+    QStringList ips = ssdp->searchAll();
     QString str = tr("未找到任何目标设备");
     if(ips.size()) {
         str = tr("已找到%1个设备，包含%2个主机，%3个副机\t\n")
@@ -291,24 +302,15 @@ void Home_WorkWid::on_findBtn_clicked()
 }
 
 
-auto Home_WorkWid::initFun()
-{
-    QString dir = "usr/data/clever/cfg/";
-    FileMgr::build().mkpath(dir); QStringList fs;
-    fs << dir+"alarm.cfg" << dir+"devParam.ini" << dir+"cfg.ini" << dir+"logo.png";
-    fs << dir+"inet.ini" << dir+"alarm.df" << dir+"snmpd.conf";// << mDir+"mac.ini";
-    fs << "usr/data/clever/ver.ini";
-    return fs;
-}
-
-
 void Home_WorkWid::on_downBtn_clicked()
 {
     QString str = tr("请确认下载设备的配置文件?");
     if(MsgBox::question(this, str)) {
-        QStringList fs = initFun();  emit startSig();
+        if(!inputCheck()) return;
         FileMgr::build().delFileOrDir("usr/data/clever");
-        cm_mdelay(10); Core_Http::bulid(this)->downFile(fs);
+        QStringList fs = mCoreThread->getFs(); emit startSig();
+        cm_mdelay(10); fs.removeLast();
+        Core_Http::bulid(this)->downFile(fs);
     }
 }
 

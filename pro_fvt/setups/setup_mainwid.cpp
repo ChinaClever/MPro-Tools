@@ -115,9 +115,9 @@ void Setup_MainWid::on_verBtn_clicked()
 
 void Setup_MainWid::initCfgMac()
 {
-    sMac *it = MacAddr::bulid()->macItem;
     CfgCom *cfg = CfgCom::bulid();
     QString str = "2C:26:5F:38:00:00";
+    sMac *it = MacAddr::bulid()->macItem;
     it->mac = cfg->readCfg("mac", str, "Mac").toString();
     it->cntMac = cfg->readCfg("cnt", 5*1000, "Mac").toInt();
     it->startMac = cfg->readCfg("start", str, "Mac").toString();
@@ -132,11 +132,13 @@ void Setup_MainWid::wirteCfgMac()
     cfg->writeCfg("cnt", it->cntMac, "Mac");
     cfg->writeCfg("start", it->startMac, "Mac");
     cfg->writeCfg("end", it->endMac, "Mac");
+    //cout << it->mac << it->startMac << it->endMac;
 }
 
 void Setup_MainWid::updateMac()
 {
     sMac *it = MacAddr::bulid()->macItem;
+    //cout << it->mac << it->startMac << it->endMac;
     int ret =  MacAddr::bulid()->macCnt(it->mac, it->endMac);
     ui->cntMacLab->setNum(ret);
 }

@@ -19,6 +19,9 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <item row="0" column="2" rowspan="2">
     <widget class="QGroupBox" name="groupBox_1">
      <property name="minimumSize">
@@ -119,6 +122,15 @@
       <string>状态显示区</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_5">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
       <item row="0" column="0">
        <widget class="QLabel" name="label_15">
         <property name="maximumSize">
@@ -173,8 +185,14 @@
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="label_14">
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
         <property name="text">
-         <string>fw版本：</string>
+         <string>软 件：</string>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::AutoText</enum>
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -197,7 +215,7 @@
          </size>
         </property>
         <property name="text">
-         <string>hw版本：</string>
+         <string>硬 件：</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -220,7 +238,7 @@
       <item row="2" column="0">
        <widget class="QLabel" name="label_16">
         <property name="text">
-         <string>Mac地址：</string>
+         <string>MAC：</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -289,7 +307,6 @@
        <font>
         <family>微软雅黑</family>
         <pointsize>16</pointsize>
-        <weight>75</weight>
         <bold>true</bold>
        </font>
       </property>
@@ -493,6 +510,9 @@
       <string>设置区</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
       <item row="0" column="0">
        <widget class="QLabel" name="label_13">
         <property name="minimumSize">
@@ -631,7 +651,7 @@
          <bool>false</bool>
         </property>
         <property name="text">
-         <string>192.168.1.89</string>
+         <string>192.168.1.99</string>
         </property>
        </widget>
       </item>
