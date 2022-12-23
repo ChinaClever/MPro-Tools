@@ -109,8 +109,8 @@ void Home_WorkWid::updateCntSlot()
     ui->allLcd->display(cnt->all);
     ui->errLcd->display(cnt->err);
 
-    int num = ui->cntSpin->value();
-    if(num) ui->cntSpin->setValue(num--);
+    int num = ui->cntSpin->value()-1;
+    if(num) ui->cntSpin->setValue(num);
 
     QString str = "0";
     if(cnt->all) {

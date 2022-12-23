@@ -41,7 +41,7 @@
       <string notr="true">color: rgb(255, 255, 255);</string>
      </property>
      <property name="text">
-      <string>调试工具</string>
+      <string>生产调试工具</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
