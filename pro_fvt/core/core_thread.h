@@ -18,6 +18,7 @@ signals:
     void overSig();
 
 protected:
+    void timeSync();
     bool workDown(const QString &ip);
 
 private:

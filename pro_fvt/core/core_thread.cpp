@@ -47,13 +47,23 @@ bool Core_Thread::searchDev()
     return ret;
 }
 
+void Core_Thread::timeSync()
+{
+    QString fmd = "yyyy-MM-dd hh:mm:ss";
+    QString t = QTime::currentTime().toString(fmd);
+    emit msgSig(tr("时间设置:")+t, true);
+    Core_Http *http = Core_Http::bulid(this);
+    sCfgItem it; it.type = 43; it.fc =1;
+    http->setting(it, t);
+}
+
 bool Core_Thread::workDown(const QString &ip)
 {
     bool res = true;
     emit msgSig(tr("目标设备:")+ip, true);
     Core_Http *http = Core_Http::bulid(this);
     http->initHost(ip); QStringList fs = getFs();
-    foreach (const auto fn, fs) {
+    timeSync(); foreach (const auto fn, fs) {
         bool ret = http->uploadFile(fn);
         if(!ret) res = false;
         emit msgSig(fn, ret);
