@@ -56,7 +56,7 @@ void JsonRpcTcpSocket::connectToHost(const QString& host, int port)
 {
     m_socket->connectToHost(host, port,
                             QIODevice::ReadWrite,
-                            QAbstractSocket::IPv4Protocol);
+                            QAbstractSocket::AnyIPProtocol);
 }
 
 void JsonRpcTcpSocket::connectToUrl(const QUrl& url)

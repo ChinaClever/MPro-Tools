@@ -90,7 +90,7 @@ bool Home_WorkWid::packing(Cfg_App &cfg, const QStringList &apps)
     it.dev = ui->devBox->currentText();
     it.remark = ui->textEdit->toPlainText();
     it.oldVersion = ui->oldVerEdit->text();
-    it.releaseDate = QDate::currentDate().toString("yyyy-MM-dd hh:mm:ss");
+    it.releaseDate = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
     QString str = it.dev + it.usr + it.ver + it.remark + it.oldVersion + it.releaseDate;
     it.md5 = QCryptographicHash::hash(str.toLatin1(),QCryptographicHash::Md5).toHex();
     bool ret = cfg.app_pack(it);

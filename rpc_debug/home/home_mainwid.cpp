@@ -105,8 +105,14 @@ void Home_MainWid::on_connectBtn_clicked()
 bool Home_MainWid::inputCheck()
 {
     QString ip = ui->ipEdit->text();
-    bool ret = cm_isIPaddress(ip);
+
+    QHostAddress host(ip);
+    qDebug() << host.scopeId() << host.toString();
+
+    //bool ret = cm_isIPaddress(ip);
+    bool ret = true;
     if(ret){
+
         ret = mRpc->startClient(ip, ui->portBox->value());
         if(!ret) MsgBox::critical(this, tr("无法连接服务端！！！"));
     } else  MsgBox::critical(this, tr("请正确输入IP地址！！！"));
