@@ -14,7 +14,7 @@
    <string>APP打包工具</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../public_pbl/images/image.qrc">
+   <iconset resource="../com_pbl/images/image.qrc">
     <normaloff>:/image/logo.jpg</normaloff>:/image/logo.jpg</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -57,7 +57,7 @@
   </widget>
  </widget>
  <resources>
-  <include location="../public_pbl/images/image.qrc"/>
+  <include location="../com_pbl/images/image.qrc"/>
  </resources>
  <connections/>
 </ui>

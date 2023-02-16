@@ -19,6 +19,10 @@ public:
 signals:
     void httpSig(const QString &msg);
 
+
+protected:
+    virtual bool eventFilter(QObject * obj,QEvent *event) override;
+
 private:
     void http_get(const QString &method, QJsonObject &json);
     void http_post(const QString &method, QJsonObject &json);
@@ -35,9 +39,9 @@ private slots:
     void on_alrmBtn_clicked();
     void on_readBtn_clicked();
     void on_downBtn_clicked();
-    void on_pushButton_clicked();
-    void on_selectBtn_clicked();
     void on_batchBtn_clicked();
+    void on_selectBtn_clicked();
+    //void on_pushButton_clicked();
     void on_cfgBox_currentIndexChanged(int index);
     void on_alarmBox_currentIndexChanged(int index);
     void onDown(QString msg);

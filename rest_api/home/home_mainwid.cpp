@@ -17,7 +17,6 @@ Home_MainWid::Home_MainWid(QWidget *parent) :
     ui->setupUi(this);
     groupBox_background_icon(this);
     connect(this, &Home_MainWid::httpSig, this, &Home_MainWid::onDown);
-
 }
 
 Home_MainWid::~Home_MainWid()
@@ -219,10 +218,10 @@ void Home_MainWid::on_downBtn_clicked()
 }
 
 
-void Home_MainWid::on_pushButton_clicked()
-{
-    http_upload("upload", "lzy.txt");
-}
+//void Home_MainWid::on_pushButton_clicked()
+//{
+//    http_upload("upload", "lzy.txt");
+//}
 
 
 void Home_MainWid::on_selectBtn_clicked()
@@ -273,3 +272,13 @@ void Home_MainWid::on_batchBtn_clicked()
     }
 }
 
+bool Home_MainWid::eventFilter(QObject *obj, QEvent *event)
+{
+    if (obj == ui->textEdit) {
+        if (event->type() == QEvent::MouseButtonDblClick) {
+            qDebug() << "Double click";
+             return true;
+        }
+    }
+    return false;
+}
