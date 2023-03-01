@@ -42,7 +42,7 @@ void Core_Http::setting(const sDataItem &it)
     json.insert("id", it.id);
     json.insert("value", it.value);
 
-    obj.insert("setDataItem", json);
+    obj.insert("pduDataSet", json);
     http_post("pduSetting", obj, m_ip, m_port);
 }
 
@@ -55,7 +55,7 @@ void Core_Http::setting(const sCfgItem &it, const QVariant &value)
     json.insert("id", it.id);
     json.insert("value", value.toJsonValue());
 
-    obj.insert("setCfgItem", json);
+    obj.insert("pduCfgSet", json);
     http_post("pduSetting", obj, m_ip, m_port);
 }
 

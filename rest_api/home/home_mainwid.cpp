@@ -101,10 +101,10 @@ void Home_MainWid::on_alrmBtn_clicked()
     json.insert("value", ui->alarmValueBox->value());
     int index =  ui->alarmBox->currentIndex();
     if(index) {
-        obj.insert("setDataItem", json);
+        obj.insert("pduDataSet", json);
         http_post("pduSetting", obj);
     } else {
-        obj.insert("getDataItem", json);
+        obj.insert("pduDataGet", json);
         http_get("pduGetting", obj);
     }
 }
@@ -119,10 +119,10 @@ void Home_MainWid::on_cfgBtn_clicked()
     json.insert("value", ui->cfgEdit->text());
     int index =  ui->cfgBox->currentIndex();
     if(index) {
-        obj.insert("setCfgItem", json);
+        obj.insert("pduCfgSet", json);
         http_post("pduSetting", obj);
     } else {
-        obj.insert("getCfgItem", json);
+        obj.insert("pduCfgGet", json);
         http_get("pduGetting", obj);
     }
 }
@@ -136,7 +136,7 @@ void Home_MainWid::on_swBtn_clicked()
     json.insert("type", ui->startBox->value());
     json.insert("id", ui->numBox->value());
     json.insert("value", ui->onBox->value());
-    obj.insert("setDataItem", json);
+    obj.insert("pduDataSet", json);
     http_post("pduSetting", obj);
 }
 

@@ -23,7 +23,7 @@ bool Ssdp_Setting::setting(const sDataItem &it, const QString &room, const QStri
     json.insert("id", it.id);
 
     QJsonObject obj;
-    obj.insert("setDataItem", json);
+    obj.insert("pduDataSet", json);
     QJsonDocument doc(obj);
     return setJson(doc.toJson(QJsonDocument::Compact), room, ip);
 }
@@ -38,7 +38,7 @@ bool Ssdp_Setting::setCfg(const sCfgItem &it, const QVariant &v, const QString &
     json.insert("value", v.toJsonValue());
 
     QJsonObject obj;
-    obj.insert("setCfgItem", json);
+    obj.insert("pduCfgSet", json);
     QJsonDocument doc(obj);
     return setJson(doc.toJson(QJsonDocument::Compact), room, ip);
 }
