@@ -285,7 +285,11 @@ bool Home_WorkWid::fileCrc(const QString &fn)
         mFileIt.md5 = File::md5(fn);
     }
 
-    //if(!ret) MsgBox::critical(this, tr("你选择的文件，未能通过检验。"));
+    if(ret) {
+        int size = File::fileSize(fn) / (1024*1024);
+        if(size > 30) {MsgBox::critical(this, tr("你选择的文件太大，无法进行批量升级。")); ret=false;}
+    }
+
     return ret;
 }
 
