@@ -50,7 +50,7 @@ bool Core_Thread::searchDev()
 void Core_Thread::timeSync()
 {
     QString fmd = "yyyy-MM-dd hh:mm:ss";
-    QString t = QTime::currentTime().toString(fmd);
+    QString t = QDateTime::currentDateTime().toString(fmd);
     emit msgSig(tr("时间设置:")+t, true);
     Core_Http *http = Core_Http::bulid(this);
     sCfgItem it; it.type = 43; it.fc =1;
