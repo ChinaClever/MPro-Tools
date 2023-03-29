@@ -150,6 +150,7 @@ void Home_MainWid::on_cmdBtn_clicked()
 void Home_MainWid::on_readBtn_clicked()
 {
     QJsonObject json;
+    json.insert("dc", 3);
     json.insert("addr", ui->addrSpinBox->value());
     http_get("pduMetaData", json);
 }

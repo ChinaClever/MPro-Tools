@@ -36,7 +36,7 @@ QStringList Ssdp_Search::respondList()
 {
     int cnt = 0; mSet.clear(); mSlaveNum = 0;
     QByteArray reply; QHostAddress host;
-    for(int i=0; i<150; i+=10) {
+    for(int i=0; i<500; i+=10) {
         if(mSet.size() != cnt) {
             cnt = mSet.size();
             i = 100;
