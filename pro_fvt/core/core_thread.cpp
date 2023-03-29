@@ -13,10 +13,11 @@ Core_Thread::Core_Thread(QObject *parent)
 
 QStringList Core_Thread::getFs()
 {
-    QString dir = "usr/data/clever/cfg/";
-    FileMgr::build().mkpath(dir); QStringList fs; fs << "usr/data/clever/ver.ini";
-    fs << dir+"alarm.cfg" << dir+"devParam.ini" << dir+"cfg.ini" << dir+"logo.png";
-    fs << dir+"inet.ini" << dir+"alarm.df" << dir+"snmpd.conf" << dir+"mac.ini";
+    FileMgr::build().mkpath("usr/data/clever/doc/");
+    QString dir = "usr/data/clever/cfg/"; FileMgr::build().mkpath(dir);
+    QStringList fs; fs << "usr/data/clever/ver.ini" << "usr/data/clever/doc/modbus.xlsx";
+    fs << dir+"inet.ini" << dir+"alarm.cfg" << dir+"devParam.ini" << dir+"cfg.ini";
+    fs << dir+"alarm.df" << dir+"snmpd.conf" << dir+"logo.png" << dir+"mac.ini";
     return fs;
 }
 
@@ -67,7 +68,7 @@ bool Core_Thread::workDown(const QString &ip)
         bool ret = http->uploadFile(fn);
         if(!ret) res = false;
         emit msgSig(fn, ret);
-        cm_mdelay(120);
+        cm_mdelay(220);
     }
 
     if(res) {
@@ -82,7 +83,7 @@ void Core_Thread::run()
     bool ret = searchDev();
     if(ret && fsCheck()) {
         foreach (const auto &ip, m_ips) {
-            ret = workDown(ip); cm_mdelay(10);
+            ret = workDown(ip); cm_mdelay(150);
             emit finshSig(ret, ip+" ");
         }
     } emit overSig();

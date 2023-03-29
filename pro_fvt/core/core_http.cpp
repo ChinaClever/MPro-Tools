@@ -80,9 +80,9 @@ bool Core_Http::uploadFile(const QString &fn)
 void Core_Http::downFile(const QStringList &fs)
 {
     foreach (const auto &fn, fs) {
-        QJsonObject json;
-        json.insert("file", fn); //cm_mdelay(100);
+        QJsonObject json; json.insert("file", fn);
         http_down("download", json, fn, m_ip, m_port);
+        cm_mdelay(350);
     }
 }
 
@@ -149,7 +149,7 @@ void Core_Http::http_down(const QString &method, QJsonObject &json, const QStrin
             .sslConfiguration(sslConfig())
             .onDownloadFileSuccess([&](QString fileName) { emit httpSig("Download completed: "+fileName);})
     .onDownloadFileFailed([&](QString error) { emit httpSig("Download failed: "+error+": "+file); })
-    .timeout(1000) // 1s超时
+    .timeout(2500) // 1s超时
             .body(json)
             .exec();
 }
