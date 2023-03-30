@@ -82,7 +82,7 @@ void Core_Http::downFile(const QStringList &fs)
     foreach (const auto &fn, fs) {
         QJsonObject json; json.insert("file", fn);
         http_down("download", json, fn, m_ip, m_port);
-        cm_mdelay(350);
+        cm_mdelay(243);
     }
 }
 
@@ -91,7 +91,7 @@ auto Core_Http::sslConfig()
     QSslConfiguration SSLConfig;
     SSLConfig = QSslConfiguration::defaultConfiguration();
     SSLConfig.setPeerVerifyMode(QSslSocket::VerifyNone);
-    SSLConfig.setProtocol(QSsl::TlsV1_2);
+    //SSLConfig.setProtocol(QSsl::TlsV1_3OrLater);
     return SSLConfig;
 }
 
@@ -142,11 +142,12 @@ void Core_Http::http_put(const QString &method, QJsonObject &json, const QString
 
 void Core_Http::http_down(const QString &method, QJsonObject &json, const QString &file, const QString &ip, int port)
 {
-    QString url = "https://%1:%2/%3";
+    QString url = "https://%1:%2/%3";    
+
     mHttp.get(url.arg(ip).arg(port).arg(method))
             .header("content-type", "application/json")
-            .download(file)  // 启用自动设置文件名字
             .sslConfiguration(sslConfig())
+            .download(file)  // 启用自动设置文件名字
             .onDownloadFileSuccess([&](QString fileName) { emit httpSig("Download completed: "+fileName);})
     .onDownloadFileFailed([&](QString error) { emit httpSig("Download failed: "+error+": "+file); })
     .timeout(2500) // 1s超时

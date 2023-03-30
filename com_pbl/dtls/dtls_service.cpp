@@ -44,7 +44,8 @@ Dtls_Service::Dtls_Service(QObject *parent) : QObject{parent}
     connect(&serverSocket, &QAbstractSocket::readyRead, this, &Dtls_Service::readyRead);
     serverConfiguration = QSslConfiguration::defaultDtlsConfiguration();
     serverConfiguration.setPreSharedKeyIdentityHint("DTLS service");
-    serverConfiguration.setPeerVerifyMode(QSslSocket::VerifyNone);
+    serverConfiguration.setPeerVerifyMode(QSslSocket::VerifyNone);    
+    serverConfiguration.setProtocol(QSsl::DtlsV1_2OrLater);
 }
 
 Dtls_Service::~Dtls_Service()

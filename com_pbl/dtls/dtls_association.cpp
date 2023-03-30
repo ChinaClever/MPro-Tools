@@ -10,6 +10,7 @@ Dtls_Association::Dtls_Association(const QString &address, quint16 port)
 {
     auto configuration = QSslConfiguration::defaultDtlsConfiguration();
     configuration.setPeerVerifyMode(QSslSocket::VerifyNone);
+    configuration.setProtocol(QSsl::DtlsV1_2OrLater);
     crypto.setDtlsConfiguration(configuration);
     crypto.setPeer(QHostAddress(address), port);
 
