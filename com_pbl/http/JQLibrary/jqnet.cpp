@@ -34,11 +34,15 @@
 #include <QHostInfo>
 #include <QTcpSocket>
 #include <QCoreApplication>
+#include <QThread>
 
 // JQLibrary lib import
 #ifdef JQFOUNDATION_LIB
 #   include "JQFoundation.h"
 #endif
+
+QMap< QThread *, QPointer< QNetworkAccessManager > > JQNet::HTTP::manageMap_;
+QMutex JQNet::HTTP::manageMutex_;
 
 QNetworkAddressEntry JQNet::getFirstNetworkAddressEntry()
 {
@@ -126,7 +130,7 @@ bool JQNet::HTTP::get(
     receiveBuffer.clear();
 
     QEventLoop eventLoop;
-    auto reply = manage_.get( request );
+    auto reply = manage().get( request );
     bool isFail = false;
 
     QObject::connect( qApp, &QCoreApplication::aboutToQuit, &eventLoop, &QEventLoop::quit );
@@ -161,7 +165,7 @@ void JQNet::HTTP::get(
         const int &timeout
     )
 {
-    auto reply = manage_.get( request );
+    auto reply = manage().get( request );
 
     this->handle(
         reply,
@@ -184,7 +188,7 @@ bool JQNet::HTTP::deleteResource(
     receiveBuffer.clear();
 
     QEventLoop eventLoop;
-    auto reply = manage_.deleteResource( request );
+    auto reply = manage().deleteResource( request );
     bool isFail = false;
 
     QObject::connect( qApp, &QCoreApplication::aboutToQuit, &eventLoop, &QEventLoop::quit );
@@ -219,7 +223,7 @@ void JQNet::HTTP::deleteResource(
         const int &timeout
     )
 {
-    auto reply = manage_.deleteResource( request );
+    auto reply = manage().deleteResource( request );
 
     this->handle(
         reply,
@@ -244,7 +248,7 @@ bool JQNet::HTTP::post(
     receiveBuffer.clear();
 
     QEventLoop eventLoop;
-    auto reply = manage_.post( request, body );
+    auto reply = manage().post( request, body );
     bool isFail = false;
 
     QObject::connect( qApp, &QCoreApplication::aboutToQuit, &eventLoop, &QEventLoop::quit );
@@ -284,7 +288,7 @@ bool JQNet::HTTP::post(
     receiveBuffer.clear();
 
     QEventLoop eventLoop;
-    auto reply = manage_.post( request, multiPart.data() );
+    auto reply = manage().post( request, multiPart.data() );
     bool isFail = false;
 
     QObject::connect( qApp, &QCoreApplication::aboutToQuit, &eventLoop, &QEventLoop::quit );
@@ -320,7 +324,7 @@ void JQNet::HTTP::post(
         const int &timeout
     )
 {
-    auto reply = manage_.post( request, body );
+    auto reply = manage().post( request, body );
 
     this->handle(
         reply,
@@ -344,7 +348,7 @@ bool JQNet::HTTP::put(
     receiveBuffer.clear();
 
     QEventLoop eventLoop;
-    auto reply = manage_.put( request, body );
+    auto reply = manage().put( request, body );
     bool isFail = false;
 
     QObject::connect( qApp, &QCoreApplication::aboutToQuit, &eventLoop, &QEventLoop::quit );
@@ -382,7 +386,7 @@ bool JQNet::HTTP::put(
     receiveBuffer.clear();
 
     QEventLoop eventLoop;
-    auto reply = manage_.put( request, multiPart.data() );
+    auto reply = manage().put( request, multiPart.data() );
     bool isFail = false;
 
     QObject::connect( qApp, &QCoreApplication::aboutToQuit, &eventLoop, &QEventLoop::quit );
@@ -418,7 +422,7 @@ void JQNet::HTTP::put(
         const int &timeout
     )
 {
-    auto reply = manage_.put( request, body );
+    auto reply = manage().put( request, body );
 
     this->handle(
         reply,
@@ -443,7 +447,7 @@ bool JQNet::HTTP::patch(
     receiveBuffer.clear();
 
     QEventLoop eventLoop;
-    auto reply = manage_.sendCustomRequest( request, "PATCH", body );
+    auto reply = manage().sendCustomRequest( request, "PATCH", body );
     bool isFail = false;
 
     QObject::connect( qApp, &QCoreApplication::aboutToQuit, &eventLoop, &QEventLoop::quit );
@@ -479,7 +483,7 @@ void JQNet::HTTP::patch(
         const int &timeout
     )
 {
-    auto reply = manage_.sendCustomRequest( request, "PATCH", body );
+    auto reply = manage().sendCustomRequest( request, "PATCH", body );
 
     this->handle(
         reply,
@@ -643,6 +647,15 @@ void JQNet::HTTP::handle(
         const std::function<void ()> &onTimeout
     )
 {
+    auto &manage = this->manage();
+
+#if ( QT_VERSION <= QT_VERSION_CHECK( 5, 14, 0 ) )
+    if( manage.networkAccessible() == QNetworkAccessManager::NotAccessible )
+    {
+        manage.setNetworkAccessible(QNetworkAccessManager::Accessible );
+    }
+#endif
+
     QSharedPointer< bool > isCalled( new bool( false ) );
 
     QTimer *timer = nullptr;
@@ -695,7 +708,7 @@ void JQNet::HTTP::handle(
     }
 #endif
 
-#if ( QT_VERSION >= 0x050F00 )
+#if ( QT_VERSION >= QT_VERSION_CHECK( 5, 15, 0 ) )
     QObject::connect( reply, static_cast< void( QNetworkReply::* )( QNetworkReply::NetworkError ) >( &QNetworkReply::errorOccurred ), [ reply, timer, onError, isCalled ](const QNetworkReply::NetworkError &code)
 #else
     QObject::connect( reply, static_cast< void( QNetworkReply::* )( QNetworkReply::NetworkError ) >( &QNetworkReply::error ), [ reply, timer, onError, isCalled ](const QNetworkReply::NetworkError &code)
@@ -716,3 +729,21 @@ void JQNet::HTTP::handle(
         reply->deleteLater();
     } );
 }
+
+QNetworkAccessManager &JQNet::HTTP::manage()
+{
+    QMutexLocker locker(&manageMutex_);
+    auto it = manageMap_.find(QThread::currentThread());
+
+    if (it == manageMap_.end()){
+        QPointer<QNetworkAccessManager> manager(new QNetworkAccessManager);
+
+        manageMap_[ QThread::currentThread() ] = manager;
+
+        return *manager;
+    } else {
+
+        return **it;
+    }
+}
+

@@ -16,7 +16,7 @@ QStringList Core_Thread::getFs()
     FileMgr::build().mkpath("usr/data/clever/doc/");
     QString dir = "usr/data/clever/cfg/"; FileMgr::build().mkpath(dir);
     QStringList fs; fs << "usr/data/clever/ver.ini" << "usr/data/clever/doc/modbus.xlsx";
-    fs << dir+"alarm.cfg" << dir+"devParam.ini" << dir+"cfg.ini";// << dir+"inet.ini";
+    fs << dir+"alarm.cfg" << dir+"devParam.ini" << dir+"cfg.ini" << dir+"inet.ini";
     fs << dir+"alarm.df" << dir+"snmpd.conf" << dir+"logo.png" << dir+"mac.ini";
     return fs;
 }
