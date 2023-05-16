@@ -210,7 +210,8 @@ bool Home_WorkWid::inputCheck()
     } else {
         ret = cm_isIPaddress(str);
         if(ret) Core_Http::bulid(this)->initHost(str);
-        else MsgBox::critical(this, tr("目标设备IP出错！"));
+        if(ret) ret = cm_pingNet(str);
+        if(!ret) MsgBox::critical(this, tr("目标设备IP出错！"));
     }
 
     return ret;

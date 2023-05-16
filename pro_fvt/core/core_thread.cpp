@@ -72,8 +72,9 @@ bool Core_Thread::workDown(const QString &ip)
     }
 
     if(res) {
-        emit msgSig(tr("重启主程序，设备有响声"), true);
-        http->execute("killall cores");
+        emit msgSig(tr("设备重启，设备有响声"), true);
+        http->execute("sync"); cm_mdelay(1000);
+        http->execute("reboot"); // killall cores
     }
     return res;
 }

@@ -42,4 +42,9 @@ void Home_MainWid::onMsg(const QString &msg)
     QString str = QString::number(mId++) + "、"+ msg + "\n";
     ui->textEdit->moveCursor(QTextCursor::Start);
     ui->textEdit->insertPlainText(str);
+
+    if(msg.contains("Download failed: Url")) {
+        QString str = tr("文件下载错误：\n") + msg;
+        MsgBox::critical(this, str);
+    }
 }

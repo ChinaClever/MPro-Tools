@@ -99,14 +99,16 @@ void Home_MainWid::on_startBtn_clicked()
 
 void Home_MainWid::devMode()
 {
-    sCfgItem it; it.type = 13; it.fc = 3;
     int v = ui->modeBox->currentIndex();
-    send(it, v);
-
-    if(v<3) {
+    sCfgItem it; if(v<3) {
+        it.type = 13;
+        it.fc = 3;
+        send(it, v);
         it.fc = 4;
     } else {
         it.type = 15;
+        it.fc = 1;
+        send(it, 1);
         it.fc = 2;
     }
 
@@ -159,32 +161,30 @@ void Home_MainWid::netAddr()
 
 void Home_MainWid::integrate()
 {
-    sCfgItem it; it.type = 15; it.fc = 1; int fc;
-    int index = ui->modbusBox->currentIndex();
-    if(index == 2) fc = 1; else fc = 0;
-    send(it, fc);
+    sCfgItem it;
+    it.type = 16; it.fc = 1;
+    int v = ui->snmpBox->currentIndex();
+    send(it, v);
 
     it.type = 15; it.fc = 11;
-    int v = ui->modeBox->currentIndex();
-    if((index == 1)&&(v==3)) fc = 1; else fc = 0;
-    send(it, fc);
+    v = ui->modeBox->currentIndex();
+    send(it, v);
 
     it.type = 17; it.fc = 1;
-    index = ui->rpcBox->currentIndex();
-    if(index == 1) fc = 1; else fc = 0;
-    send(it, fc);
+    v = ui->rpcBox->currentIndex();
+    send(it, v);
 
     it.type = 18;
-    index = ui->pushBox->currentIndex();
-    if(index == 1) {
+    v = ui->pushBox->currentIndex();
+    if(v == 1) {
         it.fc = 2; send(it, ui->hostEdit->text());
         it.fc = 3; send(it, ui->portEdit->text());
-        it.fc = 1; fc = 1;
-    } else fc = 0;
-    send(it, fc);
+        it.fc = 1; v = 1;
+    } else v = 0;
+    send(it, v);
 
-    index = ui->ctrlBox->currentIndex();
-    it.fc = 8; send(it, index);
+    v = ui->ctrlBox->currentIndex();
+    it.fc = 8; send(it, v);
 }
 
 QByteArray Home_MainWid::readFile(const QString &fn)

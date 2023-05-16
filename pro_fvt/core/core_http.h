@@ -30,7 +30,7 @@ private:
     void http_post(const QString &method, QJsonObject &json, const QString &ip, int port);
     void http_put(const QString &method, QJsonObject &json, const QString &ip, int port);
     void http_upload(const QString &method, const QString &file, const QString &ip, int port);
-    void http_down(const QString &method, QJsonObject &json, const QString &file, const QString &ip, int port);
+    bool http_down(const QString &method, QJsonObject &json, const QString &file, const QString &ip, int port);
 
 private:
     AeaQt::HttpClient mHttp;
