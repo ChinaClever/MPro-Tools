@@ -13,7 +13,7 @@ Home_WorkWid::Home_WorkWid(QWidget *parent) :
     ui(new Ui::Home_WorkWid)
 {
     ui->setupUi(this);
-    mCoreThread = new Core_Thread(this);
+    mCoreThread = Core_Thread::bulid(this);
     QTimer::singleShot(450,this,SLOT(initFunSlot()));
     //Core_Http::bulid(this)->initHost("192.168.1.89");
     //Core_Http::bulid(this)->execute("killall cores");
@@ -200,16 +200,10 @@ bool Home_WorkWid::inputCheck()
     if(ui->adCheckBox->isChecked()) {
         Ssdp_Core *ssdp = Ssdp_Core::bulid(this);
         QStringList ips = ssdp->searchAll();
-        if(1 == ips.size()) {
+        if(ips.size()) {
             ret = true; //mCoreThread->setIps(ips);
             Core_Http::bulid(this)->initHost(ips.first());
-        }else if(ips.size()){
-            QString str = tr("目标设备太多\t\n");
-            int i=0; foreach(const auto &ip, ips) {
-                str += "   " + ip; i++;
-                if(i%4==0) str += "\n";
-            } MsgBox::critical(this,str);
-        } else {
+        }else {
             QString str = tr("未找到任何目标设备");
             MsgBox::critical(this,str);
         }
@@ -255,18 +249,6 @@ bool Home_WorkWid::initWid()
     return ret;
 }
 
-void Home_WorkWid::writeSnMac(const QString &sn, const QString &mac)
-{
-    QString dir = "usr/data/clever/cfg/"; QFile file(dir + "mac.ini");
-    if(file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate)) {
-        file.write(mac.toLatin1());
-    } file.close();
-
-    file.setFileName(dir + "sn.conf");
-    if(file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate)) {
-        file.write(sn.toLatin1());
-    } file.close();
-}
 
 
 bool Home_WorkWid::updateWid()
@@ -274,8 +256,7 @@ bool Home_WorkWid::updateWid()
     QString dir = "usr/data/clever";
     Cfg_App cfg(dir, this); sAppVerIt it;
     bool ret = cfg.app_unpack(it);
-    it.sn = mCoreThread->createSn(); //if(ret) && it.sn.isEmpty()
-    cfg.app_serialNumber(it.sn);
+    //if(ret && it.sn.isEmpty()) it.sn = mCoreThread->createSn();
 
     QString str = it.sn;
     if(str.isEmpty()) str = "--- ---";
@@ -293,10 +274,9 @@ bool Home_WorkWid::updateWid()
     if(str.isEmpty()) str = "--- ---";
     ui->fwLab->setText(str);
 
-    str = mCoreThread->updateMacAddr();
+   // str = mCoreThread->updateMacAddr();
     if(str.isEmpty()) str = "--- ---";
     ui->macLab->setText(str);
-    writeSnMac(it.sn, str);
 
     return ret;
 }
@@ -350,7 +330,7 @@ void Home_WorkWid::on_downBtn_clicked()
         if(!inputCheck()) return;
         FileMgr::build().delFileOrDir("usr/data/clever");
         QStringList fs = mCoreThread->getFs(); emit startSig();
-        cm_mdelay(10); fs.removeLast(); fs.removeLast();
+        cm_mdelay(10); fs.removeLast();
         Core_Http::bulid(this)->downFile(fs);
     }
 }

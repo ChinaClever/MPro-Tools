@@ -217,7 +217,9 @@ bool Home_WorkWid::inputCheck()
     if(1 == index) {
         if(str.isEmpty()) MsgBox::critical(this, tr("机房名称，未指定。")); else ret = true;
     } else if(2 == index) {
-        ret = cm_isIPaddress(str);  if(!ret) MsgBox::critical(this, tr("目标设备IP出错！"));
+        ret = cm_isIPaddress(str);
+        if(ret) ret = cm_pingNet(str);
+        if(!ret) MsgBox::critical(this, tr("目标设备IP出错！"));
     } else ret = true;
 
     return ret;
@@ -228,6 +230,7 @@ bool Home_WorkWid::initWid()
     bool ret = inputCheck();
     if(ret && QFile::exists(ui->fnLab->text())) {
         setWidEnabled(false);
+        mId = 1; mResult = true;
         ui->startBtn->setText(tr("终 止"));
         startTime = QTime::currentTime(); emit startSig();
         QString str = startTime.toString("hh:mm:ss");

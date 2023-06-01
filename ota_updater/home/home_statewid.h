@@ -22,6 +22,7 @@ public slots:
 private slots:
     void initFunSlot();
     void insertSlot(const QString &str);
+    void finishSlot(bool pass, const QString &msg);
 
 private:
     Ui::Home_StateWid *ui;

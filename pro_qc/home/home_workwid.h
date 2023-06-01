@@ -2,8 +2,9 @@
 #define HOME_WORKWID_H
 
 #include <QWidget>
+#include "home_devwid.h"
 #include "logmainwid.h"
-#include "core_thread.h"
+
 
 namespace Ui {
 class Home_WorkWid;
@@ -43,7 +44,6 @@ private:
     bool updateWid();
     void setWidEnabled(bool en);
     void setTextColor(bool pass);
-    void writeSnMac(const QString &sn, const QString &mac);
 
 private slots:
     void timeoutDone();

@@ -58,8 +58,8 @@ void Home_MainWid::on_findBtn_clicked()
     QString str = tr("未找到任何目标设备");
     if(ips.size()) {
         str = tr("已找到%1个设备，包含%2个主机，%3个副机\t\n")
-                .arg(ips.size() + mSsdp->getSlaveNum())
-                .arg(ips.size()).arg(mSsdp->getSlaveNum());
+                  .arg(ips.size() + mSsdp->getSlaveNum())
+                  .arg(ips.size()).arg(mSsdp->getSlaveNum());
         int i=0; foreach(const auto &ip, ips) {
             str += "   " + ip; i++;
             if(i%4==0) str += "\n";
@@ -87,11 +87,11 @@ void Home_MainWid::reboot()
 
 void Home_MainWid::on_startBtn_clicked()
 {
-    webLogin();
-    devMode();
-    location();
-    netAddr();
-    integrate();
+    if(ui->groupBox_1->isEnabled()) webLogin();
+    if(ui->groupBox_2->isEnabled()) devMode();
+    if(ui->groupBox_3->isEnabled()) location();
+    if(ui->groupBox_4->isEnabled()) netAddr();
+    if(ui->groupBox_5->isEnabled()) integrate();
     setDateTime();
     setWorkDown();
     reboot();
@@ -268,4 +268,26 @@ void Home_MainWid::on_selectBtn_clicked()
     ui->pathEdit->setText(dir);
 }
 
+void Home_MainWid::setEnableWid(bool en)
+{
+    ui->groupBox_1->setEnabled(en);
+    ui->groupBox_2->setEnabled(en);
+    ui->groupBox_3->setEnabled(en);
+    ui->groupBox_4->setEnabled(en);
+    ui->groupBox_5->setEnabled(en);
+}
+
+
+void Home_MainWid::on_rangeBox_currentIndexChanged(int index)
+{
+    if(index) {
+        setEnableWid(false); switch (index) {
+        case 1: ui->groupBox_1->setEnabled(true); break;
+        case 2: ui->groupBox_2->setEnabled(true); break;
+        case 3: ui->groupBox_3->setEnabled(true); break;
+        case 4: ui->groupBox_4->setEnabled(true); break;
+        case 5: ui->groupBox_5->setEnabled(true); break;
+        }
+    } else setEnableWid(true);
+}
 

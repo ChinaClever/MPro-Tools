@@ -55,7 +55,7 @@ bool Dtls_Association::waitForConnected()
 void Dtls_Association::udpSocketConnected()
 {
     emit infoMessage(tr("%1: UDP socket is now in ConnectedState, continue with handshake ...").arg(name));
-    startHandshake();
+    cm_mdelay(3); startHandshake();
 }
 
 void Dtls_Association::readyRead()
@@ -114,7 +114,7 @@ void Dtls_Association::pskRequired(QSslPreSharedKeyAuthenticator *auth)
 
 bool Dtls_Association::writeData(const QByteArray &array)
 {
-    isRecved = false; cm_mdelay(1);
+    isRecved = false; cm_mdelay(3);
     if (waitForConnected()) {
         //qDebug() << array.size() << qCompress(array).size();
         const qint64 written = crypto.writeDatagramEncrypted(&socket, qCompress(array));

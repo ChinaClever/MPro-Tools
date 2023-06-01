@@ -11,6 +11,13 @@ Core_Thread::Core_Thread(QObject *parent)
     Ssdp_Core::bulid(this);
 }
 
+Core_Thread *Core_Thread::bulid(QObject *parent)
+{
+    static Core_Thread* sington = nullptr;
+    if(!sington) sington = new Core_Thread(parent);
+    return sington;
+}
+
 QStringList Core_Thread::getFs()
 {
     FileMgr::build().mkpath("usr/data/clever/doc/");
@@ -18,7 +25,6 @@ QStringList Core_Thread::getFs()
     QStringList fs; fs << "usr/data/clever/ver.ini" << "usr/data/clever/doc/modbus.xlsx";
     fs << dir+"alarm.cfg" << dir+"devParam.ini" << dir+"cfg.ini" << dir+"inet.ini";
     fs << dir+"alarm.df" << dir+"snmpd.conf" << dir+"logo.png" << dir+"mac.ini";
-    fs << dir + "sn.conf";
     return fs;
 }
 
@@ -75,7 +81,7 @@ bool Core_Thread::workDown(const QString &ip)
     if(res) {
         emit msgSig(tr("设备重启，设备有响声"), true);
         http->execute("sync"); cm_mdelay(1000);
-        http->execute("reboot"); // killall cores
+       // http->execute("reboot"); // killall cores  ///=======
     }
     return res;
 }
@@ -86,7 +92,7 @@ void Core_Thread::run()
     if(ret && fsCheck()) {
         foreach (const auto &ip, m_ips) {
             ret = workDown(ip); cm_mdelay(150);
-            emit finshSig(ret, ip+" ");            
+            emit finshSig(ret, ip+" ");
         }
     } emit overSig();
 }

@@ -28,6 +28,7 @@ void Home_StateWid::initFunSlot()
     Core_Sender *sender = Core_Sender::bulid(this);
     connect(sender, &Core_Sender::throwSig, this, &Home_StateWid::insertSlot);
     connect(sender, &Core_Sender::errorMessage, this, &Home_StateWid::insertSlot);
+    connect(sender, &Core_Sender::finishSig, this, &Home_StateWid::finishSlot);
 }
 
 void Home_StateWid::startSlot()
@@ -44,4 +45,14 @@ void Home_StateWid::insertSlot(const QString &str)
     if(mCnt++ > 500) ui->textEdit->clear();
 }
 
+void Home_StateWid::finishSlot(bool pass, const QString &msg)
+{
+    QString str;
+    if(pass) {
+        str = tr(" 升级文件上传成功，等待主机重启设备，重启后有响声！");
+    } else {
+        str = tr(" 升级失败！");
+    }
+    insertSlot(msg+str);
+}
 

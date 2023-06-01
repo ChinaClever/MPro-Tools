@@ -27,6 +27,7 @@ protected:
     void integrate();
     void setWorkDown();
     void setDateTime();
+    void setEnableWid(bool en);
     bool checkFile(const QByteArray &msg);
     QByteArray readFile(const QString &fn);
     void send(const sCfgItem &it, const QVariant &v);
@@ -42,6 +43,8 @@ private slots:
     void on_batchCheck_clicked(bool checked);
     void on_checkBox_stateChanged(int arg1);
     void on_selectBtn_clicked();
+
+    void on_rangeBox_currentIndexChanged(int index);
 
 private:
     Ui::Home_MainWid *ui;

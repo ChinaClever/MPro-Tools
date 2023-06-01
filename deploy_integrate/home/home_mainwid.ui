@@ -20,7 +20,7 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="1" column="1">
-    <widget class="QGroupBox" name="groupBox_2">
+    <widget class="QGroupBox" name="groupBox_5">
      <property name="title">
       <string>集成接口</string>
      </property>
@@ -282,7 +282,7 @@
       <property name="geometry">
        <rect>
         <x>94</x>
-        <y>90</y>
+        <y>100</y>
         <width>171</width>
         <height>71</height>
        </rect>
@@ -300,16 +300,16 @@
      <widget class="QPushButton" name="findBtn">
       <property name="geometry">
        <rect>
-        <x>100</x>
-        <y>240</y>
-        <width>171</width>
-        <height>35</height>
+        <x>180</x>
+        <y>250</y>
+        <width>101</width>
+        <height>30</height>
        </rect>
       </property>
       <property name="minimumSize">
        <size>
         <width>0</width>
-        <height>35</height>
+        <height>30</height>
        </size>
       </property>
       <property name="text">
@@ -320,7 +320,7 @@
       <property name="geometry">
        <rect>
         <x>120</x>
-        <y>180</y>
+        <y>190</y>
         <width>141</width>
         <height>31</height>
        </rect>
@@ -335,11 +335,14 @@
      <widget class="QCheckBox" name="checkBox">
       <property name="geometry">
        <rect>
-        <x>110</x>
-        <y>20</y>
-        <width>111</width>
-        <height>25</height>
+        <x>70</x>
+        <y>250</y>
+        <width>101</width>
+        <height>30</height>
        </rect>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
       </property>
       <property name="text">
        <string>指定IP地址</string>
@@ -351,9 +354,9 @@
       </property>
       <property name="geometry">
        <rect>
-        <x>100</x>
-        <y>50</y>
-        <width>171</width>
+        <x>60</x>
+        <y>290</y>
+        <width>241</width>
         <height>25</height>
        </rect>
       </property>
@@ -362,7 +365,7 @@
       <property name="geometry">
        <rect>
         <x>100</x>
-        <y>310</y>
+        <y>340</y>
         <width>91</width>
         <height>30</height>
        </rect>
@@ -378,7 +381,7 @@
       <property name="geometry">
        <rect>
         <x>200</x>
-        <y>310</y>
+        <y>340</y>
         <width>75</width>
         <height>30</height>
        </rect>
@@ -394,16 +397,72 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>350</y>
+        <y>380</y>
         <width>331</width>
         <height>30</height>
        </rect>
       </property>
      </widget>
+     <widget class="QComboBox" name="rangeBox">
+      <property name="geometry">
+       <rect>
+        <x>150</x>
+        <y>50</y>
+        <width>111</width>
+        <height>30</height>
+       </rect>
+      </property>
+      <item>
+       <property name="text">
+        <string>全部设置</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Web登陆</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>模式设置</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>位置信息</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>网络地址</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>集成接口</string>
+       </property>
+      </item>
+     </widget>
+     <widget class="QLabel" name="label_19">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>50</y>
+        <width>53</width>
+        <height>30</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>范围：</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
     </widget>
    </item>
    <item row="0" column="2">
-    <widget class="QGroupBox" name="groupBox_4">
+    <widget class="QGroupBox" name="groupBox_3">
      <property name="minimumSize">
       <size>
        <width>300</width>
@@ -468,7 +527,7 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QGroupBox" name="groupBox">
+    <widget class="QGroupBox" name="groupBox_4">
      <property name="title">
       <string>网络地址</string>
      </property>
@@ -634,7 +693,7 @@
     </widget>
    </item>
    <item row="0" column="0">
-    <widget class="QGroupBox" name="groupBox_5">
+    <widget class="QGroupBox" name="groupBox_1">
      <property name="minimumSize">
       <size>
        <width>300</width>
@@ -717,7 +776,7 @@
     </widget>
    </item>
    <item row="0" column="1">
-    <widget class="QGroupBox" name="groupBox_3">
+    <widget class="QGroupBox" name="groupBox_2">
      <property name="minimumSize">
       <size>
        <width>330</width>

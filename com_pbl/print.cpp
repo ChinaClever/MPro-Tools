@@ -59,16 +59,15 @@ bool cm_pingNet(const QString& ip)
     QString strArg = "ping " + ip + " -n 1 -i 2";  //strPingIP 为设备IP地址
     pingProcess.start(strArg, QIODevice::ReadOnly);
 #endif
-    pingProcess.waitForFinished(-1);
-
+    pingProcess.waitForFinished();
     QString p_stdout = QString::fromLocal8Bit(pingProcess.readAllStandardOutput());
-    bool bPingSuccess = false;
+    bool bPingSuccess = false; //qDebug() << p_stdout;
 
     if(p_stdout.contains("TTL=")) { //我采用这个字符来判断 对不对？
         bPingSuccess = true;
     }else {
         bPingSuccess = false;
-    }
+    } pingProcess.kill();
 
     return bPingSuccess;
 }

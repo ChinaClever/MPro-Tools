@@ -5,13 +5,13 @@
  */
 #include "core_serialnumber.h"
 
-Core_SerialNumber::Core_SerialNumber(QObject *parent)
+Core_Object::Core_Object(QObject *parent)
     : QThread{parent}
 {
     initCurrentNum();
 }
 
-void Core_SerialNumber::writeMac(const QByteArray &mac)
+void Core_Object::writeMac(const QByteArray &mac)
 {
     QFile file("usr/data/clever/cfg/mac.ini");
     if(file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
@@ -20,7 +20,7 @@ void Core_SerialNumber::writeMac(const QByteArray &mac)
 }
 
 
-void Core_SerialNumber::wirteCfgMac()
+void Core_Object::wirteCfgMac()
 {
     sMac *it = MacAddr::bulid()->macItem;
     CfgCom *cfg = CfgCom::bulid();
@@ -30,7 +30,7 @@ void Core_SerialNumber::wirteCfgMac()
     cfg->writeCfg("end", it->endMac, "Mac");
 }
 
-QString Core_SerialNumber::updateMacAddr(int step)
+QString Core_Object::updateMacAddr(int step)
 {
     sMac *it = MacAddr::bulid()->macItem;
     if(it->mac.size() > 5) {
@@ -45,7 +45,7 @@ QString Core_SerialNumber::updateMacAddr(int step)
     return it->mac;
 }
 
-QString Core_SerialNumber::createSn()
+QString Core_Object::createSn()
 {
     QString cmd = "2I3"; mCurrentNum +=1;
     int m = QDate::currentDate().month();
@@ -58,13 +58,13 @@ QString Core_SerialNumber::createSn()
 }
 
 
-void Core_SerialNumber::setDate()
+void Core_Object::setDate()
 {
     QString value = QDate::currentDate().toString("yyyy-MM-dd");
     CfgCom::bulid()->writeCfg("date", value, "Date");
 }
 
-bool Core_SerialNumber::getDate()
+bool Core_Object::getDate()
 {
     QString str = CfgCom::bulid()->readCfg("date","","Date").toString();
     bool ret = false; if(!str.isEmpty()) {
@@ -77,13 +77,13 @@ bool Core_SerialNumber::getDate()
     return ret;
 }
 
-void Core_SerialNumber::setCurrentNum()
+void Core_Object::setCurrentNum()
 {
     setDate(); CfgCom *cfg = CfgCom::bulid();
     cfg->writeCfg("num", mCurrentNum, "Date");
 }
 
-void Core_SerialNumber::initCurrentNum()
+void Core_Object::initCurrentNum()
 {
     bool ret = getDate();
     if(ret) {
