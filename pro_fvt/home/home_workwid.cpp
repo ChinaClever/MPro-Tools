@@ -194,16 +194,15 @@ bool Home_WorkWid::initUser()
 }
 
 
-bool Home_WorkWid::inputCheck()
+bool Home_WorkWid::inputCheck(bool en)
 {
     bool ret = true;
     QString str = ui->ipEdit->text();
-    if(ui->adCheckBox->isChecked()) {
-#if 0
+    if(ui->adCheckBox->isChecked() || en) {
         Ssdp_Core *ssdp = Ssdp_Core::bulid(this);
         QStringList ips = ssdp->searchAll();
         if(1 == ips.size()) {
-            ret = true; //mCoreThread->setIps(ips);
+            ret = true; mCoreThread->setIps(ips);
             Core_Http::bulid(this)->initHost(ips.first());
         }else if(ips.size()){
             QString str = tr("目标设备太多\t\n");
@@ -215,7 +214,6 @@ bool Home_WorkWid::inputCheck()
             QString str = tr("未找到任何目标设备");
             MsgBox::critical(this,str);
         }
-#endif
     } else {
         ret = cm_isIPaddress(str);
         QStringList ips; ips << str; cout << str;
@@ -353,7 +351,7 @@ void Home_WorkWid::on_downBtn_clicked()
 {
     QString str = tr("请确认下载设备的配置文件?");
     if(MsgBox::question(this, str)) {
-        if(!inputCheck()) return;
+        if(!inputCheck(true)) return;
         FileMgr::build().delFileOrDir("usr/data/clever");
         QStringList fs = mCoreThread->getFs(); emit startSig();
         cm_mdelay(10); fs.removeLast(); fs.removeLast();

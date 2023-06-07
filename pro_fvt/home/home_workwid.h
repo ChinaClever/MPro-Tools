@@ -33,7 +33,7 @@ private:
     bool initMac();
     bool initWid();
     bool initUser();
-    bool inputCheck();
+    bool inputCheck(bool en=false);
     void initData();
     void logWrite();
 
