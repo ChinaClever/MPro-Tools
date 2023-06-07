@@ -21,7 +21,9 @@ public slots:
     void startSlot();
 
 private:
+    void setTextColor(const QString &str);
     void insertText(const QString &dst, const QString &str);
+    void upgradeResults(const QString &dst, const QString &str);
 
 private slots:
     void udpRecvSlot();
@@ -29,7 +31,7 @@ private slots:
 private:
     Ui::Remote_RecvWid *ui;
     QUdpSocket *udpSocket;
-    int mCnt;
+    int mCnt; QStringList mErrIp;
 };
 
 #endif // REMOTE_RECVWID_H

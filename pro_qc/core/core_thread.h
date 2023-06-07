@@ -10,7 +10,6 @@ class Core_Thread : public Core_Object
 public:
     static Core_Thread *bulid(QObject *parent = nullptr);
     void setIps(const QStringList &ips) {m_ips = ips;}
-    QStringList getFs();
     void run();
 
 signals:
@@ -18,13 +17,17 @@ signals:
     void finshSig(bool pass, const QString &msg);    
     void overSig();
 
-protected:
-    void timeSync();
+private:
+    bool snCheck();
+    bool macCheck();
+    bool searchDev();
+    bool timeCheck();
+    bool devNumCheck();
+    bool outletCheck();
+    bool parameterCheck();
+    bool thresholdCheck();
     bool workDown(const QString &ip);
 
-private:
-    bool searchDev();
-    bool fsCheck();
 
 private:
     QStringList m_ips;

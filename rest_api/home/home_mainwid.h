@@ -48,7 +48,7 @@ private slots:
 
 private:
     Ui::Home_MainWid *ui;
-    AeaQt::HttpClient mHttp;
+    //AeaQt::HttpClient mHttp;
 };
 
 #endif // HOME_MAINWID_H

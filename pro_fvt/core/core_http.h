@@ -33,7 +33,7 @@ private:
     bool http_down(const QString &method, QJsonObject &json, const QString &file, const QString &ip, int port);
 
 private:
-    AeaQt::HttpClient mHttp;
+    //AeaQt::HttpClient mHttp;
     QString m_ip; int m_port;
 };
 

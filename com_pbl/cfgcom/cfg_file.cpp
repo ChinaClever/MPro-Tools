@@ -45,8 +45,8 @@ QString File::md5(const QString &fn)
         int readSize = qMin(fileSize, bufferSize);
         QCryptographicHash hash(QCryptographicHash::Md5);
         while (readSize > 0 && (bytesRead = sourceFile.read(buffer, readSize)) > 0) {
-            fileSize -= bytesRead;
-            hash.addData(buffer, bytesRead);
+            QCoreApplication::processEvents(QEventLoop::AllEvents, 1);
+            fileSize -= bytesRead; hash.addData(buffer, bytesRead);
             readSize = qMin(fileSize, bufferSize);
         }
         sourceFile.close();

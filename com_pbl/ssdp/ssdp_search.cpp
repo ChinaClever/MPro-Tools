@@ -25,25 +25,18 @@ QStringList Ssdp_Search::searchRoom(const QString &room)
 
 void Ssdp_Search::searchRecvSlot(const sSdpIt &it)
 {
-    if(!it.fc) {
-        mSet << it.ip;
+    if(!it.fc && !mSet.contains(it.ip)) {
+        mSet << it.ip; //cout << it.ip;
         mSlaveNum += it.data.toInt();
-        emit targetSig(it.ip);
+        //emit targetSig(it.ip);
     }
 }
 
 QStringList Ssdp_Search::respondList()
 {
-    int cnt = 0; mSet.clear(); mSlaveNum = 0;
-    QByteArray reply; QHostAddress host;
-    for(int i=0; i<500; i+=10) {
-        if(mSet.size() != cnt) {
-            cnt = mSet.size();
-            i = 100;
-        } cm_mdelay(10);
-    }
-
-    return mSet.values();
+    mSlaveNum = 0; mSet.clear();
+    cm_mdelay(650); //cout << mSet;
+    return mSet;
 }
 
 QStringList Ssdp_Search::searchTarget(const QString &room, const QString &ip)

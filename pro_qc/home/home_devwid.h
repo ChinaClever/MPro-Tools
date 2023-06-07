@@ -17,6 +17,8 @@ class Home_DevWid : public QWidget
 public:
     explicit Home_DevWid(QWidget *parent = nullptr);
     ~Home_DevWid();
+
+public slots:
     void updateData();
 
 private:
@@ -29,14 +31,13 @@ private:
 private slots:
     void on_uncheckBtn_clicked();
     void on_eleClearBtn_clicked();
+    void on_factoryBtn_clicked();
+    void on_outletBtn_clicked();
     void on_lineVolBox_valueChanged(int arg1);
     void on_lineCurBox_valueChanged(int arg1);
     void on_loopVolBox_valueChanged(int arg1);
     void on_loopCurBox_valueChanged(int arg1);
-
-
-    void on_factoryBtn_clicked();
-
+    
 private:
     Ui::Home_DevWid *ui;
     Core_Http *mHttp;

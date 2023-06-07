@@ -29,10 +29,10 @@ void LogMainWid::initFunSLot()
     mLogWid->initWid(DbLogs::bulid(), bar,  new Log_LogQueryDlg(this), str);
     ui->tabWidget->addTab(mLogWid, str);
 
-    str = tr("Mac记录");
-    mMacWid = new LogComWid(ui->tabWidget);
-    bar = new LogBtnBar(); bar->clearHidden();
-    mMacWid->initWid(DbMacs::bulid(), bar,  new Log_MacQueryDlg(this), str);
-    ui->tabWidget->addTab(mMacWid, str);
+    //str = tr("Mac记录");
+    //mMacWid = new LogComWid(ui->tabWidget);
+    //bar = new LogBtnBar(); bar->clearHidden();
+    //mMacWid->initWid(DbMacs::bulid(), bar,  new Log_MacQueryDlg(this), str);
+    //ui->tabWidget->addTab(mMacWid, str);
 }
 

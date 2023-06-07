@@ -31,7 +31,6 @@ signals:
     void startSig();
 
 private:
-    bool initMac();
     bool initWid();
     bool initUser();
     bool inputCheck();
@@ -46,16 +45,17 @@ private:
     void setTextColor(bool pass);
 
 private slots:
+    void updateWidSlot();
     void timeoutDone();
     void initFunSlot();
     void updateCntSlot();
     void updateResult();
     void on_startBtn_clicked();
     void on_findBtn_clicked();
-    void on_downBtn_clicked();
     void finishSlot(bool pass, const QString &msg);
     void insertTextSlot(const QString &msg, bool pass);
-    void on_adCheckBox_clicked(bool checked);
+
+    void on_auCheckBox_clicked(bool checked);
 
 private:
     Ui::Home_WorkWid *ui;

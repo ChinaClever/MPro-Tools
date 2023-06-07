@@ -17,8 +17,12 @@ public:
     explicit Home_MainWid(QWidget *parent = nullptr);
     ~Home_MainWid();
 
+signals:
+    void startSig();
+
 protected:
     void initWid();
+    void setTextColor(const QString &str);
 
 private slots:
     void onStart();

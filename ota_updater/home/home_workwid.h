@@ -56,6 +56,7 @@ private slots:
     void finishSlot(bool pass, const QString &msg);
     void on_searchBox_currentIndexChanged(int index);
     void insertTextSlot(bool pass, const QString &msg);
+    void upgradeError(const QString &host, const QString &msg);
 
 private:
     Ui::Home_WorkWid *ui;

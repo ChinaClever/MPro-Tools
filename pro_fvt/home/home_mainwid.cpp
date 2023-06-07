@@ -37,10 +37,28 @@ void Home_MainWid::onStart()
 }
 
 
-void Home_MainWid::onMsg(const QString &msg)
+void Home_MainWid::setTextColor(const QString &str)
 {
-    QString str = QString::number(mId++) + "、"+ msg + "\n";
+    bool pass = true;
+    if(str.contains("err") || str.contains("fail")) pass = false;
+    if(str.contains("错误") || str.contains("失败")) pass = false;
+
+    QColor color("black");
+    if(!pass) color = QColor("red");
     ui->textEdit->moveCursor(QTextCursor::Start);
+
+    QTextCharFormat fmt;//文本字符格式
+    fmt.setForeground(color);// 前景色(即字体色)设为color色
+    QTextCursor cursor = ui->textEdit->textCursor();//获取文本光标
+    cursor.mergeCharFormat(fmt);//光标后的文字就用该格式显示
+    ui->textEdit->mergeCurrentCharFormat(fmt);//textEdit使用当前的字符格式
+}
+
+
+void Home_MainWid::onMsg(const QString &msg)
+{    
+    QString str = QString::number(mId++) + "、"+ msg + "\n";
+    setTextColor(str); //ui->textEdit->moveCursor(QTextCursor::Start);
     ui->textEdit->insertPlainText(str);
 
     if(msg.contains("Download failed: Url")) {

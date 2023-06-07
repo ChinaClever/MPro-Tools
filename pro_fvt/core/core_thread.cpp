@@ -9,6 +9,7 @@ Core_Thread::Core_Thread(QObject *parent)
     : Core_Object{parent}
 {
     Ssdp_Core::bulid(this);
+    Core_Http::bulid(this);
 }
 
 QStringList Core_Thread::getFs()
@@ -56,7 +57,7 @@ void Core_Thread::timeSync()
     emit msgSig(tr("时间设置:")+t, true);
     Core_Http *http = Core_Http::bulid(this);
     sCfgItem it; it.type = 43; it.fc =1;
-    http->setting(it, t);
+    http->setting(it, t); cm_mdelay(320);
 }
 
 bool Core_Thread::workDown(const QString &ip)
@@ -69,7 +70,7 @@ bool Core_Thread::workDown(const QString &ip)
         bool ret = http->uploadFile(fn);
         if(!ret) res = false;
         emit msgSig(fn, ret);
-        cm_mdelay(220);
+        cm_mdelay(120);
     }
 
     if(res) {
@@ -87,6 +88,6 @@ void Core_Thread::run()
         foreach (const auto &ip, m_ips) {
             ret = workDown(ip); cm_mdelay(150);
             emit finshSig(ret, ip+" ");            
-        }
+        }m_ips.clear();
     } emit overSig();
 }

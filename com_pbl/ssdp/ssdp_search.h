@@ -24,7 +24,7 @@ private slots:
     void searchRecvSlot(const sSdpIt &it);
 
 private:
-    QSet<QString> mSet;
+    QStringList mSet;
     int mSlaveNum=0;
 };
 

@@ -42,6 +42,7 @@ void MainWindow::initWid()
 
     mDevWid = new Home_DevWid(ui->stackedWid);
     ui->stackedWid->addWidget(mDevWid);
+    connect(mHomeWid, &Home_MainWid::startSig, mDevWid, &Home_DevWid::updateData);
 
     mSetupWid = new Setup_MainWid(ui->stackedWid);
     ui->stackedWid->addWidget(mSetupWid);

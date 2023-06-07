@@ -28,7 +28,7 @@ struct sThreshold
     double loopVol;
     double loopCur;
     double loopPow;
-    QList<int> ops;
+    QVariantList ops;
 };
 
 struct sCoreUnit
@@ -45,6 +45,9 @@ struct sCoreItem
     sCoreUnit desire; // 期望
     sCoreUnit actual; // 实际
     QString jsonPacket;
+    QString datetime;
+    QString mac,sn;
+    QString ver;
 };
 
 
@@ -58,7 +61,22 @@ public:
     void clearAllEle();
     void factoryRestore();
     void relayCtrl(int on, int id=0);
+    void readMetaData();
+    void timeSync();
+    bool jsonAnalysis();
 
+private:
+    void getSn(const QJsonObject &object);
+    void getMac(const QJsonObject &object);
+    void getParameter(const QJsonObject &object);
+    void getThreshold(const QJsonObject &object);
+    double getRating(const QJsonObject &object, const QString &key);
+
+    bool checkInput(const QByteArray &msg, QJsonObject &obj);
+    double getData(const QJsonObject &object, const QString &key);
+    QJsonValue getValue(const QJsonObject &object, const QString &key);
+    QJsonArray getArray(const QJsonObject &object, const QString &key);
+    QJsonObject getObject(const QJsonObject &object, const QString &key);
 
 protected:
     Core_Http *mHttp;

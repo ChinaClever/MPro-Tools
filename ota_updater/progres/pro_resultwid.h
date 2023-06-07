@@ -22,6 +22,7 @@ public slots:
 private slots:
     void initFunSlot();
     void finishSlot(bool, const QString &);
+    void upgradeError(const QString &host, const QString &msg);
     void insertText(QPlainTextEdit *textEdit, const QString &str);
 
 private:

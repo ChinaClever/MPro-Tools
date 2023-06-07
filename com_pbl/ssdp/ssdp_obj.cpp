@@ -37,7 +37,7 @@ void Ssdp_Obj::readMsgSlot()
     while (mSocket->hasPendingDatagrams()) {
         reply.resize(mSocket->pendingDatagramSize());
         mSocket->readDatagram(reply.data(), reply.size(), &host);
-        recvMsg(host.toString(), reply); // qDebug() << host.toString();
+        recvMsg(host.toString(), reply);  cout << host.toString();
     }
 }
 
@@ -51,7 +51,8 @@ QByteArray Ssdp_Obj::toArray(const sSdpIt &it)
 bool Ssdp_Obj::toItem(const QByteArray &array, sSdpIt &it)
 {
     QByteArray data = qUncompress(array);
-    QDataStream out(&data, QIODevice::ReadOnly); bool ret = false;
+    bool ret = false; if(data.isEmpty()) return ret;
+    QDataStream out(&data, QIODevice::ReadOnly);
     out >> it.version >> it.fc >> it.room >> it.ip >> it.target >> it.data >> it.crc;
     if(it.crc == END_CRC) ret = true;
     return ret;
@@ -59,8 +60,8 @@ bool Ssdp_Obj::toItem(const QByteArray &array, sSdpIt &it)
 
 bool Ssdp_Obj::ssdpSend(const sSdpIt &it)
 {
-    bool ret = true; QByteArray array = toArray(it);
-    auto rcv = mSocket->writeDatagram(array, mAddress, mPort);  mSocket->flush();
+    bool ret = true; QByteArray array = toArray(it); //cout << array.size();
+    auto rcv = mSocket->writeDatagram(array, mAddress, mPort); mSocket->flush();
     if(rcv < 0) { ret = false; cout << "Error: SSDP write" << mSocket->errorString();}
     return ret;
 }
@@ -73,10 +74,9 @@ bool Ssdp_Obj::udpSend(const QHostAddress &host, const sSdpIt &it)
 
 void Ssdp_Obj::recvMsg(const QString &ip, const QByteArray &array)
 {
-    sSdpIt it;
-    if(toItem(array, it)) {
+    sSdpIt it; if(toItem(array, it)) {
         if(!ip.contains(it.ip)) {it.ip = ip; it.ip.remove("::ffff:");}
-        emit recvSig(it);
+        emit recvSig(it); //cout << ip;
     } else cout << it.fc << it.crc << array.size();
 }
 

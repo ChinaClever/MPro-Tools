@@ -35,15 +35,20 @@ void Home_MainWid::http_get(const QString &method, QJsonObject &json)
     QString url = "https://%1:%2/%3";
     QString ip = ui->ipEdit->text();
     int port = ui->portBox->value();
-    mHttp.get(url.arg(ip).arg(port).arg(method))
-            .header("content-type", "application/json")
-            .onSuccess([&](QString result) {emit httpSig(result);})
-    .onFailed([&](QString error) {emit httpSig(error); })
-    .onTimeout([&](QNetworkReply *) {emit httpSig("timeout"); }) // 超时处理
-    .sslConfiguration(SSLConfig)
-            .timeout(1000) // 1s超时
-            .body(json)
-            .exec();
+    AeaQt::HttpClient http;
+    http.clearAccessCache();
+    http.clearConnectionCache();
+
+    http.get(url.arg(ip).arg(port).arg(method))
+        .header("content-type", "application/json")
+        .onSuccess([&](QString result) {emit httpSig(result);})
+        .onFailed([&](QString error) {emit httpSig(error); })
+        .onTimeout([&](QNetworkReply *) {emit httpSig("timeout"); }) // 超时处理
+        .sslConfiguration(SSLConfig)
+        .timeout(1000) // 1s超时
+        .body(json)
+        .block()
+        .exec();
 }
 
 
@@ -57,15 +62,19 @@ void Home_MainWid::http_post(const QString &method, QJsonObject &json)
     QString url = "https://%1:%2/%3";
     QString ip = ui->ipEdit->text();
     int port = ui->portBox->value();
-    mHttp.post(url.arg(ip).arg(port).arg(method))
-            .header("content-type", "application/json")
-            .onSuccess([&](QString result) {emit httpSig(result);})
-    .onFailed([&](QString error) {emit httpSig(error); })
-    .onTimeout([&](QNetworkReply *) {emit httpSig("timeout"); }) // 超时处理
-    .sslConfiguration(SSLConfig)
-            .timeout(1000) // 1s超时
-            .body(json)
-            .exec();
+    AeaQt::HttpClient http;
+    http.clearAccessCache();
+    http.clearConnectionCache();
+    http.post(url.arg(ip).arg(port).arg(method))
+        .header("content-type", "application/json")
+        .onSuccess([&](QString result) {emit httpSig(result);})
+        .onFailed([&](QString error) {emit httpSig(error); })
+        .onTimeout([&](QNetworkReply *) {emit httpSig("timeout"); }) // 超时处理
+        .sslConfiguration(SSLConfig)
+        .timeout(1000) // 1s超时
+        .body(json)
+        .block()
+        .exec();
 }
 
 
@@ -79,15 +88,19 @@ void Home_MainWid::http_put(const QString &method, QJsonObject &json)
     QString url = "https://%1:%2/%3";
     QString ip = ui->ipEdit->text();
     int port = ui->portBox->value();
-    mHttp.put(url.arg(ip).arg(port).arg(method))
-            .header("content-type", "application/json")
-            .onSuccess([&](QString result) {emit httpSig(result);})
-    .onFailed([&](QString error) {emit httpSig(error); })
-    .onTimeout([&](QNetworkReply *) {emit httpSig("timeout"); }) // 超时处理
-    .sslConfiguration(SSLConfig)
-            .timeout(1000) // 1s超时
-            .body(json)
-            .exec();
+    AeaQt::HttpClient http;
+    http.clearAccessCache();
+    http.clearConnectionCache();
+    http.put(url.arg(ip).arg(port).arg(method))
+        .header("content-type", "application/json")
+        .onSuccess([&](QString result) {emit httpSig(result);})
+        .onFailed([&](QString error) {emit httpSig(error); })
+        .onTimeout([&](QNetworkReply *) {emit httpSig("timeout"); }) // 超时处理
+        .sslConfiguration(SSLConfig)
+        .timeout(1000) // 1s超时
+        .body(json)
+        .block()
+        .exec();
 }
 
 void Home_MainWid::on_alrmBtn_clicked()
@@ -181,14 +194,18 @@ void Home_MainWid::http_down(const QString &method, QJsonObject &json, const QSt
     QString url = "https://%1:%2/%3";
     QString ip = ui->ipEdit->text();
     int port = ui->portBox->value();
-    mHttp.get(url.arg(ip).arg(port).arg(method))
-            .header("content-type", "application/json")
-            .download(file)  // 启用自动设置文件名字
-            .sslConfiguration(SSLConfig)
-            .onDownloadFileSuccess([&](QString fileName) { emit httpSig("Download completed: "+fileName);})
-    .onDownloadFileFailed([&](QString error) { emit httpSig("Download failed: "+error); })
-    .body(json)
-            .exec();
+    AeaQt::HttpClient http;
+    http.clearAccessCache();
+    http.clearConnectionCache();
+    http.get(url.arg(ip).arg(port).arg(method))
+        .header("content-type", "application/json")
+        .download(file)  // 启用自动设置文件名字
+        .sslConfiguration(SSLConfig)
+        .onDownloadFileSuccess([&](QString fileName) { emit httpSig("Download completed: "+fileName);})
+        .onDownloadFileFailed([&](QString error) { emit httpSig("Download failed: "+error); })
+        .body(json)
+        .block()
+        .exec();
 }
 
 void Home_MainWid::http_upload(const QString &method, const QString &file)
@@ -201,12 +218,16 @@ void Home_MainWid::http_upload(const QString &method, const QString &file)
     QString url = "https://%1:%2/%3";
     QString ip = ui->ipEdit->text();
     int port = ui->portBox->value();
-    mHttp.post(url.arg(ip).arg(port).arg(method))
-            .body(file, file)
-            .onSuccess([&](QString result) {emit httpSig(result);})
-            .onFailed([&](QString error) {emit httpSig(error); })
-            .sslConfiguration(SSLConfig)
-            .exec();
+    AeaQt::HttpClient http;
+    http.clearAccessCache();
+    http.clearConnectionCache();
+    http.post(url.arg(ip).arg(port).arg(method))
+        .body(file, file)
+        .onSuccess([&](QString result) {emit httpSig(result);})
+        .onFailed([&](QString error) {emit httpSig(error); })
+        .sslConfiguration(SSLConfig)
+        .block()
+        .exec();
 }
 
 
@@ -278,7 +299,7 @@ bool Home_MainWid::eventFilter(QObject *obj, QEvent *event)
     if (obj == ui->textEdit) {
         if (event->type() == QEvent::MouseButtonDblClick) {
             qDebug() << "Double click";
-             return true;
+            return true;
         }
     }
     return false;

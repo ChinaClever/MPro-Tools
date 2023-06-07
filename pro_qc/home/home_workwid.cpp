@@ -6,13 +6,13 @@
 #include "home_workwid.h"
 #include "ui_home_workwid.h"
 #include <QStandardPaths>
-#include "dbmacs.h"
 
 Home_WorkWid::Home_WorkWid(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Home_WorkWid)
 {
     ui->setupUi(this);
+    Ssdp_Core::bulid(this);
     mCoreThread = Core_Thread::bulid(this);
     QTimer::singleShot(450,this,SLOT(initFunSlot()));
     //Core_Http::bulid(this)->initHost("192.168.1.89");
@@ -44,34 +44,26 @@ void Home_WorkWid::initFunSlot()
     connect(timer, SIGNAL(timeout()), this, SLOT(timeoutDone()));
     connect(mCoreThread, &Core_Thread::finshSig, this, &Home_WorkWid::finishSlot);
     connect(mCoreThread, &Core_Thread::overSig, this, &Home_WorkWid::updateResult);
-    connect(mCoreThread, &Core_Thread::msgSig, this, &Home_WorkWid::insertTextSlot);
+    connect(mCoreThread, &Core_Thread::msgSig, this, &Home_WorkWid::insertTextSlot);    
     //QTimer::singleShot(450,this,SLOT(updateCntSlot()));
 }
 
 void Home_WorkWid::logWrite()
 {
     sLogItem logIt;
-    logIt.dev = ui->devLab->text();
+    logIt.dev = "MPDU Pro";
+    logIt.mac = ui->macLab->text();
     logIt.user = ui->userEdit->text();
     logIt.sw = ui->fwLab->text();
     logIt.sn = ui->snLab->text();
     if(mResult) logIt.result = tr("通过");
     else logIt.result = tr("失败");
     DbLogs::bulid()->insertItem(logIt);
-
-    if(mResult) {
-        sMacItem macIt;
-        macIt.dev = ui->devLab->text();
-        macIt.user = ui->userEdit->text();
-        macIt.sn = ui->snLab->text();
-        macIt.mac = ui->macLab->text();
-        DbMacs::bulid()->insertItem(macIt);
-    }
 }
 
 void Home_WorkWid::finishSlot(bool pass, const QString &msg)
 {
-    QString str = msg + tr(" 配置文件上传");;
+    QString str = msg + tr(" 检查结果 ");
     if(pass) {
         mCnt.ok += 1;
         str += tr("成功！");
@@ -112,8 +104,7 @@ void Home_WorkWid::updateCntSlot()
     int num = ui->cntSpin->value()-1;
     if(num) ui->cntSpin->setValue(num);
 
-    QString str = "0";
-    if(cnt->all) {
+    QString str = "0"; if(cnt->all) {
         double value = cnt->ok*100.0 / cnt->all;
         str = QString::number(value,'f',0) +"%";
     } ui->passLcd->display(str);
@@ -158,27 +149,10 @@ void Home_WorkWid::updateResult()
     ui->timeLab->setText(str);
     ui->timeLab->setStyleSheet(style);
     ui->startBtn->setText(tr("开 始"));
-    QTimer::singleShot(450,this,SLOT(updateCntSlot()));
+    //QTimer::singleShot(450,this,SLOT(updateCntSlot()));
     str = QTime::currentTime().toString("hh:mm:ss");
     ui->endLab->setText(str);
     timer->stop();
-}
-
-bool Home_WorkWid::initMac()
-{
-    bool ret = true;
-    sMac *it = MacAddr::bulid()->macItem;
-    int res =  MacAddr::bulid()->macCnt(it->mac, it->endMac);
-    if(res <= it->cntMac) {
-        if(res < 1) {
-            MsgBox::critical(this, tr("MAC地址已用完，无法继续使用")); ret = false;
-        } else {
-            QString str = tr("剩余MAC地址，仅有%1个，请向领导反馈").arg(res);
-            MsgBox::critical(this, str);
-        }
-    }
-
-    return ret;
 }
 
 
@@ -195,22 +169,25 @@ bool Home_WorkWid::initUser()
 
 bool Home_WorkWid::inputCheck()
 {
-    bool ret = false;
+    bool ret = true;
     QString str = ui->ipEdit->text();
-    if(ui->adCheckBox->isChecked()) {
+    if(ui->auCheckBox->isChecked()) {
+#if 0
         Ssdp_Core *ssdp = Ssdp_Core::bulid(this);
         QStringList ips = ssdp->searchAll();
-        if(ips.size()) {
-            ret = true; //mCoreThread->setIps(ips);
+        if(ips.size()) { //cout << ips.size() << ips;
+            ret = true; mCoreThread->setIps(ips);
             Core_Http::bulid(this)->initHost(ips.first());
-        }else {
+        } else {
             QString str = tr("未找到任何目标设备");
             MsgBox::critical(this,str);
         }
+#endif
     } else {
         ret = cm_isIPaddress(str);
+        QStringList ips; ips << str;
         if(ret) Core_Http::bulid(this)->initHost(str);
-        if(ret) ret = cm_pingNet(str);
+        if(ret) {ret = cm_pingNet(str); mCoreThread->setIps(ips);}
         if(!ret) MsgBox::critical(this, tr("目标设备IP出错！"));
     }
 
@@ -222,22 +199,38 @@ void Home_WorkWid::initData()
 {
     QStringList ips;
     mId = 1; mResult = true;
-    if(!ui->adCheckBox->isChecked()) {
-        ips << ui->ipEdit->text();
-    } mCoreThread->setIps(ips);
+    //if(!ui->auCheckBox->isChecked()) {
+    //    ips << ui->ipEdit->text();
+    //} mCoreThread->setIps(ips);
+
+    sCoreItem *it = &(Core_Object::coreItem);
+    it->jsonPacket.clear();
+    it->datetime.clear();
+    //it->ip = ips.first();
+    it->mac.clear();
+    it->sn.clear();    
+
+    memset(&(it->actual.param), 0, sizeof(sParameter));
+    it->actual.rate.lineVol = 0;
+    it->actual.rate.lineCur = 0;
+    it->actual.rate.linePow = 0;
+    it->actual.rate.loopVol = 0;
+    it->actual.rate.loopCur = 0;
+    it->actual.rate.loopPow = 0;
+    it->actual.rate.ops.clear();
 }
 
 
 bool Home_WorkWid::initWid()
 {
-    bool ret = initMac();
-    if(ret) ret = initUser();
+    bool ret = initUser();
     if(ret) ret = inputCheck();
-    if(ret) ret = updateWid();
+    //if(ret) ret = updateWid();
     if(ret) {
         initData();
         setWidEnabled(false);
         ui->startBtn->setText(tr("终 止"));
+        QTimer::singleShot(615,this,SLOT(updateWidSlot()));
         startTime = QTime::currentTime(); emit startSig();
         QString str = startTime.toString("hh:mm:ss");
         ui->startLab->setText(str);
@@ -249,38 +242,29 @@ bool Home_WorkWid::initWid()
     return ret;
 }
 
-
+void Home_WorkWid::updateWidSlot()
+{
+    updateWid();
+}
 
 bool Home_WorkWid::updateWid()
 {
-    QString dir = "usr/data/clever";
-    Cfg_App cfg(dir, this); sAppVerIt it;
-    bool ret = cfg.app_unpack(it);
-    //if(ret && it.sn.isEmpty()) it.sn = mCoreThread->createSn();
+    sCoreItem *it = &Core_Object::coreItem;
 
-    QString str = it.sn;
+    QString str = it->sn;
     if(str.isEmpty()) str = "--- ---";
     ui->snLab->setText(str);
 
-    str = it.dev;
-    if(str.isEmpty()) str = "--- ---";
-    ui->devLab->setText(str);
-
-    str = it.hw;
-    if(str.isEmpty()) str = "--- ---";
-    ui->hwLab->setText(str);
-
-    str = it.ver;
+    str = it->ver;
     if(str.isEmpty()) str = "--- ---";
     ui->fwLab->setText(str);
 
-   // str = mCoreThread->updateMacAddr();
+    str = it->mac;
     if(str.isEmpty()) str = "--- ---";
     ui->macLab->setText(str);
 
-    return ret;
+    return true;
 }
-
 
 
 void Home_WorkWid::timeoutDone()
@@ -294,16 +278,14 @@ void Home_WorkWid::on_startBtn_clicked()
     if(isStart == false) {
         if(initWid()) {
             timer->start(500);
-            mCoreThread->run();
-            //mCoreThread->start();
+            //mCoreThread->run();
+            mCoreThread->start();
         }
     } else {
         bool ret = MsgBox::question(this, tr("确定需要提前结束？"));
         if(ret) { mResult = false; updateResult(); }
     }
 }
-
-
 
 void Home_WorkWid::on_findBtn_clicked()
 {
@@ -322,21 +304,9 @@ void Home_WorkWid::on_findBtn_clicked()
     MsgBox::information(this, str);
 }
 
-
-void Home_WorkWid::on_downBtn_clicked()
-{
-    QString str = tr("请确认下载设备的配置文件?");
-    if(MsgBox::question(this, str)) {
-        if(!inputCheck()) return;
-        FileMgr::build().delFileOrDir("usr/data/clever");
-        QStringList fs = mCoreThread->getFs(); emit startSig();
-        cm_mdelay(10); fs.removeLast();
-        Core_Http::bulid(this)->downFile(fs);
-    }
-}
-
-
-void Home_WorkWid::on_adCheckBox_clicked(bool checked)
+void Home_WorkWid::on_auCheckBox_clicked(bool checked)
 {
     ui->ipEdit->setDisabled(checked);
 }
+
+

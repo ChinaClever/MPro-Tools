@@ -13,6 +13,7 @@ Home_WorkWid::Home_WorkWid(QWidget *parent) :
     ui(new Ui::Home_WorkWid)
 {
     ui->setupUi(this);
+    Ssdp_Core::bulid(this);
     mCoreThread = new Core_Thread(this);
     QTimer::singleShot(450,this,SLOT(initFunSlot()));
     //Core_Http::bulid(this)->initHost("192.168.1.89");
@@ -158,7 +159,7 @@ void Home_WorkWid::updateResult()
     ui->timeLab->setText(str);
     ui->timeLab->setStyleSheet(style);
     ui->startBtn->setText(tr("开 始"));
-    QTimer::singleShot(450,this,SLOT(updateCntSlot()));
+    //QTimer::singleShot(450,this,SLOT(updateCntSlot()));
     str = QTime::currentTime().toString("hh:mm:ss");
     ui->endLab->setText(str);
     timer->stop();
@@ -195,9 +196,10 @@ bool Home_WorkWid::initUser()
 
 bool Home_WorkWid::inputCheck()
 {
-    bool ret = false;
+    bool ret = true;
     QString str = ui->ipEdit->text();
     if(ui->adCheckBox->isChecked()) {
+#if 0
         Ssdp_Core *ssdp = Ssdp_Core::bulid(this);
         QStringList ips = ssdp->searchAll();
         if(1 == ips.size()) {
@@ -213,10 +215,12 @@ bool Home_WorkWid::inputCheck()
             QString str = tr("未找到任何目标设备");
             MsgBox::critical(this,str);
         }
+#endif
     } else {
         ret = cm_isIPaddress(str);
+        QStringList ips; ips << str; cout << str;
         if(ret) Core_Http::bulid(this)->initHost(str);
-        if(ret) ret = cm_pingNet(str);
+        if(ret) {ret = cm_pingNet(str); mCoreThread->setIps(ips); }
         if(!ret) MsgBox::critical(this, tr("目标设备IP出错！"));
     }
 
@@ -230,7 +234,8 @@ void Home_WorkWid::initData()
     mId = 1; mResult = true;
     if(!ui->adCheckBox->isChecked()) {
         ips << ui->ipEdit->text();
-    } mCoreThread->setIps(ips);
+        //mCoreThread->setIps(ips);
+    }
 }
 
 
@@ -274,7 +279,8 @@ bool Home_WorkWid::updateWid()
     QString dir = "usr/data/clever";
     Cfg_App cfg(dir, this); sAppVerIt it;
     bool ret = cfg.app_unpack(it);
-    it.sn = mCoreThread->createSn(); //if(ret) && it.sn.isEmpty()
+    if(!ret) MsgBox::critical(this, tr("版本信息读取错误"));
+    it.sn = mCoreThread->createSn();
     cfg.app_serialNumber(it.sn);
 
     QString str = it.sn;
@@ -314,8 +320,8 @@ void Home_WorkWid::on_startBtn_clicked()
     if(isStart == false) {
         if(initWid()) {
             timer->start(500);
-            mCoreThread->run();
-            //mCoreThread->start();
+            //mCoreThread->run();
+            mCoreThread->start();
         }
     } else {
         bool ret = MsgBox::question(this, tr("确定需要提前结束？"));

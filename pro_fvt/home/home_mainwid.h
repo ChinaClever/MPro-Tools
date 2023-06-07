@@ -19,6 +19,7 @@ public:
 
 protected:
     void initWid();
+    void setTextColor(const QString &str);
 
 private slots:
     void onStart();

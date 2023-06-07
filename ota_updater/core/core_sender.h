@@ -20,6 +20,7 @@ signals:
     void subProgress(const QString &,int);
     void infoMessage(bool,const QString &);
     void finishSig(bool, const QString &);
+    void upgradeError(const QString &host, const QString &msg);
     void throwSig(const QString &);
     void overSig();
 

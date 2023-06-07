@@ -39,3 +39,152 @@ void Core_Object::relayCtrl(int on, int id)
     it.value = on;
     mHttp->setting(it);
 }
+
+void Core_Object::readMetaData()
+{
+    mHttp->readJson(0);
+    cm_mdelay(455);
+}
+
+void Core_Object::timeSync()
+{
+    QString fmd = "yyyy-MM-dd hh:mm:ss";
+    QString t = QDateTime::currentDateTime().toString(fmd);
+    //emit msgSig(tr("时间设置:")+t, true);
+    Core_Http *http = Core_Http::bulid(this);
+    sCfgItem it; it.type = 43; it.fc =1;
+    http->setting(it, t);
+}
+
+
+bool Core_Object::jsonAnalysis()
+{
+    QJsonObject obj; sCoreItem *it = &coreItem;
+    QByteArray msg = it->jsonPacket.toLatin1();
+    bool ret = checkInput(msg, obj);
+    if(ret) {
+        getSn(obj); getMac(obj); getParameter(obj);
+        it->datetime = getValue(obj, "datetime").toString();
+        obj = getObject(obj, "pdu_data"); getThreshold(obj);
+    }
+    return ret;
+}
+
+void Core_Object::getSn(const QJsonObject &object)
+{
+    QJsonObject obj = getObject(object, "pdu_version");
+    coreItem.sn = getValue(obj, "serialNumber").toString();
+    coreItem.ver = getValue(obj, "ver").toString();
+}
+
+void Core_Object::getMac(const QJsonObject &object)
+{
+    QJsonObject obj = getObject(object, "net_addr");
+    coreItem.mac = getValue(obj, "mac").toString();
+}
+
+void Core_Object::getParameter(const QJsonObject &object)
+{
+    sParameter *it = &coreItem.actual.param;
+    QJsonObject obj = getObject(object, "pdu_info");
+    it->devSpec = getData(obj, "pdu_spec");
+    it->sensorBoxEn = getData(obj, "sensor_box");
+    it->standNeutral = getData(obj, "stand_neutral");
+    it->lineNum = getData(obj, "line_num");
+    it->loopNum = getData(obj, "loop_num");
+    it->outputNum = getData(obj, "output_num");
+    it->boardNum = getData(obj, "board_num");
+    it->language = getData(obj, "language");
+    it->isBreaker = getData(obj, "breaker");
+    it->vh = getData(obj, "vh");
+}
+
+void Core_Object::getThreshold(const QJsonObject &object)
+{
+    sThreshold *it = &coreItem.actual.rate;    
+    QJsonObject obj = getObject(object, "line_item_list");
+    it->lineVol = getRating(obj, "vol");
+    it->lineCur = getRating(obj, "cur");
+    it->linePow = getRating(obj, "pow");
+
+    obj = getObject(object, "loop_item_list");
+    it->loopVol = getRating(obj, "vol");
+    it->loopCur = getRating(obj, "cur");
+    it->loopPow = getRating(obj, "pow");
+
+    obj = getObject(object, "output_item_list");
+    it->ops = getArray(obj, "cur_rated").toVariantList();
+}
+
+double Core_Object::getRating(const QJsonObject &object, const QString &key)
+{
+    QJsonArray array = getArray(object, key+"_rated");
+    QJsonValue firstElement = array.first();
+    bool allElementsEqual = true;
+    for (int i = 1; i < array.size(); ++i) {
+        if (firstElement != array.at(i)) {
+            allElementsEqual = false;
+            break;
+        }
+    }
+
+    if(!allElementsEqual) cout <<  array;
+    return array.first().toDouble();
+}
+
+QJsonArray Core_Object::getArray(const QJsonObject &object, const QString &key)
+{
+    QJsonArray array;
+    if (object.contains(key)) {
+        QJsonValue value = object.value(key);
+        if (value.isArray()) {
+            array = value.toArray();
+        }
+    } else cout << key << object.keys();
+
+    return array;
+}
+
+double Core_Object::getData(const QJsonObject &object, const QString &key)
+{
+    double ret = -1;
+    QJsonValue value = getValue(object, key);
+    if(value.isDouble()) {
+        ret = value.toDouble();
+    }
+
+    return ret;
+}
+
+
+QJsonValue Core_Object::getValue(const QJsonObject &object, const QString &key)
+{
+    QJsonValue value;
+    if (object.contains(key))  {
+        value = object.value(key);
+    }
+    return value;
+}
+
+QJsonObject Core_Object::getObject(const QJsonObject &object, const QString &key)
+{
+    QJsonObject obj;
+    if (object.contains(key)){
+        QJsonValue value = object.value(key);
+        if (value.isObject()){
+            obj = value.toObject();
+        }
+    }
+    return obj;
+}
+
+
+bool Core_Object::checkInput(const QByteArray &msg, QJsonObject &obj)
+{
+    QJsonParseError jsonerror; bool ret = false;
+    QJsonDocument doc = QJsonDocument::fromJson(msg, &jsonerror);
+    if (!doc.isNull() && jsonerror.error == QJsonParseError::NoError) {
+        if(doc.isObject())  {obj = doc.object(); ret = true;}
+    }
+    return ret;
+}

@@ -66,7 +66,7 @@ void Core_Http::uploadFile(const QStringList &fs)
             if(File::fileSize(fn) > 3)
             http_upload("upload", fn, m_ip, m_port);
         } else qDebug() << fn;
-        cm_mdelay(10); //qDebug() << fn;
+        cm_mdelay(350); //qDebug() << fn;
     }
 }
 
@@ -97,10 +97,16 @@ auto Core_Http::sslConfig()
     return SSLConfig;
 }
 
+
+
+
 void Core_Http::http_get(const QString &method, QJsonObject &json, const QString &ip, int port)
 {
+    AeaQt::HttpClient http;
+    http.clearAccessCache();
+    http.clearConnectionCache();
     QString url = "https://%1:%2/%3";
-    mHttp.get(url.arg(ip).arg(port).arg(method))
+    http.get(url.arg(ip).arg(port).arg(method))
             .header("content-type", "application/json")
             .onSuccess([&](QString result) {emit httpSig(result);})
     .onFailed([&](QString error) {emit httpSig(error); })
@@ -108,14 +114,18 @@ void Core_Http::http_get(const QString &method, QJsonObject &json, const QString
     .sslConfiguration(sslConfig())
             .timeout(1000) // 1s超时
             .body(json)
+            .block()
             .exec();
 }
 
 
 void Core_Http::http_post(const QString &method, QJsonObject &json, const QString &ip, int port)
 {
+    AeaQt::HttpClient http;
+    http.clearAccessCache();
+    http.clearConnectionCache();
     QString url = "https://%1:%2/%3";
-    mHttp.post(url.arg(ip).arg(port).arg(method))
+    http.post(url.arg(ip).arg(port).arg(method))
             .header("content-type", "application/json")
             .onSuccess([&](QString result) {emit httpSig(result);})
     .onFailed([&](QString error) {emit httpSig(error); })
@@ -123,14 +133,18 @@ void Core_Http::http_post(const QString &method, QJsonObject &json, const QStrin
     .sslConfiguration(sslConfig())
             .timeout(1000) // 1s超时
             .body(json)
+            .block()
             .exec();
 }
 
 
 void Core_Http::http_put(const QString &method, QJsonObject &json, const QString &ip, int port)
 {
+    AeaQt::HttpClient http;
+    http.clearAccessCache();
+    http.clearConnectionCache();
     QString url = "https://%1:%2/%3";
-    mHttp.put(url.arg(ip).arg(port).arg(method))
+    http.put(url.arg(ip).arg(port).arg(method))
             .header("content-type", "application/json")
             .onSuccess([&](QString result) {emit httpSig(result);})
     .onFailed([&](QString error) {emit httpSig(error); })
@@ -138,14 +152,18 @@ void Core_Http::http_put(const QString &method, QJsonObject &json, const QString
     .sslConfiguration(sslConfig())
             .timeout(1000) // 1s超时
             .body(json)
+            .block()
             .exec();
 }
 
 
 bool Core_Http::http_down(const QString &method, QJsonObject &json, const QString &file, const QString &ip, int port)
 {
+    AeaQt::HttpClient http;
+    http.clearAccessCache();
+    http.clearConnectionCache();
     QString url = "https://%1:%2/%3"; bool ret = true;
-    mHttp.get(url.arg(ip).arg(port).arg(method))
+    http.get(url.arg(ip).arg(port).arg(method))
             .header("content-type", "application/json")
             .sslConfiguration(sslConfig())
             .download(file)  // 启用自动设置文件名字
@@ -153,17 +171,22 @@ bool Core_Http::http_down(const QString &method, QJsonObject &json, const QStrin
     .onDownloadFileFailed([&](QString error) { emit httpSig("Download failed: "+error+": "+file); ret = false;})
     .timeout(2500) // 1s超时
             .body(json)
+            .block()
             .exec();
     return ret;
 }
 
 void Core_Http::http_upload(const QString &method, const QString &file, const QString &ip, int port)
 {
+    AeaQt::HttpClient http;
+    http.clearAccessCache();
+    http.clearConnectionCache();
     QString url = "https://%1:%2/%3";
-    mHttp.post(url.arg(ip).arg(port).arg(method)).body(file, file)
+    http.post(url.arg(ip).arg(port).arg(method)).body(file, file)
             .onSuccess([&](QString result) {emit httpSig("Upload completed: "+result);})
     .onFailed([&](QString error) {emit httpSig("Upload failed: "+file+error);})
     .sslConfiguration(sslConfig())
             .timeout(1000) // 1s超时
-            .exec();   
+            .block()
+            .exec();
 }

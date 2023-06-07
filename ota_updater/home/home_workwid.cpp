@@ -40,6 +40,7 @@ void Home_WorkWid::initFunSlot()
     ui->targetEdit->setHidden(true);
     mSsdp = Ssdp_Core::bulid(this);
     mSender = Core_Sender::bulid(this);
+    connect(mSender, &Core_Sender::upgradeError, this, &Home_WorkWid::upgradeError);
     connect(mSender, &Core_Sender::infoMessage, this, &Home_WorkWid::insertTextSlot);
     connect(mSender, &Core_Sender::finishSig, this, &Home_WorkWid::finishSlot);
     connect(mSender, &Core_Sender::overSig, this, &Home_WorkWid::updateResult);
@@ -47,6 +48,16 @@ void Home_WorkWid::initFunSlot()
     timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(timeoutDone()));
     // QTimer::singleShot(450,this,SLOT(updateCntSlot()));
+}
+
+
+void Home_WorkWid::upgradeError(const QString &host, const QString &msg)
+{
+    QString str = host + tr(" 升级失败 ") ;
+    mCnt.okCnt -= 1; mCnt.errCnt += 1;
+    insertTextSlot(false, str);
+    if(!isStart) updateResult();
+    MsgBox::critical(this, str+msg);
 }
 
 void Home_WorkWid::setTextColor(bool pass)
@@ -135,7 +146,7 @@ void Home_WorkWid::setWidEnabled(bool en)
 
 void Home_WorkWid::updateResult()
 {
-    QString style; mId = 1;
+    QString style; //mId = 1;
     QString str = tr("---");
     if(mResult && mCnt.dstCnt) {
         str = tr("成功"); style = "background-color:green; color:rgb(255, 255, 255);";

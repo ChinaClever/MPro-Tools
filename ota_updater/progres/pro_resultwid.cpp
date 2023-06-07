@@ -24,6 +24,7 @@ void Pro_ResultWid::initFunSlot()
 {
     Core_Sender *sender = Core_Sender::bulid(this);
     connect(sender, &Core_Sender::finishSig, this, &Pro_ResultWid::finishSlot);
+    connect(sender, &Core_Sender::upgradeError, this, &Pro_ResultWid::upgradeError);
 }
 
 void Pro_ResultWid::startSlot()
@@ -44,4 +45,15 @@ void Pro_ResultWid::insertText(QPlainTextEdit *textEdit, const QString &str)
 {
     textEdit->moveCursor(QTextCursor::Start);
     textEdit->insertPlainText(str+"\n");
+}
+
+void Pro_ResultWid::upgradeError(const QString &host, const QString &msg)
+{
+    QPlainTextEdit *t = ui->errTextEdit;
+    QString str = ui->errTextEdit->toPlainText();
+    if(!str.contains(host+"\n")) insertText(t, host);
+
+    t = ui->okTextEdit;
+    str = ui->errTextEdit->toPlainText().remove(host+"\n");
+    ui->okTextEdit->setPlainText(str);
 }

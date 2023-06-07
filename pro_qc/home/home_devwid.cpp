@@ -55,6 +55,7 @@ void Home_DevWid::updateParams()
     it->language = ui->languageBox->currentIndex();
     it->boardNum = ui->boardNumBox->value();
     it->loopNum = ui->loopNumBox->value();
+    it->outputNum = ui->outputNumBox->value();
 }
 
 void Home_DevWid::updateThresholds()
@@ -71,7 +72,7 @@ void Home_DevWid::updateThresholds()
 void Home_DevWid::updateOutlets()
 {
     QList<QCheckBox *> box = checkBoxFound();
-    foreach (auto it, box) {
+    mIt->rate.ops.clear(); foreach (auto it, box) {
         if(it->isChecked()) {
             QString name = it->objectName().remove("op_");
             mIt->rate.ops << name.toInt();
