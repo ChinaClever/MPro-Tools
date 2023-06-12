@@ -23,8 +23,8 @@ bool Core_Thread::searchDev()
 {
     bool ret = true; if(m_ips.isEmpty()) {
         Ssdp_Core *ssdp = Ssdp_Core::bulid(this);
-        cm_mdelay(15); QStringList ips = ssdp->searchAll();
-        QString str = tr("未找到任何目标设备");
+        QStringList ips = ssdp->searchAll();
+        QString str = tr("未找到任何目标设备"); // cm_mdelay(150);
         if(ips.size()) str = tr("已找到%1个设备").arg(ips.size());
         else {ret = false;} m_ips = ips;
         emit msgSig(str, ret); //cout << ips;
@@ -66,6 +66,18 @@ bool Core_Thread::macCheck()
     if(v.contains("2C:26:")) {str += v; ret = true;}
     else {str += tr("错误：mac=%1").arg(v);}
     emit msgSig(str, ret);
+    return ret;
+}
+
+bool Core_Thread::supplyVolCheck()
+{
+    sParameter *actual = &coreItem.actual.param;
+    bool ret = true; uint vol = actual->supplyVol;
+    QString str = tr("12电源检查：vol = %1V").arg(vol / 1000.0);
+    if(vol < 11*1000 || vol > 13*1000) {
+        str += tr("异常"); ret = false;
+    } emit msgSig(str, ret);
+
     return ret;
 }
 
@@ -266,6 +278,7 @@ bool Core_Thread::workDown(const QString &ip)
     ret = timeCheck(); if(!ret) res = false;
     ret = snCheck(); if(!ret) res = false;
     ret = macCheck(); if(!ret) res = false;
+    ret = supplyVolCheck(); if(!ret) res = false;
     ret = parameterCheck(); if(!ret) res = false;
     ret = devNumCheck(); if(!ret) res = false;
     ret = outletCheck(); if(!ret) res = false;
@@ -288,6 +301,6 @@ void Core_Thread::run()
             if(ret) ret = workDown(ip);
             else emit msgSig(tr("目标设备不存在:")+ip, ret);
             emit finshSig(ret, ip+" ");
-        }m_ips.clear();
+        } m_ips.clear();
     }  emit overSig();
 }

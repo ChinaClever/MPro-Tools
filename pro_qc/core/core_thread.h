@@ -24,6 +24,7 @@ private:
     bool timeCheck();
     bool devNumCheck();
     bool outletCheck();
+    bool supplyVolCheck();
     bool parameterCheck();
     bool thresholdCheck();
     bool workDown(const QString &ip);

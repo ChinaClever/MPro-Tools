@@ -41,8 +41,8 @@ bool Core_Thread::searchDev()
 {
     bool ret = true; if(m_ips.isEmpty()) {
         Ssdp_Core *ssdp = Ssdp_Core::bulid(this);
-        cm_mdelay(15); QStringList ips = ssdp->searchAll();
-        QString str = tr("未找到任何目标设备");
+        QStringList ips = ssdp->searchAll();
+        QString str = tr("未找到任何目标设备"); // cm_mdelay(150);
         if(ips.size()) str = tr("已找到%1个设备").arg(ips.size());
         else {ret = false;} m_ips = ips;
         emit msgSig(str, ret);
@@ -70,7 +70,7 @@ bool Core_Thread::workDown(const QString &ip)
         bool ret = http->uploadFile(fn);
         if(!ret) res = false;
         emit msgSig(fn, ret);
-        cm_mdelay(120);
+        cm_mdelay(220);
     }
 
     if(res) {

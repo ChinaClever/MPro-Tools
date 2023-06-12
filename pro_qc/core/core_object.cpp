@@ -90,6 +90,7 @@ void Core_Object::getParameter(const QJsonObject &object)
     it->devSpec = getData(obj, "pdu_spec");
     it->sensorBoxEn = getData(obj, "sensor_box");
     it->standNeutral = getData(obj, "stand_neutral");
+    it->supplyVol = getData(obj, "supply_vol");
     it->lineNum = getData(obj, "line_num");
     it->loopNum = getData(obj, "loop_num");
     it->outputNum = getData(obj, "output_num");

@@ -12,6 +12,7 @@ struct sParameter {
     uint vh; // 0:垂直 1:水平
     uint standNeutral; // 0-标准,1-中性
     uint webBackground; // 网页背景颜色
+    uint supplyVol;
 
     uint lineNum; //设备单三相
     uint boardNum;   //　执行板数量
