@@ -34,7 +34,7 @@ void MainWindow::initFunSlot()
 
 
     static AeaQt::HttpClient client;
-    client.get("https://192.168.1.99:3166/pduMetaData")
+    client.get("https://192.168.1.163:3166/pduMetaData")
             .sslConfiguration(SSLConfig)
             .header("content-type", "application/json")
             .body(json)

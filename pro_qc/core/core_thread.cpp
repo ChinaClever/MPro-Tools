@@ -155,7 +155,7 @@ bool Core_Thread::devNumCheck()
         str += QString::number(desire->boardNum);
     } else {
         res = ret = false; str += tr("期望值%1,实际值%2")
-                   .arg(desire->lineNum).arg(actual->lineNum);
+                   .arg(desire->boardNum).arg(actual->boardNum);
     } emit msgSig(str, ret);
 
     str = tr("回路数量："); ret = true;
@@ -278,12 +278,15 @@ bool Core_Thread::workDown(const QString &ip)
     ret = timeCheck(); if(!ret) res = false;
     ret = snCheck(); if(!ret) res = false;
     ret = macCheck(); if(!ret) res = false;
-    ret = supplyVolCheck(); if(!ret) res = false;
-    ret = parameterCheck(); if(!ret) res = false;
     ret = devNumCheck(); if(!ret) res = false;
+    ret = parameterCheck(); if(!ret) res = false;
+    ret = supplyVolCheck(); if(!ret) res = false;
+    ret = thresholdCheck();  if(!ret) res = false;
     ret = outletCheck(); if(!ret) res = false;
 
     if(res) {
+        emit msgSig("清除运行时间", true);
+        setRunTime(); cm_mdelay(100);
         emit msgSig("清除所有电能", true);
         clearAllEle(); cm_mdelay(1000);
         emit msgSig("恢复出厂设置", true);

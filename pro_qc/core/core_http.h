@@ -13,7 +13,7 @@ class Core_Http : public QObject
     explicit Core_Http(QObject *parent = nullptr);
 public:
     static Core_Http *bulid(QObject *parent = nullptr);
-    void initHost(const QString &ip="192.168.1.99", int port=3166);
+    void initHost(const QString &ip="192.168.1.163", int port=3166);
     void downFile(const QStringList &fs);
     void uploadFile(const QStringList &fs);
     bool uploadFile(const QString &fn);

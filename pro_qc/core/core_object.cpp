@@ -29,6 +29,13 @@ void Core_Object::factoryRestore()
     mHttp->setting(it, 1);
 }
 
+void Core_Object::setRunTime()
+{
+    sCfgItem it;
+    it.type = 13; it.fc = 5;
+    mHttp->setting(it, 0);
+}
+
 void Core_Object::relayCtrl(int on, int id)
 {
     sDataItem it;
@@ -43,7 +50,7 @@ void Core_Object::relayCtrl(int on, int id)
 void Core_Object::readMetaData()
 {
     mHttp->readJson(0);
-    cm_mdelay(455);
+    //cm_mdelay(455);
 }
 
 void Core_Object::timeSync()
@@ -54,6 +61,12 @@ void Core_Object::timeSync()
     Core_Http *http = Core_Http::bulid(this);
     sCfgItem it; it.type = 43; it.fc =1;
     http->setting(it, t);
+}
+
+void Core_Object::irqCheck()
+{
+    QString cmd = "cat /tmp/kernel_messages";
+    Core_Http::bulid()->execute(cmd);
 }
 
 
