@@ -35,6 +35,12 @@ void Home_DevWid::on_factoryBtn_clicked()
     MsgBox::information(this, tr("设备已进行出厂设置"));
 }
 
+void Home_DevWid::on_logBtn_clicked()
+{
+    Core_Thread::bulid(this)->clearLogs();
+    MsgBox::information(this, tr("设备日志已清除"));
+}
+
 
 void Home_DevWid::on_outletBtn_clicked()
 {
@@ -131,6 +137,7 @@ void Home_DevWid::on_loopCurBox_valueChanged(int arg1)
     double v = arg1 * ui->loopVolBox->value() / 1000.0;
     ui->loopPowBox->setValue(v);
 }
+
 
 
 

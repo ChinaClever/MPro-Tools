@@ -29,7 +29,9 @@ struct sThreshold
     double loopVol;
     double loopCur;
     double loopPow;
+    double volValue; //电压参考值
     QVariantList ops;
+    QVariantList outputVols;
 };
 
 struct sCoreUnit
@@ -60,6 +62,7 @@ public:
     explicit Core_Object(QObject *parent = nullptr);
     static sCoreItem coreItem;
     void clearAllEle();
+    void clearLogs();
     void factoryRestore();
     void relayCtrl(int on, int id=0);
     void readMetaData();
@@ -71,9 +74,10 @@ public:
 private:
     void getSn(const QJsonObject &object);
     void getMac(const QJsonObject &object);
+    void getOutputVol(const QJsonObject &object);
     void getParameter(const QJsonObject &object);
     void getThreshold(const QJsonObject &object);
-    double getRating(const QJsonObject &object, const QString &key);
+    double getRating(const QJsonObject &object, const QString &key, const QString &suffix="rated");
 
     bool checkInput(const QByteArray &msg, QJsonObject &obj);
     double getData(const QJsonObject &object, const QString &key);

@@ -24,6 +24,7 @@ private:
     bool timeCheck();
     bool devNumCheck();
     bool outletCheck();
+    bool outputVolCheck();
     bool supplyVolCheck();
     bool parameterCheck();
     bool thresholdCheck();

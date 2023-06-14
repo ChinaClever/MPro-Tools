@@ -36,6 +36,13 @@ void Core_Object::setRunTime()
     mHttp->setting(it, 0);
 }
 
+void Core_Object::clearLogs()
+{
+    sCfgItem it;
+    it.type = 96; it.fc = 3;
+    mHttp->setting(it, 0);
+}
+
 void Core_Object::relayCtrl(int on, int id)
 {
     sDataItem it;
@@ -76,7 +83,8 @@ bool Core_Object::jsonAnalysis()
     QByteArray msg = it->jsonPacket.toLatin1();
     bool ret = checkInput(msg, obj);
     if(ret) {
-        getSn(obj); getMac(obj); getParameter(obj);
+        getOutputVol(obj); getSn(obj);
+        getMac(obj); getParameter(obj);
         it->datetime = getValue(obj, "datetime").toString();
         obj = getObject(obj, "pdu_data"); getThreshold(obj);
     }
@@ -94,6 +102,13 @@ void Core_Object::getMac(const QJsonObject &object)
 {
     QJsonObject obj = getObject(object, "net_addr");
     coreItem.mac = getValue(obj, "mac").toString();
+}
+
+void Core_Object::getOutputVol(const QJsonObject &object)
+{
+    //QJsonObject obj = getObject(object, "output_vol");
+    coreItem.actual.rate.outputVols = getArray(object, "output_vol").toVariantList();
+    //cout << coreItem.actual.rate.outputVols.size() << coreItem.actual.rate.outputVols;
 }
 
 void Core_Object::getParameter(const QJsonObject &object)
@@ -120,6 +135,8 @@ void Core_Object::getThreshold(const QJsonObject &object)
     it->lineVol = getRating(obj, "vol");
     it->lineCur = getRating(obj, "cur");
     it->linePow = getRating(obj, "pow");
+    it->volValue = getRating(obj, "vol", "value");
+
 
     obj = getObject(object, "loop_item_list");
     it->loopVol = getRating(obj, "vol");
@@ -130,15 +147,17 @@ void Core_Object::getThreshold(const QJsonObject &object)
     it->ops = getArray(obj, "cur_rated").toVariantList();
 }
 
-double Core_Object::getRating(const QJsonObject &object, const QString &key)
+double Core_Object::getRating(const QJsonObject &object, const QString &key, const QString &suffix)
 {
-    QJsonArray array = getArray(object, key+"_rated");
+    QJsonArray array = getArray(object, key+"_"+suffix);
     QJsonValue firstElement = array.first();
     bool allElementsEqual = true;
-    for (int i = 1; i < array.size(); ++i) {
-        if (firstElement != array.at(i)) {
-            allElementsEqual = false;
-            break;
+    if(suffix.contains("rated")) {
+        for (int i = 1; i < array.size(); ++i) {
+            if (firstElement != array.at(i)) {
+                allElementsEqual = false;
+                break;
+            }
         }
     }
 

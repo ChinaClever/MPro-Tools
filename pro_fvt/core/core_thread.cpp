@@ -66,7 +66,8 @@ bool Core_Thread::workDown(const QString &ip)
     emit msgSig(tr("目标设备:")+ip, true);
     Core_Http *http = Core_Http::bulid(this);
     http->initHost(ip); QStringList fs = getFs();
-    timeSync(); foreach (const auto fn, fs) {
+    fs.removeFirst(); timeSync();
+    foreach (const auto fn, fs) {
         bool ret = http->uploadFile(fn);
         if(!ret) res = false;
         emit msgSig(fn, ret);

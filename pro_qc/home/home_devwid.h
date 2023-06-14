@@ -37,7 +37,9 @@ private slots:
     void on_lineCurBox_valueChanged(int arg1);
     void on_loopVolBox_valueChanged(int arg1);
     void on_loopCurBox_valueChanged(int arg1);
-    
+
+    void on_logBtn_clicked();
+
 private:
     Ui::Home_DevWid *ui;
     Core_Http *mHttp;

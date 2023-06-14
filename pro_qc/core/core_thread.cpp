@@ -267,6 +267,32 @@ bool Core_Thread::outletCheck()
     return ret;
 }
 
+bool Core_Thread::outputVolCheck()
+{
+    bool ret = true;  QString str;
+    int spec = coreItem.actual.param.devSpec;
+    int num = coreItem.actual.param.outputNum;
+    int value = coreItem.actual.rate.volValue * 10.0;
+    QVariantList vols = coreItem.actual.rate.outputVols;
+    if(spec > 1) {
+        for(int i=0; i<vols.size()&&(i<num); ++i) {
+            int v = vols.at(i).toInt();
+            int s = qAbs(v - value);
+            if(spec == 3 && !v){ continue; } if(s > 50) {
+                str = tr("输出位%1电压相差过大：相电压：%2V 输出位电压：%3V")
+                          .arg(i+1).arg(value/10.0).arg(v/10.0);
+                ret = false;  emit msgSig(str, ret);
+            }
+        }
+    }
+
+    if(ret) {
+        str = tr("输出位电压检查：OK");
+        emit msgSig(str, ret);
+    }
+
+    return ret;
+}
 
 
 bool Core_Thread::workDown(const QString &ip)
@@ -282,13 +308,15 @@ bool Core_Thread::workDown(const QString &ip)
     ret = parameterCheck(); if(!ret) res = false;
     ret = supplyVolCheck(); if(!ret) res = false;
     ret = thresholdCheck();  if(!ret) res = false;
+    ret = outputVolCheck(); if(!ret) res = false;
     ret = outletCheck(); if(!ret) res = false;
 
     if(res) {
-        emit msgSig("清除运行时间", true);
-        setRunTime(); cm_mdelay(100);
-        emit msgSig("清除所有电能", true);
-        clearAllEle(); cm_mdelay(1000);
+        emit msgSig("清除所有电能", true); clearAllEle();
+        emit msgSig("清除运行时间", true); setRunTime();
+        emit msgSig("清除设备日志", true); clearLogs();
+
+        cm_mdelay(1000);
         emit msgSig("恢复出厂设置", true);
         factoryRestore(); cm_mdelay(100);
     }
