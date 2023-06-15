@@ -51,8 +51,8 @@ QString Core_Object::createSn()
     int m = QDate::currentDate().month();
     int y = QDate::currentDate().year() - 2000;
     for(int i=0; i<3; ++i) cmd += "%" + QString::number(i+1);
-    QString sn  = QString(cmd).arg(y,2,QLatin1Char('0'))
-                     .arg(m, 2, QLatin1Char('0'))
+    QString sn  = QString(cmd).arg(y,2,10,QLatin1Char('0'))
+                     .arg(m, 2, 10,QLatin1Char('0'))
                      .arg(mCurrentNum, 5, 10, QLatin1Char('0'));
     this->setCurrentNum();
     return sn.toUpper();

@@ -277,8 +277,8 @@ bool Core_Thread::outputVolCheck()
     if(spec > 1) {
         for(int i=0; i<vols.size()&&(i<num); ++i) {
             int v = vols.at(i).toInt();
-            int s = qAbs(v - value);
-            if(spec == 3 && !v){ continue; } if(s > 50) {
+             int s = qAbs(v - value); //cout << v << s;
+            if(spec == 3 && !v){ continue; } if(s > 50 || !v) {
                 str = tr("输出位%1电压相差过大：相电压：%2V 输出位电压：%3V")
                           .arg(i+1).arg(value/10.0).arg(v/10.0);
                 ret = false;  emit msgSig(str, ret);
@@ -294,6 +294,15 @@ bool Core_Thread::outputVolCheck()
     return ret;
 }
 
+bool Core_Thread::alarmCheck()
+{
+    bool ret = false; if(coreItem.alarm) {
+        QString str = tr("设备有报警，请检查：");
+        str += "status=" + QString::number(coreItem.alarm);
+        emit msgSig(str, ret);
+    } else ret = true;
+    return ret;
+}
 
 bool Core_Thread::workDown(const QString &ip)
 {
@@ -304,6 +313,7 @@ bool Core_Thread::workDown(const QString &ip)
     ret = timeCheck(); if(!ret) res = false;
     ret = snCheck(); if(!ret) res = false;
     ret = macCheck(); if(!ret) res = false;
+    ret = alarmCheck(); if(!ret) res = false;
     ret = devNumCheck(); if(!ret) res = false;
     ret = parameterCheck(); if(!ret) res = false;
     ret = supplyVolCheck(); if(!ret) res = false;

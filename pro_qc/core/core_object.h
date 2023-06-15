@@ -51,6 +51,7 @@ struct sCoreItem
     QString datetime;
     QString mac,sn;
     QString ver;
+    int alarm;
 };
 
 
@@ -77,6 +78,7 @@ private:
     void getOutputVol(const QJsonObject &object);
     void getParameter(const QJsonObject &object);
     void getThreshold(const QJsonObject &object);
+    void getAlarmStatus(const QJsonObject &object);
     double getRating(const QJsonObject &object, const QString &key, const QString &suffix="rated");
 
     bool checkInput(const QByteArray &msg, QJsonObject &obj);

@@ -27,10 +27,16 @@ bool Core_Thread::fsCheck()
 {
     bool ret = true;
     QStringList fs = getFs();
+    fs.removeLast(); fs.removeLast();
     foreach (const auto fn, fs) {
         if(!QFile::exists(fn)) {
             ret = false;
             emit msgSig(tr("文件未找到")+fn, ret);
+        }
+        int size = File::fileSize(fn);
+        if(!size) {
+            ret = false;
+            emit msgSig(tr("文件为空")+fn, ret);
         }
     } if(ret) emit msgSig(tr("文件未检查 OK!"), ret);
     return ret;
@@ -60,18 +66,50 @@ void Core_Thread::timeSync()
     http->setting(it, t); cm_mdelay(320);
 }
 
-bool Core_Thread::workDown(const QString &ip)
+
+void Core_Thread::writeSnMac(const QString &sn, const QString &mac)
 {
-    bool res = true;
-    emit msgSig(tr("目标设备:")+ip, true);
+    QString dir = "usr/data/clever/cfg/"; QFile file(dir + "mac.ini");
+    if(file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate)) {
+        file.write(mac.toLatin1());
+    } file.close();
+
+    file.setFileName(dir + "sn.conf");
+    if(file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate)) {
+        file.write(sn.toLatin1());
+    } file.close();
+}
+
+
+bool Core_Thread::downVer(const QString &ip)
+{
+    QString str = tr("下载版本信息:");
+    QStringList fs; fs << "usr/data/clever/ver.ini";
     Core_Http *http = Core_Http::bulid(this);
-    http->initHost(ip); QStringList fs = getFs();
-    fs.removeFirst(); timeSync();
+    http->initHost(ip); http->downFile(fs);
+    QString dir = "usr/data/clever";
+    Cfg_App cfg(dir, this); sAppVerIt it;
+    bool ret = cfg.app_unpack(it);
+    if(ret) {
+        it.sn = m_sn = createSn();
+        cfg.app_serialNumber(it.sn);
+        QString mac = m_mac = updateMacAddr();
+        writeSnMac(it.sn, mac); //str += "ok\n";
+        str = "SN：" + m_sn + "   MAC：" + m_mac;
+    } else str =  tr("版本信息读取错误");
+    emit msgSig(str, ret);
+    return ret;
+}
+
+bool Core_Thread::workDown(const QString &ip)
+{    
+    Core_Http *http = Core_Http::bulid(this);
+    QStringList fs = getFs(); bool res = true;
     foreach (const auto fn, fs) {
         bool ret = http->uploadFile(fn);
         if(!ret) res = false;
         emit msgSig(fn, ret);
-        cm_mdelay(220);
+        cm_mdelay(20);
     }
 
     if(res) {
@@ -86,8 +124,10 @@ void Core_Thread::run()
 {
     bool ret = searchDev();
     if(ret && fsCheck()) {
-        foreach (const auto &ip, m_ips) {
-            ret = workDown(ip); cm_mdelay(150);
+        foreach (const auto &ip, m_ips) {            
+            emit msgSig(tr("目标设备:")+ip, true);
+            ret = downVer(ip); timeSync();
+            if(ret) ret = workDown(ip); cm_mdelay(150);
             emit finshSig(ret, ip+" ");            
         }m_ips.clear();
     } emit overSig();

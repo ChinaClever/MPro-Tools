@@ -84,7 +84,7 @@ bool Core_Object::jsonAnalysis()
     bool ret = checkInput(msg, obj);
     if(ret) {
         getOutputVol(obj); getSn(obj);
-        getMac(obj); getParameter(obj);
+        getMac(obj); getParameter(obj); getAlarmStatus(obj);
         it->datetime = getValue(obj, "datetime").toString();
         obj = getObject(obj, "pdu_data"); getThreshold(obj);
     }
@@ -109,6 +109,11 @@ void Core_Object::getOutputVol(const QJsonObject &object)
     //QJsonObject obj = getObject(object, "output_vol");
     coreItem.actual.rate.outputVols = getArray(object, "output_vol").toVariantList();
     //cout << coreItem.actual.rate.outputVols.size() << coreItem.actual.rate.outputVols;
+}
+
+void Core_Object::getAlarmStatus(const QJsonObject &object)
+{
+    coreItem.alarm = getValue(object, "status").toInt();
 }
 
 void Core_Object::getParameter(const QJsonObject &object)

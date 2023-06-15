@@ -283,6 +283,9 @@
       <string>操作区</string>
      </property>
      <widget class="QPushButton" name="startBtn">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
       <property name="geometry">
        <rect>
         <x>60</x>
@@ -625,7 +628,7 @@
          <enum>QAbstractSpinBox::DefaultStepType</enum>
         </property>
         <property name="value">
-         <number>100</number>
+         <number>0</number>
         </property>
        </widget>
       </item>

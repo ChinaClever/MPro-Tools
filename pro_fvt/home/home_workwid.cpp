@@ -193,13 +193,10 @@ bool Home_WorkWid::initUser()
     return true;
 }
 
-
-bool Home_WorkWid::inputCheck()
+bool Home_WorkWid::initHost()
 {
-    bool ret = true;
-    QString str = ui->ipEdit->text();
+    bool ret = false;
     if(ui->adCheckBox->isChecked()) {
-#if 0
         Ssdp_Core *ssdp = Ssdp_Core::bulid(this);
         QStringList ips = ssdp->searchAll();
         if(1 == ips.size()) {
@@ -215,7 +212,17 @@ bool Home_WorkWid::inputCheck()
             QString str = tr("未找到任何目标设备");
             MsgBox::critical(this,str);
         }
-#endif
+    }
+
+    return ret;
+}
+
+bool Home_WorkWid::inputCheck()
+{
+    bool ret = true;
+    QString str = ui->ipEdit->text();
+    if(ui->adCheckBox->isChecked()) {
+        //ret = initHost();
     } else {
         ret = cm_isIPaddress(str); if(!ret) cout << str;
         QStringList ips; ips << str;
@@ -244,11 +251,12 @@ bool Home_WorkWid::initWid()
     bool ret = initMac();
     if(ret) ret = initUser();
     if(ret) ret = inputCheck();
-    if(ret) ret = updateWid();
+    //if(ret) ret = updateWid();
     if(ret) {
         initData();
         setWidEnabled(false);
         ui->startBtn->setText(tr("终 止"));
+        QTimer::singleShot(2100,this,&Home_WorkWid::updateWid);
         startTime = QTime::currentTime(); emit startSig();
         QString str = startTime.toString("hh:mm:ss");
         ui->startLab->setText(str);
@@ -279,9 +287,9 @@ bool Home_WorkWid::updateWid()
     QString dir = "usr/data/clever";
     Cfg_App cfg(dir, this); sAppVerIt it;
     bool ret = cfg.app_unpack(it);
-    if(!ret) MsgBox::critical(this, tr("版本信息读取错误"));
-    it.sn = mCoreThread->createSn();
-    cfg.app_serialNumber(it.sn);
+    if(!ret || it.sn.isEmpty()) MsgBox::critical(this, tr("版本信息读取错误"));
+    //it.sn = mCoreThread->createSn();
+    //cfg.app_serialNumber(it.sn);
 
     QString str = it.sn;
     if(str.isEmpty()) str = "--- ---";
@@ -299,10 +307,10 @@ bool Home_WorkWid::updateWid()
     if(str.isEmpty()) str = "--- ---";
     ui->fwLab->setText(str);
 
-    str = mCoreThread->updateMacAddr();
+    str = mCoreThread->m_mac;
     if(str.isEmpty()) str = "--- ---";
     ui->macLab->setText(str);
-    writeSnMac(it.sn, str);
+    //writeSnMac(it.sn, str);
 
     return ret;
 }
@@ -353,12 +361,12 @@ void Home_WorkWid::on_downBtn_clicked()
 {
     QString str = tr("请确认下载设备的配置文件?");
     if(MsgBox::question(this, str)) {
-        if(!inputCheck()) return;
+        if(!inputCheck() || !initHost()) return;
         FileMgr::build().delFileOrDir("usr/data/clever");
         QStringList fs = mCoreThread->getFs(); emit startSig();
         cm_mdelay(10); fs.removeLast(); fs.removeLast();
         Core_Http::bulid(this)->downFile(fs);
-    }
+    } ui->startBtn->setEnabled(true);
 }
 
 

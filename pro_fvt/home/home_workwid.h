@@ -41,6 +41,7 @@ private:
     void initLayout();
     void updateTime();
     bool updateWid();
+    bool initHost();
     void setWidEnabled(bool en);
     void setTextColor(bool pass);
     void writeSnMac(const QString &sn, const QString &mac);

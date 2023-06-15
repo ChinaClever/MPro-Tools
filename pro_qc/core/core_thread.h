@@ -22,6 +22,7 @@ private:
     bool macCheck();
     bool searchDev();
     bool timeCheck();
+    bool alarmCheck();
     bool devNumCheck();
     bool outletCheck();
     bool outputVolCheck();

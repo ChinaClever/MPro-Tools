@@ -9,6 +9,7 @@ class Core_Thread : public Core_Object
 public:
     explicit Core_Thread(QObject *parent = nullptr);
     void setIps(const QStringList &ips) {m_ips = ips;}
+    QString m_mac, m_sn;
     QStringList getFs();
     void run();
 
@@ -19,7 +20,9 @@ signals:
 
 protected:
     void timeSync();
+    bool downVer(const QString &ip);
     bool workDown(const QString &ip);
+    void writeSnMac(const QString &sn, const QString &mac);
 
 private:
     bool searchDev();
