@@ -17,8 +17,8 @@ QStringList Core_Thread::getFs()
     FileMgr::build().mkpath("usr/data/clever/doc/");
     QString dir = "usr/data/clever/cfg/"; FileMgr::build().mkpath(dir);
     QStringList fs; fs << "usr/data/clever/ver.ini" << "usr/data/clever/doc/modbus.xlsx";
-    fs << dir+"alarm.cfg" << dir+"devParam.ini" << dir+"cfg.ini" << dir+"inet.ini";
-    fs << dir+"alarm.df" << dir+"snmpd.conf" << dir+"logo.png" << dir+"mac.ini";
+    fs << dir+"alarm.conf" << dir+"devParam.ini" << dir+"cfg.ini" << dir+"inet.ini";
+    fs << dir+"alarm.cfg" << dir+"snmpd.conf" << dir+"logo.png" << dir+"mac.conf";
     fs << dir + "sn.conf";
     return fs;
 }
@@ -48,6 +48,7 @@ bool Core_Thread::searchDev()
     bool ret = true; if(m_ips.isEmpty()) {
         Ssdp_Core *ssdp = Ssdp_Core::bulid(this);
         QStringList ips = ssdp->searchAll();
+        if(ips.isEmpty()) ips = ssdp->searchAll();
         QString str = tr("未找到任何目标设备"); // cm_mdelay(150);
         if(ips.size()) str = tr("已找到%1个设备").arg(ips.size());
         else {ret = false;} m_ips = ips;
@@ -69,7 +70,7 @@ void Core_Thread::timeSync()
 
 void Core_Thread::writeSnMac(const QString &sn, const QString &mac)
 {
-    QString dir = "usr/data/clever/cfg/"; QFile file(dir + "mac.ini");
+    QString dir = "usr/data/clever/cfg/"; QFile file(dir + "mac.conf");
     if(file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate)) {
         file.write(mac.toLatin1());
     } file.close();

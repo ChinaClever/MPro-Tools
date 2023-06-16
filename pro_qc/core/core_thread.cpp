@@ -24,6 +24,7 @@ bool Core_Thread::searchDev()
     bool ret = true; if(m_ips.isEmpty()) {
         Ssdp_Core *ssdp = Ssdp_Core::bulid(this);
         QStringList ips = ssdp->searchAll();
+        if(ips.isEmpty()) ips = ssdp->searchAll();
         QString str = tr("未找到任何目标设备"); // cm_mdelay(150);
         if(ips.size()) str = tr("已找到%1个设备").arg(ips.size());
         else {ret = false;} m_ips = ips;

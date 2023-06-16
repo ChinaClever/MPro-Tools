@@ -563,7 +563,7 @@
       <item row="1" column="1" colspan="2">
        <widget class="QLineEdit" name="userEdit">
         <property name="text">
-         <string>clever</string>
+         <string/>
         </property>
         <property name="frame">
          <bool>false</bool>

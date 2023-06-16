@@ -39,6 +39,7 @@ void MainWindow::initWid()
 {
     mHomeWid = new Home_MainWid(ui->stackedWid);
     ui->stackedWid->addWidget(mHomeWid);
+    connect(mHomeWid, &Home_MainWid::setDevSig, this, &MainWindow::setDevSlot);
 
     mDevWid = new Home_DevWid(ui->stackedWid);
     ui->stackedWid->addWidget(mDevWid);
@@ -54,4 +55,9 @@ void MainWindow::initWid()
 void MainWindow::navBarSlot(int id)
 {
     ui->stackedWid->setCurrentIndex(id);
+}
+
+void MainWindow::setDevSlot()
+{
+    navBarSlot(1);
 }

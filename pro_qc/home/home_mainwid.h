@@ -19,6 +19,7 @@ public:
 
 signals:
     void startSig();
+    void setDevSig();
 
 protected:
     void initWid();

@@ -310,3 +310,10 @@ void Home_WorkWid::on_auCheckBox_clicked(bool checked)
 }
 
 
+
+void Home_WorkWid::on_devSetBtn_clicked()
+{
+    emit setDevSig();
+    ui->startBtn->setEnabled(true);
+}
+

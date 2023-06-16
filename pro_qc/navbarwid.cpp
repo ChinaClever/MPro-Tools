@@ -17,6 +17,7 @@ NavBarWid::NavBarWid(QWidget *parent) :
     gridLayout->setContentsMargins(0, 0, 0, 6);
     gridLayout->addWidget(this);
     mUserLand = new UsrLandDlg(this);
+    ui->devBtn->setHidden(true);
 
     QTimer::singleShot(5,this,SLOT(on_loginBtn_clicked()));
     connect(mUserLand,SIGNAL(sendUserNameSig(QString)),this,SLOT(recvUserNameSlot(QString)));

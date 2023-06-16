@@ -270,7 +270,7 @@ bool Home_WorkWid::initWid()
 
 void Home_WorkWid::writeSnMac(const QString &sn, const QString &mac)
 {
-    QString dir = "usr/data/clever/cfg/"; QFile file(dir + "mac.ini");
+    QString dir = "usr/data/clever/cfg/"; QFile file(dir + "mac.conf");
     if(file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate)) {
         file.write(mac.toLatin1());
     } file.close();

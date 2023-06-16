@@ -28,6 +28,7 @@ public:
     ~Home_WorkWid();
 
 signals:
+    void setDevSig();
     void startSig();
 
 private:
@@ -52,10 +53,10 @@ private slots:
     void updateResult();
     void on_startBtn_clicked();
     void on_findBtn_clicked();
+    void on_devSetBtn_clicked();
+    void on_auCheckBox_clicked(bool checked);
     void finishSlot(bool pass, const QString &msg);
     void insertTextSlot(const QString &msg, bool pass);
-
-    void on_auCheckBox_clicked(bool checked);
 
 private:
     Ui::Home_WorkWid *ui;
