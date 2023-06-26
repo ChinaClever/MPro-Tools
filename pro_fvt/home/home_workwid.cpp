@@ -212,7 +212,7 @@ bool Home_WorkWid::initHost()
             QString str = tr("未找到任何目标设备");
             MsgBox::critical(this,str);
         }
-    }
+    } else ret = true;
 
     return ret;
 }

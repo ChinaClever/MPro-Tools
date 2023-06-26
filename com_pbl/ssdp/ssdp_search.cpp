@@ -28,7 +28,7 @@ void Ssdp_Search::searchRecvSlot(const sSdpIt &it)
     if(!it.fc && !mSet.contains(it.ip)) {
         mSet << it.ip; //cout << it.ip;
         mSlaveNum += it.data.toInt();
-        //emit targetSig(it.ip);
+        emit targetSig(it.ip);
     }
 }
 

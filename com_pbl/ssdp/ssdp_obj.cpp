@@ -17,7 +17,7 @@ Ssdp_Obj::Ssdp_Obj(QObject *parent) : QObject(parent)
 
 bool Ssdp_Obj::ssdpBind()
 {
-    auto ok = mSocket->bind(QHostAddress::AnyIPv4, mPort, QUdpSocket::ShareAddress);
+    auto ok = mSocket->bind(QHostAddress::AnyIPv4, mPort, QUdpSocket::DontShareAddress);
     if(ok) ok = mSocket->joinMulticastGroup(mAddress);
     if(ok) connect(mSocket,SIGNAL(readyRead()),this,SLOT(readMsgSlot()));
     else cout << mSocket->errorString();
