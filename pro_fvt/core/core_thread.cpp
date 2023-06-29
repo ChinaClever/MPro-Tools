@@ -61,12 +61,19 @@ void Core_Thread::timeSync()
 {
     QString fmd = "yyyy-MM-dd hh:mm:ss";
     QString t = QDateTime::currentDateTime().toString(fmd);
-    emit msgSig(tr("时间设置:")+t, true);
+    emit msgSig(tr("时间设置：")+t, true);
     Core_Http *http = Core_Http::bulid(this);
     sCfgItem it; it.type = 43; it.fc =1;
     http->setting(it, t); cm_mdelay(320);
 }
 
+
+void Core_Thread::enCascade()
+{
+    sCfgItem it; it.type = 13; it.fc = 3;
+    Core_Http::bulid(this)->setting(it, 1);
+    emit msgSig(tr("设备模式：已开启级联功能"), true);
+}
 
 void Core_Thread::writeSnMac(const QString &sn, const QString &mac)
 {
@@ -127,7 +134,7 @@ void Core_Thread::run()
     if(ret && fsCheck()) {
         foreach (const auto &ip, m_ips) {            
             emit msgSig(tr("目标设备:")+ip, true);
-            ret = downVer(ip); timeSync();
+            ret = downVer(ip); timeSync(); enCascade();
             if(ret) ret = workDown(ip); cm_mdelay(150);
             emit finshSig(ret, ip+" ");            
         }m_ips.clear();

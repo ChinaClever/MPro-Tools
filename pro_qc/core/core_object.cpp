@@ -22,6 +22,13 @@ void Core_Object::clearAllEle()
     mHttp->setting(it);
 }
 
+void Core_Object::enCascade()
+{
+    sCfgItem it;
+    it.type = 13; it.fc = 3;
+    mHttp->setting(it, 1);
+}
+
 void Core_Object::factoryRestore()
 {
     sCfgItem it;

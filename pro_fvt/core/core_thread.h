@@ -20,6 +20,7 @@ signals:
 
 protected:
     void timeSync();
+    void enCascade();
     bool downVer(const QString &ip);
     bool workDown(const QString &ip);
     void writeSnMac(const QString &sn, const QString &mac);

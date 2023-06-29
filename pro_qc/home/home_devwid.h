@@ -40,6 +40,8 @@ private slots:
 
     void on_logBtn_clicked();
 
+    void on_cascadeBtn_clicked();
+
 private:
     Ui::Home_DevWid *ui;
     Core_Http *mHttp;

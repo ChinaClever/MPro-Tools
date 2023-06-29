@@ -49,6 +49,14 @@ void Home_DevWid::on_outletBtn_clicked()
 }
 
 
+void Home_DevWid::on_cascadeBtn_clicked()
+{
+    Core_Thread::bulid(this)->enCascade();
+    MsgBox::information(this, tr("设备级联功能已开启"));
+}
+
+
+
 void Home_DevWid::updateParams()
 {
     sParameter *it = &mIt->param;
@@ -137,6 +145,7 @@ void Home_DevWid::on_loopCurBox_valueChanged(int arg1)
     double v = arg1 * ui->loopVolBox->value() / 1000.0;
     ui->loopPowBox->setValue(v);
 }
+
 
 
 

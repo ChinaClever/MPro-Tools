@@ -28,7 +28,7 @@
      <widget class="QPushButton" name="logBtn">
       <property name="geometry">
        <rect>
-        <x>420</x>
+        <x>630</x>
         <y>80</y>
         <width>100</width>
         <height>31</height>
@@ -74,7 +74,7 @@
      <widget class="QPushButton" name="eleClearBtn">
       <property name="geometry">
        <rect>
-        <x>630</x>
+        <x>820</x>
         <y>80</y>
         <width>100</width>
         <height>30</height>
@@ -87,7 +87,7 @@
      <widget class="QPushButton" name="factoryBtn">
       <property name="geometry">
        <rect>
-        <x>830</x>
+        <x>990</x>
         <y>80</y>
         <width>120</width>
         <height>30</height>
@@ -95,6 +95,19 @@
       </property>
       <property name="text">
        <string>恢复出厂设置</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="cascadeBtn">
+      <property name="geometry">
+       <rect>
+        <x>440</x>
+        <y>80</y>
+        <width>100</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>开启级联</string>
       </property>
      </widget>
     </widget>
