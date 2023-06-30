@@ -65,7 +65,7 @@ public:
     static sCoreItem coreItem;
     void clearAllEle();
     void clearLogs();
-    void enCascade();
+    void enCascade(int v);
     void factoryRestore();
     void relayCtrl(int on, int id=0);
     void relayDelay(int sec, int id=0);

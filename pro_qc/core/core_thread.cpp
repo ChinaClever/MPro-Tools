@@ -405,7 +405,7 @@ bool Core_Thread::workDown(const QString &ip)
 
     if(res) {
         if(coreItem.actual.param.devSpec > 2) {
-            relayDelay(0); relayCtrl(1);
+            relayDelay(0); relayCtrl(1); enCascade(0);
         } emit msgSig("清除所有电能", true); clearAllEle();
         emit msgSig("清除运行时间", true); setRunTime();
         emit msgSig("清除设备日志", true); clearLogs();

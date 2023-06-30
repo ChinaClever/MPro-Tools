@@ -22,11 +22,11 @@ void Core_Object::clearAllEle()
     mHttp->setting(it);
 }
 
-void Core_Object::enCascade()
+void Core_Object::enCascade(int v)
 {
     sCfgItem it;
     it.type = 13; it.fc = 3;
-    mHttp->setting(it, 1);
+    mHttp->setting(it, v);
 }
 
 void Core_Object::factoryRestore()

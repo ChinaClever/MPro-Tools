@@ -68,11 +68,9 @@ void Home_DevWid::on_disDelayBtn_clicked()
 
 void Home_DevWid::on_cascadeBtn_clicked()
 {
-    Core_Thread::bulid(this)->enCascade();
+    Core_Thread::bulid(this)->enCascade(1);
     MsgBox::information(this, tr("设备级联功能已开启"));
 }
-
-
 
 void Home_DevWid::updateParams()
 {
