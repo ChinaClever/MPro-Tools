@@ -225,7 +225,7 @@
       <item row="2" column="1" colspan="3">
        <widget class="QLabel" name="logoLab">
         <property name="text">
-         <string>公司标准默认Logo图片</string>
+         <string>--- ---</string>
         </property>
        </widget>
       </item>
