@@ -32,15 +32,17 @@ private slots:
     void on_uncheckBtn_clicked();
     void on_eleClearBtn_clicked();
     void on_factoryBtn_clicked();
-    void on_outletBtn_clicked();
     void on_lineVolBox_valueChanged(int arg1);
     void on_lineCurBox_valueChanged(int arg1);
     void on_loopVolBox_valueChanged(int arg1);
     void on_loopCurBox_valueChanged(int arg1);
 
     void on_logBtn_clicked();
-
     void on_cascadeBtn_clicked();
+    void on_openAllBtn_clicked();
+    void on_closeAllBtn_clicked();
+    void on_enDelayBtn_clicked();
+    void on_disDelayBtn_clicked();
 
 private:
     Ui::Home_DevWid *ui;

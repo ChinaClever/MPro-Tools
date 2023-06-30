@@ -26,9 +26,9 @@ class Home_WorkWid : public QWidget
 public:
     explicit Home_WorkWid(QWidget *parent = nullptr);
     ~Home_WorkWid();
+    void devSetBtn();
 
 signals:
-    void setDevSig();
     void startSig();
 
 private:
@@ -53,7 +53,7 @@ private slots:
     void updateResult();
     void on_startBtn_clicked();
     void on_findBtn_clicked();
-    void on_devSetBtn_clicked();
+    void on_logoBtn_clicked();
     void on_auCheckBox_clicked(bool checked);
     void finishSlot(bool pass, const QString &msg);
     void insertTextSlot(const QString &msg, bool pass);

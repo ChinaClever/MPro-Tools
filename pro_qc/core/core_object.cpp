@@ -61,6 +61,17 @@ void Core_Object::relayCtrl(int on, int id)
     mHttp->setting(it);
 }
 
+void Core_Object::relayDelay(int sec, int id)
+{
+    sDataItem it;
+    it.id = id;
+    it.type = 3;
+    it.topic = 1;
+    it.subtopic = 4;
+    it.value = sec;
+    mHttp->setting(it);
+}
+
 void Core_Object::readMetaData()
 {
     mHttp->readJson(0);

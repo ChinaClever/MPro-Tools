@@ -29,10 +29,13 @@ private:
     bool supplyVolCheck();
     bool parameterCheck();
     bool thresholdCheck();
+    bool compareImages();
+    bool logoCheck(const QString &ip);
+    bool downLogo(const QString &ip);
     bool workDown(const QString &ip);
 
-
 private:
+    QString mLogo;
     QStringList m_ips;
 };
 

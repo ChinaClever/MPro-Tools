@@ -20,98 +20,6 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_4">
-   <item row="0" column="0">
-    <widget class="QGroupBox" name="groupBox_1">
-     <property name="title">
-      <string>常用操作</string>
-     </property>
-     <widget class="QPushButton" name="logBtn">
-      <property name="geometry">
-       <rect>
-        <x>630</x>
-        <y>80</y>
-        <width>100</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>清除日志</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="outletBtn">
-      <property name="geometry">
-       <rect>
-        <x>260</x>
-        <y>80</y>
-        <width>80</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>执行</string>
-      </property>
-     </widget>
-     <widget class="QComboBox" name="outletBox">
-      <property name="geometry">
-       <rect>
-        <x>120</x>
-        <y>80</y>
-        <width>131</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <item>
-       <property name="text">
-        <string>输出位全关</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>输出位全开</string>
-       </property>
-      </item>
-     </widget>
-     <widget class="QPushButton" name="eleClearBtn">
-      <property name="geometry">
-       <rect>
-        <x>820</x>
-        <y>80</y>
-        <width>100</width>
-        <height>30</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>电能清除</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="factoryBtn">
-      <property name="geometry">
-       <rect>
-        <x>990</x>
-        <y>80</y>
-        <width>120</width>
-        <height>30</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>恢复出厂设置</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="cascadeBtn">
-      <property name="geometry">
-       <rect>
-        <x>440</x>
-        <y>80</y>
-        <width>100</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>开启级联</string>
-      </property>
-     </widget>
-    </widget>
-   </item>
    <item row="1" column="0">
     <widget class="QGroupBox" name="groupBox_2">
      <property name="maximumSize">
@@ -124,16 +32,6 @@
       <string>额定值配置</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_10">
-        <property name="text">
-         <string>相电压额定值：</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="1">
        <widget class="QSpinBox" name="lineVolBox">
         <property name="maximumSize">
@@ -156,13 +54,22 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="2">
-       <widget class="QLabel" name="label_11">
-        <property name="text">
-         <string>相电流额定值：</string>
+      <item row="1" column="5">
+       <widget class="QDoubleSpinBox" name="loopPowBox">
+        <property name="maximumSize">
+         <size>
+          <width>120</width>
+          <height>16777215</height>
+         </size>
         </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        <property name="suffix">
+         <string>KW</string>
+        </property>
+        <property name="decimals">
+         <number>3</number>
+        </property>
+        <property name="value">
+         <double>3.520000000000000</double>
         </property>
        </widget>
       </item>
@@ -182,27 +89,59 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="4">
-       <widget class="QLabel" name="label_12">
+      <item row="1" column="6">
+       <widget class="QLabel" name="label_18">
         <property name="text">
-         <string>相功率额定值：</string>
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QLabel" name="label_15">
+        <property name="text">
+         <string>回路电流额定值：</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
-      <item row="0" column="6">
-       <widget class="QLabel" name="label_17">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_10">
         <property name="text">
-         <string/>
+         <string>相电压额定值：</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_13">
+      <item row="0" column="5">
+       <widget class="QDoubleSpinBox" name="linePowBox">
+        <property name="maximumSize">
+         <size>
+          <width>120</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="prefix">
+         <string/>
+        </property>
+        <property name="suffix">
+         <string>KW</string>
+        </property>
+        <property name="decimals">
+         <number>3</number>
+        </property>
+        <property name="value">
+         <double>7.040000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="4">
+       <widget class="QLabel" name="label_14">
         <property name="text">
-         <string>回路电压额定值：</string>
+         <string>回路功率额定值：</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -231,10 +170,27 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="2">
-       <widget class="QLabel" name="label_15">
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_13">
         <property name="text">
-         <string>回路电流额定值：</string>
+         <string>回路电压额定值：</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="6">
+       <widget class="QLabel" name="label_17">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QLabel" name="label_11">
+        <property name="text">
+         <string>相电流额定值：</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -257,61 +213,13 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="4">
-       <widget class="QLabel" name="label_14">
+      <item row="0" column="4">
+       <widget class="QLabel" name="label_12">
         <property name="text">
-         <string>回路功率额定值：</string>
+         <string>相功率额定值：</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="6">
-       <widget class="QLabel" name="label_18">
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="5">
-       <widget class="QDoubleSpinBox" name="linePowBox">
-        <property name="maximumSize">
-         <size>
-          <width>120</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="prefix">
-         <string/>
-        </property>
-        <property name="suffix">
-         <string>KW</string>
-        </property>
-        <property name="decimals">
-         <number>3</number>
-        </property>
-        <property name="value">
-         <double>7.040000000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="5">
-       <widget class="QDoubleSpinBox" name="loopPowBox">
-        <property name="maximumSize">
-         <size>
-          <width>120</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="suffix">
-         <string>KW</string>
-        </property>
-        <property name="decimals">
-         <number>3</number>
-        </property>
-        <property name="value">
-         <double>3.520000000000000</double>
         </property>
        </widget>
       </item>
@@ -387,6 +295,11 @@
         <item>
          <property name="text">
           <string>中性</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>定制</string>
          </property>
         </item>
        </widget>
@@ -990,6 +903,117 @@
        </widget>
       </item>
      </layout>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QGroupBox" name="groupBox_1">
+     <property name="title">
+      <string>常用操作</string>
+     </property>
+     <widget class="QPushButton" name="logBtn">
+      <property name="geometry">
+       <rect>
+        <x>690</x>
+        <y>60</y>
+        <width>100</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>清除日志</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="eleClearBtn">
+      <property name="geometry">
+       <rect>
+        <x>810</x>
+        <y>60</y>
+        <width>100</width>
+        <height>30</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>电能清除</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="factoryBtn">
+      <property name="geometry">
+       <rect>
+        <x>810</x>
+        <y>110</y>
+        <width>101</width>
+        <height>30</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>恢复出厂</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="cascadeBtn">
+      <property name="geometry">
+       <rect>
+        <x>690</x>
+        <y>110</y>
+        <width>100</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>开启级联</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="closeAllBtn">
+      <property name="geometry">
+       <rect>
+        <x>240</x>
+        <y>110</y>
+        <width>101</width>
+        <height>30</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>全 关</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="enDelayBtn">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>60</y>
+        <width>100</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>开关延时</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="disDelayBtn">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>110</y>
+        <width>100</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>清除延时</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="openAllBtn">
+      <property name="geometry">
+       <rect>
+        <x>240</x>
+        <y>60</y>
+        <width>100</width>
+        <height>30</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>全 开</string>
+      </property>
+     </widget>
     </widget>
    </item>
   </layout>

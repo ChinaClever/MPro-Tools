@@ -42,12 +42,29 @@ void Home_DevWid::on_logBtn_clicked()
 }
 
 
-void Home_DevWid::on_outletBtn_clicked()
+void Home_DevWid::on_openAllBtn_clicked()
 {
-    int index = ui->outletBox->currentIndex();
-    Core_Thread::bulid(this)->relayCtrl(index);
+    Core_Thread::bulid(this)->relayCtrl(1);
 }
 
+
+void Home_DevWid::on_closeAllBtn_clicked()
+{
+    Core_Thread::bulid(this)->relayCtrl(0);
+}
+
+void Home_DevWid::on_enDelayBtn_clicked()
+{
+    Core_Thread::bulid(this)->relayDelay(1);
+    MsgBox::information(this, tr("顺序上下电延时功能已开启"));
+}
+
+
+void Home_DevWid::on_disDelayBtn_clicked()
+{
+    Core_Thread::bulid(this)->relayDelay(0);
+    MsgBox::information(this, tr("顺序上下电延时功能已清除"));
+}
 
 void Home_DevWid::on_cascadeBtn_clicked()
 {
@@ -145,6 +162,14 @@ void Home_DevWid::on_loopCurBox_valueChanged(int arg1)
     double v = arg1 * ui->loopVolBox->value() / 1000.0;
     ui->loopPowBox->setValue(v);
 }
+
+
+
+
+
+
+
+
 
 
 

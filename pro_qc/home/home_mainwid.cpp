@@ -16,7 +16,7 @@ Home_MainWid::Home_MainWid(QWidget *parent) :
     Core_Http *http = Core_Http::bulid(this);
     connect(http, &Core_Http::httpSig, this, &Home_MainWid::onMsg);
     connect(mWorkWid, &Home_WorkWid::startSig, this, &Home_MainWid::onStart);
-    connect(mWorkWid, &Home_WorkWid::setDevSig, this, &Home_MainWid::setDevSig);
+    connect(this, &Home_MainWid::setDevSig, [&]{mWorkWid->devSetBtn();});
 }
 
 Home_MainWid::~Home_MainWid()

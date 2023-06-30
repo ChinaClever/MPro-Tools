@@ -310,10 +310,20 @@ void Home_WorkWid::on_auCheckBox_clicked(bool checked)
 }
 
 
-
-void Home_WorkWid::on_devSetBtn_clicked()
+void Home_WorkWid::devSetBtn()
 {
-    emit setDevSig();
     ui->startBtn->setEnabled(true);
+}
+
+void Home_WorkWid::on_logoBtn_clicked()
+{
+    sCoreItem *it = &Core_Object::coreItem;
+    it->logo = QFileDialog::getOpenFileName(this, "设备Logo图片选择",
+                                                    QStandardPaths::writableLocation(QStandardPaths::DesktopLocation),
+                                                    "Images (*.png *.xpm *.jpg)");
+
+    QString str = it->logo;
+    if(str.isEmpty()) str = "--- ---";
+    ui->logoLab->setText(str);
 }
 

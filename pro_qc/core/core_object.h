@@ -45,6 +45,7 @@ struct sCoreItem
 {
     int port = 3166;
     QString ip="192.168.1.163";
+    QString logo="logo.png";
     sCoreUnit desire; // 期望
     sCoreUnit actual; // 实际
     QString jsonPacket;
@@ -67,6 +68,7 @@ public:
     void enCascade();
     void factoryRestore();
     void relayCtrl(int on, int id=0);
+    void relayDelay(int sec, int id=0);
     void readMetaData();
     void timeSync();
     void irqCheck();

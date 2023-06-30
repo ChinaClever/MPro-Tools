@@ -4,11 +4,16 @@
  *      Author: Lzy
  */
 #include "core_thread.h"
+#include <QImage>
+#include <QPixmap>
 
 Core_Thread::Core_Thread(QObject *parent)
     : Core_Object{parent}
 {
     Ssdp_Core::bulid(this);
+    mLogo = "usr/data/clever/cfg/logo.png";
+    QString dir = "usr/data/clever/cfg";
+    FileMgr::build().mkpath(dir);
 }
 
 Core_Thread *Core_Thread::bulid(QObject *parent)
@@ -81,6 +86,81 @@ bool Core_Thread::supplyVolCheck()
 
     return ret;
 }
+
+bool Core_Thread::downLogo(const QString &ip)
+{
+    QString str = tr("Logo图片下载：");
+    QStringList fs; fs << mLogo;
+
+    QFile::remove(mLogo);
+    Core_Http *http = Core_Http::bulid(this);
+    http->initHost(ip); http->downFile(fs);
+    for(int i=0; i<1000; i+= 100) {
+        if(QFile::exists(mLogo)) break; else cm_mdelay(100);
+    }
+
+    bool ret =QFile::exists(mLogo);
+    if(ret) str += tr("成功"); else str += tr("失败");
+    emit msgSig(str, ret);
+    return ret;
+}
+
+// 计算两张图片的差异
+bool Core_Thread::compareImages()
+{
+    if(File::fileSize(mLogo) != File::fileSize(coreItem.logo))  return false;
+
+    // 加载两个图片文件
+    QImage img1(mLogo);
+    QImage img2(coreItem.logo);
+
+    // 将两张图片转换为QImage类型，以便进行像素比较
+    //QImage img1 = pix1.toImage();
+    //QImage img2 = pix2.toImage();
+
+    // 检查图片尺寸是否相同
+    if (img1.size() != img2.size()) {
+        return false;
+    }
+
+    // 计算不同像素点的数量
+    uint diffCount = 0; uint count = 0;
+    for (int y = 0; y < img1.height(); ++y) {
+        for (int x = 0; x < img1.width(); ++x) {
+            if (img1.pixelColor(x, y) != img2.pixelColor(x, y)) {
+                ++diffCount;
+            } ++count;
+        }
+    }
+
+    // 设置一个阈值，判断两张图片是否大致相同
+    const double threshold = 0.1; // 根据实际情况调整阈值
+    if ((diffCount*1.0)/count <= threshold) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+bool Core_Thread::logoCheck(const QString &ip)
+{
+    bool ret = true;
+    if(coreItem.desire.param.standNeutral<2) {
+        emit msgSig(tr("标准和中性版本跳过Logo检测"), true);
+    } else if (coreItem.logo.isEmpty()) {
+         emit msgSig(tr("未指定Logo此项检测跳过"), true);
+     } else {
+        ret = downLogo(ip);
+        if(ret) {
+            ret = compareImages();
+            QString str = tr("Logo图片差异检查：");
+            if(ret) str += tr("通过"); else str += tr("失败");
+            emit msgSig(str, ret);
+        }
+    }
+
+    return ret;
+ }
 
 bool Core_Thread::parameterCheck()
 {
@@ -321,9 +401,12 @@ bool Core_Thread::workDown(const QString &ip)
     ret = thresholdCheck();  if(!ret) res = false;
     ret = outputVolCheck(); if(!ret) res = false;
     ret = outletCheck(); if(!ret) res = false;
+    ret = logoCheck(ip); if(!ret) res = false;
 
     if(res) {
-        emit msgSig("清除所有电能", true); clearAllEle();
+        if(coreItem.actual.param.devSpec > 2) {
+            relayDelay(0); relayCtrl(1);
+        } emit msgSig("清除所有电能", true); clearAllEle();
         emit msgSig("清除运行时间", true); setRunTime();
         emit msgSig("清除设备日志", true); clearLogs();
 

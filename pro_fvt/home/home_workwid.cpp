@@ -41,6 +41,8 @@ void Home_WorkWid::initLayout()
 void Home_WorkWid::initFunSlot()
 {
     initLayout(); isStart = false;
+    QString dir = "usr/data/clever/cfg";
+    FileMgr::build().mkpath(dir);
     timer = new QTimer(this); //timer->start(500);
     connect(timer, SIGNAL(timeout()), this, SLOT(timeoutDone()));
     connect(mCoreThread, &Core_Thread::finshSig, this, &Home_WorkWid::finishSlot);
