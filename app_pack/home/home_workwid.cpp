@@ -151,6 +151,8 @@ bool Home_WorkWid::workDown()
     QFile::remove(dir+"/"+CFG_APP); cm_mdelay(1);
     Cfg_App cfg(dir, this); emit startSig();
     QStringList fs = File::entryList(dir+"/app");
+    fs << File::entryList(dir+"/outlet");
+    fs << File::entryList(dir+"/rootfs");
     fs.removeOne(CFG_APP); packing(cfg, fs);
     if(fs.size()) emit downSig(dir);
     return fs.size();

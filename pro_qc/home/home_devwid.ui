@@ -913,7 +913,7 @@
      <widget class="QPushButton" name="logBtn">
       <property name="geometry">
        <rect>
-        <x>690</x>
+        <x>730</x>
         <y>60</y>
         <width>100</width>
         <height>31</height>
@@ -926,7 +926,7 @@
      <widget class="QPushButton" name="eleClearBtn">
       <property name="geometry">
        <rect>
-        <x>810</x>
+        <x>850</x>
         <y>60</y>
         <width>100</width>
         <height>30</height>
@@ -939,7 +939,7 @@
      <widget class="QPushButton" name="factoryBtn">
       <property name="geometry">
        <rect>
-        <x>810</x>
+        <x>850</x>
         <y>110</y>
         <width>101</width>
         <height>30</height>
@@ -952,7 +952,7 @@
      <widget class="QPushButton" name="cascadeBtn">
       <property name="geometry">
        <rect>
-        <x>690</x>
+        <x>730</x>
         <y>110</y>
         <width>100</width>
         <height>31</height>
@@ -965,7 +965,7 @@
      <widget class="QPushButton" name="closeAllBtn">
       <property name="geometry">
        <rect>
-        <x>240</x>
+        <x>220</x>
         <y>110</y>
         <width>101</width>
         <height>30</height>
@@ -978,7 +978,7 @@
      <widget class="QPushButton" name="enDelayBtn">
       <property name="geometry">
        <rect>
-        <x>120</x>
+        <x>100</x>
         <y>60</y>
         <width>100</width>
         <height>31</height>
@@ -991,7 +991,7 @@
      <widget class="QPushButton" name="disDelayBtn">
       <property name="geometry">
        <rect>
-        <x>120</x>
+        <x>100</x>
         <y>110</y>
         <width>100</width>
         <height>31</height>
@@ -1004,7 +1004,7 @@
      <widget class="QPushButton" name="openAllBtn">
       <property name="geometry">
        <rect>
-        <x>240</x>
+        <x>220</x>
         <y>60</y>
         <width>100</width>
         <height>30</height>
@@ -1012,6 +1012,90 @@
       </property>
       <property name="text">
        <string>全 开</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_21">
+      <property name="geometry">
+       <rect>
+        <x>380</x>
+        <y>60</y>
+        <width>101</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>ModbusRtu</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_22">
+      <property name="geometry">
+       <rect>
+        <x>380</x>
+        <y>110</y>
+        <width>101</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>传感器盒子</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="rtuEnBtn">
+      <property name="geometry">
+       <rect>
+        <x>490</x>
+        <y>60</y>
+        <width>75</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>开启</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="rtuDisenBtn">
+      <property name="geometry">
+       <rect>
+        <x>580</x>
+        <y>60</y>
+        <width>75</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>关闭</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="boxDisenBtn">
+      <property name="geometry">
+       <rect>
+        <x>580</x>
+        <y>110</y>
+        <width>75</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>关闭</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="bosEnBtn">
+      <property name="geometry">
+       <rect>
+        <x>490</x>
+        <y>110</y>
+        <width>75</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>开启</string>
       </property>
      </widget>
     </widget>

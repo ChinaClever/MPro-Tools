@@ -44,6 +44,14 @@ private slots:
     void on_enDelayBtn_clicked();
     void on_disDelayBtn_clicked();
 
+    void on_rtuEnBtn_clicked();
+
+    void on_rtuDisenBtn_clicked();
+
+    void on_bosEnBtn_clicked();
+
+    void on_boxDisenBtn_clicked();
+
 private:
     Ui::Home_DevWid *ui;
     Core_Http *mHttp;

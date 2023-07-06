@@ -21,13 +21,11 @@ Home_DevWid::~Home_DevWid()
     delete ui;
 }
 
-
 void Home_DevWid::on_eleClearBtn_clicked()
 {
     Core_Thread::bulid(this)->clearAllEle();
     MsgBox::information(this, tr("电能已清除"));
 }
-
 
 void Home_DevWid::on_factoryBtn_clicked()
 {
@@ -41,12 +39,10 @@ void Home_DevWid::on_logBtn_clicked()
     MsgBox::information(this, tr("设备日志已清除"));
 }
 
-
 void Home_DevWid::on_openAllBtn_clicked()
 {
     Core_Thread::bulid(this)->relayCtrl(1);
 }
-
 
 void Home_DevWid::on_closeAllBtn_clicked()
 {
@@ -59,7 +55,6 @@ void Home_DevWid::on_enDelayBtn_clicked()
     MsgBox::information(this, tr("顺序上下电延时功能已开启"));
 }
 
-
 void Home_DevWid::on_disDelayBtn_clicked()
 {
     Core_Thread::bulid(this)->relayDelay(0);
@@ -70,6 +65,30 @@ void Home_DevWid::on_cascadeBtn_clicked()
 {
     Core_Thread::bulid(this)->enCascade(1);
     MsgBox::information(this, tr("设备级联功能已开启"));
+}
+
+void Home_DevWid::on_rtuEnBtn_clicked()
+{
+    Core_Thread::bulid(this)->rtuSet(1);
+    MsgBox::information(this, tr("Modbus-RTU功能已开启"));
+}
+
+void Home_DevWid::on_rtuDisenBtn_clicked()
+{
+    Core_Thread::bulid(this)->rtuSet(0);
+    MsgBox::information(this, tr("Modbus-RTU功能已关闭"));
+}
+
+void Home_DevWid::on_bosEnBtn_clicked()
+{
+    Core_Thread::bulid(this)->boxSet(1);
+    MsgBox::information(this, tr("传感器盒子功能已开启"));
+}
+
+void Home_DevWid::on_boxDisenBtn_clicked()
+{
+    Core_Thread::bulid(this)->boxSet(0);
+    MsgBox::information(this, tr("传感器盒子功能已关闭"));
 }
 
 void Home_DevWid::updateParams()
@@ -109,7 +128,6 @@ void Home_DevWid::updateOutlets()
     }
 }
 
-
 void Home_DevWid::updateData()
 {
     updateParams();
@@ -133,13 +151,11 @@ void Home_DevWid::on_uncheckBtn_clicked()
     foreach (auto it, box) it->setChecked(false);
 }
 
-
 void Home_DevWid::on_lineVolBox_valueChanged(int arg1)
 {
     double v = arg1 * ui->lineCurBox->value() / 1000.0;
     ui->linePowBox->setValue(v);
 }
-
 
 void Home_DevWid::on_lineCurBox_valueChanged(int arg1)
 {
@@ -147,19 +163,21 @@ void Home_DevWid::on_lineCurBox_valueChanged(int arg1)
     ui->linePowBox->setValue(v);
 }
 
-
 void Home_DevWid::on_loopVolBox_valueChanged(int arg1)
 {
     double v = arg1 * ui->loopCurBox->value() / 1000.0;
     ui->loopPowBox->setValue(v);
 }
 
-
 void Home_DevWid::on_loopCurBox_valueChanged(int arg1)
 {
     double v = arg1 * ui->loopVolBox->value() / 1000.0;
     ui->loopPowBox->setValue(v);
 }
+
+
+
+
 
 
 

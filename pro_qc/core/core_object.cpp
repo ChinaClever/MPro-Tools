@@ -29,6 +29,21 @@ void Core_Object::enCascade(int v)
     mHttp->setting(it, v);
 }
 
+void Core_Object::rtuSet(int v)
+{
+    sCfgItem it;
+    it.type = 15; it.fc = 1;
+    mHttp->setting(it, v);
+    it.fc = 7; mHttp->setting(it, 1);
+}
+
+void Core_Object::boxSet(int v)
+{
+    sCfgItem it;
+    it.type = 13; it.fc = 9;
+    mHttp->setting(it, v);
+}
+
 void Core_Object::factoryRestore()
 {
     sCfgItem it;

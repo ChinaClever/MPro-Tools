@@ -67,6 +67,8 @@ public:
     void clearLogs();
     void enCascade(int v);
     void factoryRestore();
+    void rtuSet(int v);
+    void boxSet(int v);
     void relayCtrl(int on, int id=0);
     void relayDelay(int sec, int id=0);
     void readMetaData();
