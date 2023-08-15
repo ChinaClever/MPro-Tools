@@ -67,7 +67,7 @@ bool Cfg_App::app_unpack(sAppVerIt &it)
     it.remark = readCfg("remark", "", g).toString();
     it.oldVersion = readCfg("oldVersion", "", g).toString();
     it.releaseDate = readCfg("releaseDate", "", g).toString();
-    QString str = it.dev + it.usr + it.ver + it.remark + it.oldVersion + it.releaseDate;
+    QString str = it.dev + it.usr + it.ver + it.releaseDate; // + it.remark + it.oldVersion
     str = QCryptographicHash::hash(str.toLatin1(),QCryptographicHash::Md5).toHex();
     return  it.md5 == str;
 }

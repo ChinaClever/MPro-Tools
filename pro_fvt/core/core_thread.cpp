@@ -68,11 +68,11 @@ void Core_Thread::timeSync()
 }
 
 
-void Core_Thread::enCascade()
+void Core_Thread::enModbusRtu()
 {
-    sCfgItem it; it.type = 13; it.fc = 3;
+    sCfgItem it; it.type = 15; it.fc = 1;
     Core_Http::bulid(this)->setting(it, 1);
-    emit msgSig(tr("设备模式：已开启级联功能"), true);
+    emit msgSig(tr("设备模式：已开启Modbus-RTU功能"), true);
 }
 
 void Core_Thread::writeSnMac(const QString &sn, const QString &mac)
@@ -137,7 +137,7 @@ void Core_Thread::run()
     if(ret && fsCheck()) {
         foreach (const auto &ip, m_ips) {            
             emit msgSig(tr("目标设备:")+ip, true);
-            ret = downVer(ip); timeSync(); enCascade();
+            ret = downVer(ip); timeSync(); enModbusRtu();
             if(ret) ret = workDown(ip); cm_mdelay(150);
             emit finshSig(ret, ip+" ");            
         }m_ips.clear();

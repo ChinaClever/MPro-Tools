@@ -404,7 +404,7 @@ bool Core_Thread::workDown(const QString &ip)
     ret = logoCheck(ip); if(!ret) res = false;
 
     if(res) {
-        enCascade(0); //clearAllEle()
+        enCascade(0); rtuSet(0); //clearAllEle()
         if(coreItem.actual.param.devSpec > 2) {
             relayDelay(0); relayCtrl(1);
         } emit msgSig("清除所有电能", true); clearAllEle();
