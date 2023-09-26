@@ -73,6 +73,10 @@ void Core_Thread::enModbusRtu()
     sCfgItem it; it.type = 15; it.fc = 1;
     Core_Http::bulid(this)->setting(it, 1);
     emit msgSig(tr("设备模式：已开启Modbus-RTU功能"), true);
+
+    it.type = 13; it.fc = 9;
+    Core_Http::bulid(this)->setting(it, 1);
+    emit msgSig(tr("启用扩展口：已开启传感器盒子功能"), true);
 }
 
 void Core_Thread::writeSnMac(const QString &sn, const QString &mac)
