@@ -327,3 +327,8 @@ void Home_WorkWid::on_logoBtn_clicked()
     ui->logoLab->setText(str);
 }
 
+void Home_WorkWid::on_ipEdit_textChanged(const QString &arg1)
+{
+    Core_Http::bulid()->initHost(arg1);
+}
+

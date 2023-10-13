@@ -25,6 +25,7 @@ private:
     bool alarmCheck();
     bool devNumCheck();
     bool outletCheck();
+    bool mcuTempCheck();
     bool outputVolCheck();
     bool supplyVolCheck();
     bool parameterCheck();

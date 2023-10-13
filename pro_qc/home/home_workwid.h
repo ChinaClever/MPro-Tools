@@ -58,6 +58,8 @@ private slots:
     void finishSlot(bool pass, const QString &msg);
     void insertTextSlot(const QString &msg, bool pass);
 
+    void on_ipEdit_textChanged(const QString &arg1);
+
 private:
     Ui::Home_WorkWid *ui;
     Core_Thread *mCoreThread;

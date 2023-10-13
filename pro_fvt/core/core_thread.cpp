@@ -64,7 +64,9 @@ void Core_Thread::timeSync()
     emit msgSig(tr("时间设置：")+t, true);
     Core_Http *http = Core_Http::bulid(this);
     sCfgItem it; it.type = 43; it.fc =1;
-    http->setting(it, t); cm_mdelay(320);
+    http->setting(it, t); cm_mdelay(321);
+    it.type = 30; it.fc = 9;
+    http->setting(it, t);
 }
 
 
@@ -128,7 +130,7 @@ bool Core_Thread::workDown(const QString &ip)
     }
 
     if(res) {
-        emit msgSig(tr("设备重启，设备有响声"), true);
+        emit msgSig(tr("设备重启，设备有响声"), true);        
         http->execute("sync"); cm_mdelay(1000);
         http->execute("reboot"); // killall cores
     }

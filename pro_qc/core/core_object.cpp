@@ -127,8 +127,9 @@ bool Core_Object::jsonAnalysis()
 void Core_Object::getSn(const QJsonObject &object)
 {
     QJsonObject obj = getObject(object, "pdu_version");
-    coreItem.sn = getValue(obj, "serialNumber").toString();
     coreItem.ver = getValue(obj, "ver").toString();
+    coreItem.sn = getValue(obj, "serialNumber").toString();
+    coreItem.mcutemp = getArray(obj, "mcu_temp").toVariantList();
 }
 
 void Core_Object::getMac(const QJsonObject &object)

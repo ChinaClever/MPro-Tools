@@ -85,6 +85,7 @@ void Home_WorkWid::writeLog(const sAppVerIt &app)
 bool Home_WorkWid::packing(Cfg_App &cfg, const QStringList &apps)
 {
     sAppVerIt it; it.apps = apps;
+    it.hw = ui->hwEdit->text();
     it.usr = ui->usrEdit->text();
     it.ver = ui->versionEdit->text();
     it.dev = ui->devBox->currentText();
@@ -93,8 +94,7 @@ bool Home_WorkWid::packing(Cfg_App &cfg, const QStringList &apps)
     it.releaseDate = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
     QString str = it.dev + it.usr + it.ver + it.releaseDate; // + it.remark + it.oldVersion
     it.md5 = QCryptographicHash::hash(str.toLatin1(),QCryptographicHash::Md5).toHex();
-    bool ret = cfg.app_pack(it);
-    if(ret) writeLog(it);
+    bool ret = cfg.app_pack(it); if(ret) writeLog(it);
     return ret;
 }
 

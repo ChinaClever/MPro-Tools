@@ -52,6 +52,7 @@ struct sCoreItem
     QString datetime;
     QString mac,sn;
     QString ver;
+    QVariantList mcutemp;
     int alarm;
 };
 

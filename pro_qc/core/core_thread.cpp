@@ -64,6 +64,21 @@ bool Core_Thread::snCheck()
     return ret;
 }
 
+bool Core_Thread::mcuTempCheck()
+{
+    bool res = true;
+    int cnt = coreItem.actual.param.boardNum;
+    QVariantList list = coreItem.mcutemp;
+    for(int i=0; i<cnt; ++i) {
+        int temp = list.at(i).toInt(); bool ret = true;
+        QString str = tr("第%1块执行板温度%2°c").arg(i+1).arg(temp);
+        if(temp > 65){ res = ret = false; str += tr("错误");}
+        emit msgSig(str, ret); cout << str;
+    }
+
+    return res;
+}
+
 bool Core_Thread::macCheck()
 {
     bool ret = false;
@@ -400,6 +415,7 @@ bool Core_Thread::workDown(const QString &ip)
     ret = supplyVolCheck(); if(!ret) res = false;
     ret = thresholdCheck();  if(!ret) res = false;
     ret = outputVolCheck(); if(!ret) res = false;
+    ret = mcuTempCheck(); if(!ret) res = false;
     ret = outletCheck(); if(!ret) res = false;
     ret = logoCheck(ip); if(!ret) res = false;
 

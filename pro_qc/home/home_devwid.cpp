@@ -36,7 +36,7 @@ void Home_DevWid::on_factoryBtn_clicked()
 void Home_DevWid::on_logBtn_clicked()
 {
     Core_Thread::bulid(this)->clearLogs();
-    MsgBox::information(this, tr("设备日志已清除"));
+    MsgBox::information(this, tr("设备日志已清除，重启后生效"));
 }
 
 void Home_DevWid::on_openAllBtn_clicked()
