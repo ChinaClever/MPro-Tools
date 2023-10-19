@@ -120,6 +120,7 @@ bool Core_Object::jsonAnalysis()
         getMac(obj); getParameter(obj); getAlarmStatus(obj);
         it->datetime = getValue(obj, "datetime").toString();
         obj = getObject(obj, "pdu_data"); getThreshold(obj);
+        getTgData(obj); getEnvData(obj);
     }
     return ret;
 }
@@ -167,6 +168,24 @@ void Core_Object::getParameter(const QJsonObject &object)
     it->vh = getData(obj, "vh");
 }
 
+void Core_Object::getTgData(const QJsonObject &object)
+{
+    sMonitorData *it = &coreItem.actual.data;
+    QJsonObject obj = getObject(object, "pdu_tg_data");
+    it->apparent_pow = getData(obj, "apparent_pow");
+    it->tg_ele = getData(obj, "ele");
+    it->tg_pow = getData(obj, "pow");
+}
+
+void Core_Object::getEnvData(const QJsonObject &object)
+{
+    sMonitorData *it = &coreItem.actual.data;
+    QJsonObject obj = getObject(object, "env_item_list");
+    it->doors = getArray(obj, "door").toVariantList();
+    it->temps = getArray(obj, "tem_value").toVariantList();
+}
+
+
 void Core_Object::getThreshold(const QJsonObject &object)
 {
     sThreshold *it = &coreItem.actual.rate;    
@@ -175,7 +194,6 @@ void Core_Object::getThreshold(const QJsonObject &object)
     it->lineCur = getRating(obj, "cur");
     it->linePow = getRating(obj, "pow");
     it->volValue = getRating(obj, "vol", "value");
-
 
     obj = getObject(object, "loop_item_list");
     it->loopVol = getRating(obj, "vol");

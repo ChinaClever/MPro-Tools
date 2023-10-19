@@ -34,10 +34,20 @@ struct sThreshold
     QVariantList outputVols;
 };
 
+struct sMonitorData
+{
+    double apparent_pow;
+    double tg_ele;
+    double tg_pow;
+    QVariantList temps;
+    QVariantList doors;
+};
+
 struct sCoreUnit
 {
     sParameter param;
     sThreshold rate;
+    sMonitorData data;
 };
 
 
@@ -81,6 +91,8 @@ public:
 private:
     void getSn(const QJsonObject &object);
     void getMac(const QJsonObject &object);
+    void getTgData(const QJsonObject &object);
+    void getEnvData(const QJsonObject &object);
     void getOutputVol(const QJsonObject &object);
     void getParameter(const QJsonObject &object);
     void getThreshold(const QJsonObject &object);

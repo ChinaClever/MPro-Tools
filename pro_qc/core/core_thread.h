@@ -18,7 +18,9 @@ signals:
     void overSig();
 
 private:
+    bool tgCheck();
     bool snCheck();
+    bool envCheck();
     bool macCheck();
     bool searchDev();
     bool timeCheck();
@@ -31,6 +33,7 @@ private:
     bool parameterCheck();
     bool thresholdCheck();
     bool compareImages();
+    bool bigEleCheck();
     bool logoCheck(const QString &ip);
     bool downLogo(const QString &ip);
     bool workDown(const QString &ip);

@@ -69,11 +69,11 @@ bool Core_Thread::mcuTempCheck()
     bool res = true;
     int cnt = coreItem.actual.param.boardNum;
     QVariantList list = coreItem.mcutemp;
-    for(int i=0; i<cnt; ++i) {
+    for(int i=0; i<cnt && i<list.size(); ++i) {
         int temp = list.at(i).toInt(); bool ret = true;
         QString str = tr("第%1块执行板温度%2°c").arg(i+1).arg(temp);
-        if(temp > 65){ res = ret = false; str += tr("错误");}
-        emit msgSig(str, ret); cout << str;
+        if(temp > 65 || temp < 5){ res = ret = false; str += tr("错误");}
+        emit msgSig(str, ret); //cout << str;
     }
 
     return res;
@@ -221,13 +221,13 @@ bool Core_Thread::parameterCheck()
                    .arg(desire->standNeutral).arg(actual->standNeutral);
     } emit msgSig(str, ret);
 
-    str = tr("传感器盒子："); ret = true;
-    if(desire->sensorBoxEn == actual->sensorBoxEn) {
-        if(desire->sensorBoxEn) str += tr("存在"); else str += tr("不带");
-    } else {
-        res = ret = false; str += tr("期望值%1,实际值%2")
-                   .arg(desire->sensorBoxEn).arg(actual->sensorBoxEn);
-    } emit msgSig(str, ret);
+//    str = tr("传感器盒子："); ret = true;
+//    if(desire->sensorBoxEn == actual->sensorBoxEn) {
+//        if(desire->sensorBoxEn) str += tr("存在"); else str += tr("不带");
+//    } else {
+//        res = ret = false; str += tr("期望值%1,实际值%2")
+//                   .arg(desire->sensorBoxEn).arg(actual->sensorBoxEn);
+//    } emit msgSig(str, ret);
 
     return res;
 }
@@ -400,6 +400,45 @@ bool Core_Thread::alarmCheck()
     return ret;
 }
 
+bool Core_Thread::tgCheck()
+{
+    bool res = true; bool ret = true;
+    sMonitorData *it = &coreItem.actual.data;
+    QString str = tr("设备总功率：%1kva").arg(it->apparent_pow);
+    if(it->apparent_pow >1) {res = ret = false;  str += tr("过大");} emit msgSig(str, ret);
+
+    str = tr("设备总电能：%1kwh").arg(it->tg_ele); ret = true;
+    if(it->tg_ele > 10) {res = ret = false;  str += tr("过大");} emit msgSig(str, ret);
+
+    return res;
+}
+
+bool Core_Thread::envCheck()
+{
+    bool res = true; bool ret = true;
+    sMonitorData *it = &coreItem.actual.data;
+
+    for(int i=0; i<4; ++i) {
+        double value = it->temps.at(i).toDouble();
+        QString str = tr("传感器温度%1：%2°C").arg(i+1).arg(value);
+        if(value < 5 || value > 50) {
+            ret = res = false; str += tr("错误; ");
+            if(i > 1) str += tr("检查传感器盒子连接状态");
+        }
+        emit msgSig(str, ret);
+    }
+
+    for(int i=0; i<2; ++i) {
+        int value = it->doors.at(i).toInt();
+        QString str = tr("门禁%1：%2").arg(i+1).arg(value);
+        if(0 == value) {ret = res = false; str += tr("错误");}
+        emit msgSig(str, ret);
+    }
+
+     return res;
+}
+
+
 bool Core_Thread::workDown(const QString &ip)
 {
     bool res = true, ret;
@@ -413,14 +452,18 @@ bool Core_Thread::workDown(const QString &ip)
     ret = devNumCheck(); if(!ret) res = false;
     ret = parameterCheck(); if(!ret) res = false;
     ret = supplyVolCheck(); if(!ret) res = false;
-    ret = thresholdCheck();  if(!ret) res = false;
+    ret = thresholdCheck(); if(!ret) res = false;
     ret = outputVolCheck(); if(!ret) res = false;
     ret = mcuTempCheck(); if(!ret) res = false;
     ret = outletCheck(); if(!ret) res = false;
     ret = logoCheck(ip); if(!ret) res = false;
+    ret = envCheck(); if(!ret) res = false;
+    ret = tgCheck(); if(!ret) res = false;
 
     if(res) {
-        enCascade(0); rtuSet(0); boxSet(0); //clearAllEle()
+        enCascade(0); rtuSet(0); //clearAllEle()
+        sParameter *desire = &coreItem.desire.param;
+        if(0 == desire->sensorBoxEn) boxSet(0);
         if(coreItem.actual.param.devSpec > 2) {
             relayDelay(0); relayCtrl(1);
         } emit msgSig("清除所有电能", true); clearAllEle();
