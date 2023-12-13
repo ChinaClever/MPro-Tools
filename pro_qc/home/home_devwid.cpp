@@ -104,6 +104,17 @@ void Home_DevWid::updateParams()
     it->boardNum = ui->boardNumBox->value();
     it->loopNum = ui->loopNumBox->value();
     it->outputNum = ui->outputNumBox->value();
+
+    sVersion *ver = &mIt->ver;
+    ver->devType = ui->typeEdit->text();
+    ver->fwVer = ui->fwEdit->text();
+    ver->loopOutlets.clear();
+    ver->loopOutlets << ui->opBox_1->value();
+    ver->loopOutlets << ui->opBox_2->value();
+    ver->loopOutlets << ui->opBox_3->value();
+    ver->loopOutlets << ui->opBox_4->value();
+    ver->loopOutlets << ui->opBox_5->value();
+    ver->loopOutlets << ui->opBox_6->value();
 }
 
 void Home_DevWid::updateThresholds()

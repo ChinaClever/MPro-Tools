@@ -18,6 +18,7 @@ signals:
     void overSig();
 
 private:
+    bool fwCheck();
     bool tgCheck();
     bool snCheck();
     bool envCheck();

@@ -128,9 +128,11 @@ bool Core_Object::jsonAnalysis()
 void Core_Object::getSn(const QJsonObject &object)
 {
     QJsonObject obj = getObject(object, "pdu_version");
-    coreItem.ver = getValue(obj, "ver").toString();
     coreItem.sn = getValue(obj, "serialNumber").toString();
     coreItem.mcutemp = getArray(obj, "mcu_temp").toVariantList();
+    coreItem.actual.ver.fwVer = getValue(obj, "ver").toString();
+    //coreItem.actual.ver.devType = getValue(obj, "dev").toString();
+    coreItem.actual.ver.opVers = getArray(obj, "op_vers").toVariantList();
 }
 
 void Core_Object::getMac(const QJsonObject &object)
@@ -140,10 +142,12 @@ void Core_Object::getMac(const QJsonObject &object)
 }
 
 void Core_Object::getOutputVol(const QJsonObject &object)
-{
-    //QJsonObject obj = getObject(object, "output_vol");
+{    
     coreItem.actual.rate.outputVols = getArray(object, "output_vol").toVariantList();
     //cout << coreItem.actual.rate.outputVols.size() << coreItem.actual.rate.outputVols;
+
+    QJsonObject obj = getObject(object, "uut_info");
+    coreItem.actual.ver.devType = getValue(obj, "pdu_type").toString();
 }
 
 void Core_Object::getAlarmStatus(const QJsonObject &object)
@@ -166,6 +170,9 @@ void Core_Object::getParameter(const QJsonObject &object)
     it->language = getData(obj, "language");
     it->isBreaker = getData(obj, "breaker");
     it->vh = getData(obj, "vh");
+
+    sVersion *ver = &coreItem.actual.ver;
+    ver->loopOutlets = getArray(obj, "loop_array").toVariantList();
 }
 
 void Core_Object::getTgData(const QJsonObject &object)
@@ -229,7 +236,7 @@ QJsonArray Core_Object::getArray(const QJsonObject &object, const QString &key)
         QJsonValue value = object.value(key);
         if (value.isArray()) {
             array = value.toArray();
-        }
+        } else cout << key << object.keys();
     } else cout << key << object.keys();
 
     return array;
@@ -241,7 +248,7 @@ double Core_Object::getData(const QJsonObject &object, const QString &key)
     QJsonValue value = getValue(object, key);
     if(value.isDouble()) {
         ret = value.toDouble();
-    }
+    } else cout << key << object.keys();
 
     return ret;
 }
@@ -252,7 +259,7 @@ QJsonValue Core_Object::getValue(const QJsonObject &object, const QString &key)
     QJsonValue value;
     if (object.contains(key))  {
         value = object.value(key);
-    }
+    } else cout << key << object.keys();
     return value;
 }
 
@@ -264,7 +271,7 @@ QJsonObject Core_Object::getObject(const QJsonObject &object, const QString &key
         if (value.isObject()){
             obj = value.toObject();
         }
-    }
+    } else cout << key << object.keys();
     return obj;
 }
 

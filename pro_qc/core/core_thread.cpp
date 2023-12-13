@@ -273,6 +273,43 @@ bool Core_Thread::devNumCheck()
     return res;
 }
 
+bool Core_Thread::fwCheck()
+{
+    sVersion *desire = &coreItem.desire.ver;
+    sVersion *actual = &coreItem.actual.ver;
+    bool ret=true, res=true;
+
+    QString str = tr("软件版本号："); ret = true;
+    if(desire->fwVer == actual->fwVer) {
+        str += desire->fwVer;
+    } else {
+        res = ret = false; str += tr("期望值%1,实际值%2")
+                   .arg(desire->fwVer, actual->fwVer);
+    } emit msgSig(str, ret);
+
+    str = tr("设备类型："); ret = true;
+        if(desire->devType == actual->devType) {
+        str += desire->devType;
+    } else {
+        res = ret = false; str += tr("期望值%1,实际值%2")
+                   .arg(desire->devType, actual->devType);
+    } emit msgSig(str, ret);
+
+    int num = coreItem.actual.param.loopNum;
+    for(int i=0; i<num; ++i) {
+        str = tr("第%1回路的输出位数量: "); ret = true;
+        int a = desire->loopOutlets.at(i).toInt();
+        int b = actual->loopOutlets.at(i).toInt();
+        if(a == b) {
+            str += QString::number(b);
+        } else {
+            res = ret = false;
+            str += tr("期望值%1,实际值%2") .arg(a).arg(b);
+        } emit msgSig(str.arg(i+1), ret);
+    }
+
+    return res;
+}
 
 bool Core_Thread::thresholdCheck()
 {
@@ -418,7 +455,7 @@ bool Core_Thread::envCheck()
     bool res = true; bool ret = true;
     sMonitorData *it = &coreItem.actual.data;
 
-    for(int i=0; i<4; ++i) {
+    for(int i=0; i<4 && i< it->temps.size(); ++i) {
         double value = it->temps.at(i).toDouble();
         QString str = tr("传感器温度%1：%2°C").arg(i+1).arg(value);
         if(value < 5 || value > 50) {
@@ -428,7 +465,7 @@ bool Core_Thread::envCheck()
         emit msgSig(str, ret);
     }
 
-    for(int i=0; i<2; ++i) {
+    for(int i=0; i<2 && i< it->doors.size(); ++i) {
         int value = it->doors.at(i).toInt();
         QString str = tr("门禁%1：%2").arg(i+1).arg(value);
         if(0 == value) {ret = res = false; str += tr("错误");}
@@ -447,6 +484,7 @@ bool Core_Thread::workDown(const QString &ip)
     http->initHost(ip); readMetaData(); jsonAnalysis();
     ret = timeCheck(); if(!ret) res = false;
     ret = snCheck(); if(!ret) res = false;
+    ret = fwCheck(); if(!ret) res = false;
     ret = macCheck(); if(!ret) res = false;
     ret = alarmCheck(); if(!ret) res = false;
     ret = devNumCheck(); if(!ret) res = false;
@@ -465,7 +503,7 @@ bool Core_Thread::workDown(const QString &ip)
         sParameter *desire = &coreItem.desire.param;
         if(0 == desire->sensorBoxEn) boxSet(0);
         if(coreItem.actual.param.devSpec > 2) {
-            relayDelay(0); relayCtrl(1);
+            relayCtrl(1); relayDelay(1); //relayDelay(0);
         } emit msgSig("清除所有电能", true); clearAllEle();
         emit msgSig("清除运行时间", true); setRunTime();
         emit msgSig("清除设备日志", true); clearLogs();

@@ -30,7 +30,7 @@ struct sThreshold
     double loopCur;
     double loopPow;
     double volValue; //电压参考值
-    QVariantList ops;
+    QVariantList ops; //输出位电流额定值
     QVariantList outputVols;
 };
 
@@ -43,8 +43,17 @@ struct sMonitorData
     QVariantList doors;
 };
 
+struct sVersion
+{
+    QVariantList opVers; // 每块执行板软件版本
+    QVariantList loopOutlets; // 每个回路输出位爆裂
+    QString devType; // 设备类型
+    QString fwVer; //软件版本号
+};
+
 struct sCoreUnit
 {
+    sVersion ver;
     sParameter param;
     sThreshold rate;
     sMonitorData data;
@@ -61,7 +70,6 @@ struct sCoreItem
     QString jsonPacket;
     QString datetime;
     QString mac,sn;
-    QString ver;
     QVariantList mcutemp;
     int alarm;
 };

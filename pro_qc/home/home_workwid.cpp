@@ -208,7 +208,7 @@ void Home_WorkWid::initData()
     it->datetime.clear();
     //it->ip = ips.first();
     it->mac.clear();
-    it->sn.clear();    
+    it->sn.clear();
 
     memset(&(it->actual.param), 0, sizeof(sParameter));
     it->actual.rate.lineVol = 0;
@@ -255,7 +255,7 @@ bool Home_WorkWid::updateWid()
     if(str.isEmpty()) str = "--- ---";
     ui->snLab->setText(str);
 
-    str = it->ver;
+    str = it->actual.ver.fwVer;
     if(str.isEmpty()) str = "--- ---";
     ui->fwLab->setText(str);
 
