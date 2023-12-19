@@ -56,6 +56,7 @@ private:
     Ui::Home_DevWid *ui;
     Core_Http *mHttp;
     sCoreUnit *mIt;
+    sDataPacket *mPro;
 };
 
 #endif // HOME_DEVWID_H

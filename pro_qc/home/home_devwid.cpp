@@ -13,6 +13,7 @@ Home_DevWid::Home_DevWid(QWidget *parent) :
     ui->setupUi(this);
     groupBox_background_icon(this);
     mHttp = Core_Http::bulid(this);
+    mPro=sDataPacket::bulid();
     mIt = &Core_Object::coreItem.desire;
 }
 
@@ -107,6 +108,7 @@ void Home_DevWid::updateParams()
 
     sVersion *ver = &mIt->ver;
     ver->devType = ui->typeEdit->text();
+    mPro->getPro()->productType = ui->typeEdit->text();
     ver->fwVer = ui->fwEdit->text();
     ver->loopOutlets.clear();
     ver->loopOutlets << ui->opBox_1->value();

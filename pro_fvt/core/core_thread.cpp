@@ -10,6 +10,7 @@ Core_Thread::Core_Thread(QObject *parent)
 {
     Ssdp_Core::bulid(this);
     Core_Http::bulid(this);
+    mPro = sDataPacket::bulid()->getPro();
 }
 
 QStringList Core_Thread::getFs()
@@ -112,6 +113,7 @@ bool Core_Thread::downVer(const QString &ip)
     bool ret = cfg.app_unpack(it);
     if(ret) {
         it.sn = m_sn = createSn();
+        mPro->productSN = m_sn;
         cfg.app_serialNumber(it.sn);
         QString mac = m_mac = updateMacAddr();
         writeSnMac(it.sn, mac); //str += "ok\n";
@@ -148,9 +150,9 @@ void Core_Thread::run()
             emit msgSig(tr("目标设备:")+ip, true);
             ret = downVer(ip); timeSync();
             if(ret) ret = workDown(ip);
-            if(ret) enModbusRtu();
-            cm_mdelay(150);
-            emit finshSig(ret, ip+" ");
+            if(ret) enModbusRtu(); cm_mdelay(150);
+            emit finshSig(ret, ip+" "); sleep(2);
+            Json_Pack::bulid()->http_post("debugdata/add","192.168.1.12");
         }m_ips.clear();
     } emit overSig();
 }

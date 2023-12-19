@@ -4,6 +4,8 @@
 #include <QWidget>
 #include "logmainwid.h"
 #include "core_thread.h"
+#include "datapacket.h"
+#include "json_pack.h"
 
 namespace Ui {
 class Home_WorkWid;
@@ -58,6 +60,8 @@ private slots:
     void insertTextSlot(const QString &msg, bool pass);
     void on_adCheckBox_clicked(bool checked);
 
+    void on_userEdit_selectionChanged();
+
 private:
     Ui::Home_WorkWid *ui;
     Core_Thread *mCoreThread;
@@ -67,6 +71,7 @@ private:
     QTime startTime;
     sCount mCnt;
     int mId=1;
+    sDataPacket *mPro;
 };
 
 #endif // HOME_WORKWID_H

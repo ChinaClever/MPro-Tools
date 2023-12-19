@@ -3,7 +3,7 @@
 
 #include "core_http.h"
 #include "cfgcom.h"
-
+#include "json_pack.h"
 class Core_Object : public QThread
 {
     Q_OBJECT
@@ -22,6 +22,7 @@ private:
 
 private:
     ushort mCurrentNum=0;
+    sProgress *mPro;
 };
 
 #endif // CORE_SERIALNUMBER_H

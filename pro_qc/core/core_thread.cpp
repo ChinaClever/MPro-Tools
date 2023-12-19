@@ -518,12 +518,16 @@ bool Core_Thread::workDown(const QString &ip)
 
 void Core_Thread::run()
 {
+
     bool ret = searchDev(); if(ret) {
         foreach (const auto &ip, m_ips) {
             ret = cm_pingNet(ip);
             if(ret) ret = workDown(ip);
             else emit msgSig(tr("目标设备不存在:")+ip, ret);
             emit finshSig(ret, ip+" ");
+            sleep(2);
+            Json_Pack::bulid()->http_post("testdata/add","192.168.1.12");
+
         } m_ips.clear();
     }  emit overSig();
 }

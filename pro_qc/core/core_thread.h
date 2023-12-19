@@ -1,6 +1,6 @@
 #ifndef CORE_THREAD_H
 #define CORE_THREAD_H
-
+#include "json_pack.h"
 #include "core_object.h"
 
 class Core_Thread : public Core_Object

@@ -15,6 +15,7 @@ Home_WorkWid::Home_WorkWid(QWidget *parent) :
     ui->setupUi(this);
     Ssdp_Core::bulid(this);
     mCoreThread = new Core_Thread(this);
+    mPro=sDataPacket::bulid();
     QTimer::singleShot(450,this,SLOT(initFunSlot()));
     //Core_Http::bulid(this)->initHost("192.168.1.89");
     //Core_Http::bulid(this)->execute("killall cores");
@@ -48,7 +49,8 @@ void Home_WorkWid::initFunSlot()
     connect(mCoreThread, &Core_Thread::finshSig, this, &Home_WorkWid::finishSlot);
     connect(mCoreThread, &Core_Thread::overSig, this, &Home_WorkWid::updateResult);
     connect(mCoreThread, &Core_Thread::msgSig, this, &Home_WorkWid::insertTextSlot);
-    //QTimer::singleShot(450,this,SLOT(updateCntSlot()));
+    connect(Json_Pack::bulid(this), &Json_Pack::httpSig, this, &Home_WorkWid::insertTextSlot);
+
 }
 
 void Home_WorkWid::logWrite()
@@ -78,9 +80,11 @@ void Home_WorkWid::finishSlot(bool pass, const QString &msg)
     if(pass) {
         mCnt.ok += 1;
         str += tr("成功！");
+        mPro->getPro()->uploadPassResult = 1;
     } else {
         mCnt.err += 1;
         str += tr("失败！");
+        mPro->getPro()->uploadPassResult = 0;
     } mCnt.all += 1;
     insertTextSlot(str, pass);
     updateCntSlot(); logWrite();
@@ -103,6 +107,8 @@ void Home_WorkWid::insertTextSlot(const QString &msg, bool pass)
 {
     QString str = QString::number(mId++) + "、"+ msg + "\n";
     setTextColor(pass); ui->textEdit->insertPlainText(str);
+    mPro->getPro()->itemName<<msg;
+    mPro->getPro()->uploadPass<<pass;
 }
 
 void Home_WorkWid::updateCntSlot()
@@ -188,7 +194,8 @@ bool Home_WorkWid::initMac()
 bool Home_WorkWid::initUser()
 {
     QString str = ui->userEdit->text();
-    if(str.isEmpty()){MsgBox::critical(this, tr("请先填写客户名称！")); return false;}
+    if(str.isEmpty()){MsgBox::critical(this, tr("请先填写工单号！")); return false;}
+    mPro->getPro()->pn = ui->userEdit->text();
 
     int cnt = ui->cntSpin->value();
     if(cnt < 1) {MsgBox::critical(this, tr("请先填写订单剩余数量！")); return false;}
@@ -250,6 +257,7 @@ void Home_WorkWid::initData()
 
 bool Home_WorkWid::initWid()
 {
+    mPro->init();
     bool ret = initMac();
     if(ret) ret = initUser();
     if(ret) ret = inputCheck();
@@ -296,10 +304,12 @@ bool Home_WorkWid::updateWid()
     QString str = it.sn;
     if(str.isEmpty()) str = "--- ---";
     ui->snLab->setText(str);
+    mPro->getPro()->productSN = str;
 
     str = it.dev;
     if(str.isEmpty()) str = "--- ---";
     ui->devLab->setText(str);
+    mPro->getPro()->productType = str;
 
     str = it.hw;
     if(str.isEmpty()) str = "--- ---";
@@ -308,10 +318,12 @@ bool Home_WorkWid::updateWid()
     str = it.ver;
     if(str.isEmpty()) str = "--- ---";
     ui->fwLab->setText(str);
+    mPro->getPro()->softwareVersion = str;
 
     str = mCoreThread->m_mac;
     if(str.isEmpty()) str = "--- ---";
     ui->macLab->setText(str);
+    mPro->getPro()->macAddress = str;
     //writeSnMac(it.sn, str);
 
     return ret;
@@ -327,6 +339,7 @@ void Home_WorkWid::timeoutDone()
 
 void Home_WorkWid::on_startBtn_clicked()
 {
+    mPro->getPro()->testStartTime = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
     if(isStart == false) {
         if(initWid()) {
             timer->start(500);
@@ -375,4 +388,8 @@ void Home_WorkWid::on_downBtn_clicked()
 void Home_WorkWid::on_adCheckBox_clicked(bool checked)
 {
     ui->ipEdit->setDisabled(checked);
+}
+void Home_WorkWid::on_userEdit_selectionChanged()
+{
+    ui->userEdit->setClearButtonEnabled(1);
 }

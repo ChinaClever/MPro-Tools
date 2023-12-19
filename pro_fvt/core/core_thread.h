@@ -2,6 +2,7 @@
 #define CORE_THREAD_H
 
 #include "core_serialnumber.h"
+#include "json_pack.h"
 
 class Core_Thread : public Core_Object
 {
@@ -28,6 +29,7 @@ protected:
 private:
     bool searchDev();
     bool fsCheck();
+    sProgress *mPro;
 
 private:
     QStringList m_ips;

@@ -12,6 +12,7 @@ include(core/core.pri)
 include(logs/logs.pri)
 include(home/home.pri)
 include(setups/setups.pri)
+include(json/json.pri)
 
 CM_PATH = ../com_pbl
 include($$CM_PATH/com_pbl.pri)
@@ -33,3 +34,7 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+DISTFILES += \
+    json/Json协议/test.json
+

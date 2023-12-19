@@ -34,6 +34,12 @@ FORMS += \
 RESOURCES += \
     $$PWD/images/image.qrc
 
+DISTFILES += \
+    $$PWD/json/Json协议/test.json \
+    $$PWD/json/Json协议/test.json \
+    $$PWD/json/json.pri \
+    $$PWD/json/json.pri
+
 
 
 
