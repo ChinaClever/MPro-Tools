@@ -101,7 +101,7 @@ void Home_WorkWid::insertTextSlot(const QString &msg, bool pass)
     setTextColor(pass); ui->textEdit->insertPlainText(str);
     mPro->getPro()->itemName<<msg;
     mPro->getPro()->uploadPass<<pass;
-    // setTextColor(mPro->updatePro(str,pass)); ui->textEdit->insertPlainText(mPro->getPro()->itemName);
+
 }
 
 void Home_WorkWid::updateCntSlot()

@@ -104,7 +104,6 @@ void Json_Pack::http_post(const QString &method, const QString &ip, int port)
 }
 QString Json_Pack::http_get(const QString &method, const QString &ip, int port)
 {
-    qDebug()<<"33333333";
     QJsonObject json; part_head(json);
     QString mac;
     AeaQt::HttpClient http;
@@ -113,8 +112,8 @@ QString Json_Pack::http_get(const QString &method, const QString &ip, int port)
     QString url = "http://%1:%2/%3";
     http.get(url.arg(ip).arg(port).arg(method))
         .header("content-type", "application/json")
-        .onSuccess([&](QString result) {qDebug()<<"11111111"<<result;mac = result;emit httpSig(result,true);})
-        .onFailed([&](QString error) {qDebug()<<"22222222"<<error; emit httpSig(error,false); })
+        .onSuccess([&](QString result) {mac = result;emit httpSig(result,true);})
+        .onFailed([&](QString error) {emit httpSig(error,false); })
         .onTimeout([&](QNetworkReply *) {emit httpSig("http_get timeout",false); }) // 超时处理
         .timeout(1000) // 1s超时
         .block()

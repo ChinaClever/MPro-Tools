@@ -35,9 +35,8 @@ QString Core_Object::updateMacAddr(int step)
 {
     sMac *it = MacAddr::bulid()->macItem;
     mPro = sDataPacket::bulid()->getPro();
-    qDebug()<<"666666"<<it->mac.size();
     if(it->mac.size()) {
-        qDebug()<<"44444444";
+
         QString url = "mac/test?work_order=%1&serial_id=%2";
         url = url.arg(mPro->pn).arg(mPro->productSN);
         sleep(1);
@@ -48,7 +47,6 @@ QString Core_Object::updateMacAddr(int step)
 
         CfgCom::bulid()->writeCfg("mac", it->mac, "Mac");
     } else {
-        qDebug()<<"55555555";
         qDebug() << "updateMacAddr err" << it->mac;
     }
 
