@@ -54,7 +54,7 @@ void Home_WorkWid::initFunSlot()
 void Home_WorkWid::logWrite()
 {
     sLogItem logIt;
-    logIt.dev = "MPDU Pro";
+    logIt.dev = "MPro";
     logIt.mac = ui->macLab->text();
     logIt.user = ui->userEdit->text();
     logIt.sw = ui->fwLab->text();

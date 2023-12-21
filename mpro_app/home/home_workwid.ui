@@ -127,7 +127,7 @@
          </size>
         </property>
         <property name="text">
-         <string>0.1_0.1_1000M_20230816</string>
+         <string>0.2_0.2_1000M_20231102</string>
         </property>
        </widget>
       </item>
@@ -362,7 +362,7 @@
       </property>
       <item>
        <property name="text">
-        <string>MPDU-Pro</string>
+        <string>MPro</string>
        </property>
       </item>
      </widget>
