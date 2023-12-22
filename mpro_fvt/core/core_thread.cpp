@@ -74,11 +74,13 @@ void Core_Thread::timeSync()
 void Core_Thread::enModbusRtu()
 {
     sCfgItem it; it.type = 15; it.fc = 1;
-    Core_Http::bulid(this)->setting(it, 0);
-
-    it.type = 13; it.fc = 3;
     Core_Http::bulid(this)->setting(it, 1);
-    emit msgSig(tr("设备模式：已开启设备级联功能"), true);
+    it.fc = 7; Core_Http::bulid(this)->setting(it, 1);
+    emit msgSig(tr("设备模式：已开启Modbus-RTU功能"), true);
+
+    //it.type = 13; it.fc = 3;
+    //Core_Http::bulid(this)->setting(it, 1);
+    //emit msgSig(tr("设备模式：已开启设备级联功能"), true);
 
     it.type = 13; it.fc = 9;
     Core_Http::bulid(this)->setting(it, 1);
