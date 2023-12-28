@@ -310,7 +310,7 @@ bool Home_WorkWid::updateWid()
     if(str.isEmpty()) str = "--- ---";
     ui->devLab->setText(str);
     mPro->getPro()->productType = str;
-
+    mPro->getPro()->PCB_Code = ui->pcbEdit->text();
     str = it.hw;
     if(str.isEmpty()) str = "--- ---";
     ui->hwLab->setText(str);
@@ -341,11 +341,16 @@ void Home_WorkWid::on_startBtn_clicked()
 {
     mPro->getPro()->testStartTime = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
     if(isStart == false) {
-        if(initWid()) {
-            timer->start(500);
-            //mCoreThread->run();
-            mCoreThread->start();
+        if(!ui->pcbEdit->text().isEmpty()){
+            if(initWid()) {
+                timer->start(500);
+                //mCoreThread->run();
+                mCoreThread->start();
+            }
+        }else{
+            MsgBox::critical(this, tr("请先填写pcb码！"));
         }
+
     } else {
         bool ret = MsgBox::question(this, tr("确定需要提前结束？"));
         if(ret) { mResult = false; updateResult(); }
@@ -393,3 +398,9 @@ void Home_WorkWid::on_userEdit_selectionChanged()
 {
     ui->userEdit->setClearButtonEnabled(1);
 }
+
+void Home_WorkWid::on_pcbEdit_textChanged(const QString &arg1)
+{
+    ui->pcbEdit->setClearButtonEnabled(1);
+}
+

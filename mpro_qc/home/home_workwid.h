@@ -63,6 +63,8 @@ private slots:
 
     void on_userEdit_selectionChanged();
 
+    void on_snEdit_textChanged(const QString &arg1);
+
 private:
     Ui::Home_WorkWid *ui;
     Core_Thread *mCoreThread;

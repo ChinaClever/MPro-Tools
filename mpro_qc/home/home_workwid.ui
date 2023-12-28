@@ -294,6 +294,29 @@
        <string>开 始</string>
       </property>
      </widget>
+     <widget class="QLabel" name="snlabel">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>40</y>
+        <width>81</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>产品序列号：</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="snEdit">
+      <property name="geometry">
+       <rect>
+        <x>100</x>
+        <y>40</y>
+        <width>113</width>
+        <height>21</height>
+       </rect>
+      </property>
+     </widget>
     </widget>
    </item>
    <item row="2" column="2">

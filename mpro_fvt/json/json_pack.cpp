@@ -39,6 +39,7 @@ void Json_Pack::head(QJsonObject &obj)
     obj.insert("testEndTime", mPro->testEndTime);
     obj.insert("testTime", mPro->testTime);
     obj.insert("work_order", mPro->pn);
+    obj.insert("PCB_Code", mPro->PCB_Code);
 
 
     pduInfo(obj);

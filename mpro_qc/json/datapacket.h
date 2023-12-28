@@ -172,6 +172,7 @@ struct sProgress
     QList<bool> uploadPass;
     uchar uploadPassResult;
     QString pn;
+    QString goods_SN;
 
 };
 

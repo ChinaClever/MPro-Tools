@@ -171,7 +171,7 @@ bool Home_WorkWid::initUser()
     QString str = ui->userEdit->text();
     if(str.isEmpty()){MsgBox::critical(this, tr("请先填写工单号！")); return false;}
     mPro->getPro()->pn = ui->userEdit->text();
-
+    mPro->getPro()->goods_SN = ui->snEdit->text();
     int cnt = ui->cntSpin->value();
     if(cnt < 1) {MsgBox::critical(this, tr("请先填写订单剩余数量！")); return false;}
     return true;
@@ -291,11 +291,15 @@ void Home_WorkWid::on_startBtn_clicked()
 {
     mPro->getPro()->testStartTime = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
     if(isStart == false) {
-        if(initWid()) {
-
-            timer->start(500);
-            //mCoreThread->run();
-            mCoreThread->start();
+        if(!ui->snEdit->text().isEmpty())
+        {
+            if(initWid()) {
+                timer->start(500);
+                //mCoreThread->run();
+                mCoreThread->start();
+            }
+        } else{
+            MsgBox::critical(this, tr("请先填写成品序列号！"));
         }
     } else {
         bool ret = MsgBox::question(this, tr("确定需要提前结束？"));
@@ -351,5 +355,11 @@ void Home_WorkWid::on_ipEdit_textChanged(const QString &arg1)
 void Home_WorkWid::on_userEdit_selectionChanged()
 {
     ui->userEdit->setClearButtonEnabled(1);
+}
+
+
+void Home_WorkWid::on_snEdit_textChanged(const QString &arg1)
+{
+    ui->snEdit->setClearButtonEnabled(1);
 }
 

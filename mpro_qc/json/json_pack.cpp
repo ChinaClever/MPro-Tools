@@ -39,7 +39,7 @@ void Json_Pack::head(QJsonObject &obj)
     obj.insert("testEndTime", mPro->testEndTime);
     obj.insert("testTime", mPro->testTime);
     obj.insert("work_order", mPro->pn);
-
+    obj.insert("goods_SN", mPro->goods_SN);
 
     pduInfo(obj);
 }
@@ -55,7 +55,6 @@ int Json_Pack::objData(QJsonObject &obj)
 {
     QJsonArray jsonArray;
     int num = mPro->uploadPass.size();
-    qDebug()<<"aaaaaaaa"<<mPro->itemName.size()<<num;
     for(int i=0; i<num; ++i)
     {
         QJsonObject subObj;
