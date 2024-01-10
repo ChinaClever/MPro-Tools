@@ -304,7 +304,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>产品序列号：</string>
+       <string>成品序列号：</string>
       </property>
      </widget>
      <widget class="QLineEdit" name="snEdit">
