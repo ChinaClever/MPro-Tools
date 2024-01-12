@@ -527,7 +527,7 @@ void Core_Thread::run()
             emit finshSig(ret, ip+" ");
             sleep(2);
             Json_Pack::bulid()->http_post("testdata/add","192.168.1.12");
-
+            Json_Pack::bulid()->http_post_module("bind/add","192.168.1.12");//发送成品序列号、模块序列号
         } m_ips.clear();
     }  emit overSig();
 }

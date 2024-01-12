@@ -68,7 +68,39 @@ int Json_Pack::objData(QJsonObject &obj)
 
     return num;
 }
+void Json_Pack::part_head(QJsonObject &obj)
+{
+    QJsonArray module;
+    // module.append(mPro->sn1);
+    // module.append(mPro->sn2);
+    // module.append(mPro->sn3);
 
+    module.append("111");
+    module.append("222");
+    module.append("333");
+
+    obj.insert("goods_SN", mPro->productSN);
+    obj.insert("module", module);
+}
+
+void Json_Pack::http_post_module(const QString &method, const QString &ip, int port)
+{
+    QJsonObject json; part_head(json);
+    qDebug()<<"json: "<<json;
+    AeaQt::HttpClient http;
+    http.clearAccessCache();
+    http.clearConnectionCache();
+    QString url = "http://%1:%2/%3";
+    http.post(url.arg(ip).arg(port).arg(method))
+        .header("content-type", "application/json")
+        .onSuccess([&](QString result) {emit httpSig(result,true);})
+        .onFailed([&](QString error) {emit httpSig(error,false); })
+        .onTimeout([&](QNetworkReply *) {emit httpSig("http_post timeout",false); }) // 超时处理
+        .timeout(1000) // 1s超时
+        .block()
+        .body(json)
+        .exec();
+}
 void Json_Pack::http_post(const QString &method, const QString &ip, int port)
 {
     QJsonObject json; head(json);

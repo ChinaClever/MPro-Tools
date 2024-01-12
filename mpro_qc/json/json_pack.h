@@ -11,6 +11,7 @@ class Json_Pack:public QObject
 public:
     static Json_Pack *bulid(QObject *parent = nullptr);
     void http_post(const QString &method, const QString &ip, int port=8000);
+    void http_post_module(const QString &method, const QString &ip, int port=8000);
 signals:
     void httpSig(const QString &msg, bool pass);
 
@@ -18,6 +19,7 @@ protected:
     void head(QJsonObject &obj);
     void pduInfo(QJsonObject &json);
     int objData(QJsonObject &obj);
+    void part_head(QJsonObject &obj);
 
 private:
     sProgress *mPro;

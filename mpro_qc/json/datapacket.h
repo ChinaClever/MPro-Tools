@@ -173,7 +173,9 @@ struct sProgress
     uchar uploadPassResult;
     QString pn;
     QString goods_SN;
-
+    QString sn1;
+    QString sn2;
+    QString sn3;
 };
 
 
