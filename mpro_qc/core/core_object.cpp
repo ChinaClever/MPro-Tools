@@ -133,6 +133,7 @@ void Core_Object::getSn(const QJsonObject &object)
     coreItem.actual.ver.fwVer = getValue(obj, "ver").toString();
     //coreItem.actual.ver.devType = getValue(obj, "dev").toString();
     coreItem.actual.ver.opVers = getArray(obj, "op_vers").toVariantList();
+    coreItem.actual.ver.opSn = getArray(obj, "op_sn").toVariantList();
 }
 
 void Core_Object::getMac(const QJsonObject &object)

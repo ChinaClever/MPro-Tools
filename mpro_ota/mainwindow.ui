@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MPDU-Pro批量升级工具</string>
+   <string>MPro批量升级工具</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../com_pbl/images/image.qrc">

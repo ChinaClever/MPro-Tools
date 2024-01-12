@@ -25,7 +25,7 @@ void sDataPacket::init()
     pro->macAddress.clear();
     pro->testTime.clear();
 
-    pro->softwareType = "MPDU-Pro-MonitorDebug";
+    pro->softwareType = "MPro-MonitorDebug";
     pro->companyName = "clever";
     pro->protocolVersion = "V1.0";
     // pro->testStartTime = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
