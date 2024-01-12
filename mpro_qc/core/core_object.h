@@ -45,6 +45,7 @@ struct sMonitorData
 
 struct sVersion
 {
+    QVariantList opSn; // 执行板序列号
     QVariantList opVers; // 每块执行板软件版本
     QVariantList loopOutlets; // 每个回路输出位爆裂
     QString devType; // 设备类型
