@@ -68,25 +68,16 @@ int Json_Pack::objData(QJsonObject &obj)
 
     return num;
 }
+
 void Json_Pack::part_head(QJsonObject &obj)
 {
-    QJsonArray module;
-    // module.append(mPro->sn1);
-    // module.append(mPro->sn2);
-    // module.append(mPro->sn3);
-
-    module.append("111");
-    module.append("222");
-    module.append("333");
-
-    obj.insert("goods_SN", mPro->productSN);
-    obj.insert("module", module);
+    obj.insert("goods_SN", mPro->goods_SN);
+    obj.insert("module", mPro->module);
 }
 
 void Json_Pack::http_post_module(const QString &method, const QString &ip, int port)
 {
     QJsonObject json; part_head(json);
-    qDebug()<<"json: "<<json;
     AeaQt::HttpClient http;
     http.clearAccessCache();
     http.clearConnectionCache();

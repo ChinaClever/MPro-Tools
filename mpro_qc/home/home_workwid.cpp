@@ -273,6 +273,8 @@ bool Home_WorkWid::updateWid()
     ui->fwLab->setText(str);
     mPro->getPro()->softwareVersion = str;
 
+    mPro->getPro()->module = QJsonArray::fromVariantList(it->actual.ver.opSn);
+
     str = it->mac;
     if(str.isEmpty()) str = "--- ---";
     ui->macLab->setText(str);
