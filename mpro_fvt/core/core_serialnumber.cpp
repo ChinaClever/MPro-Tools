@@ -13,7 +13,7 @@ Core_Object::Core_Object(QObject *parent)
 
 void Core_Object::writeMac(const QByteArray &mac)
 {
-    QFile file("usr/data/clever/cfg/mac.conf");
+    QFile file("usr/data/pdu/cfg/mac.conf");
     if(file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
         file.write(mac); file.close();
     } wirteCfgMac();
