@@ -8,5 +8,6 @@ SUBDIRS += \
     mpro_fvt \
     mpro_qc \
     mpro_rest \
-    mpro_rpc
+    mpro_rpc \
+    mpro_vol
 
