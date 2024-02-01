@@ -62,7 +62,7 @@ bool Modbus_Thread::loopDevInfo(bool ret,int i)
         emit msgSig(str, ret);
         temp = mItem->data[i-1] / 1000.0;
         mItem->noldata[i-1] = QString::number(temp,'f',3);
-        str = tr("电压表 %1 数据vol= %2 V").arg(i).arg(mItem->noldata[i-1]);
+        str = tr("电压表 %1 数据 vol= %2 V").arg(i).arg(mItem->noldata[i-1]);
         emit msgSig(str, ret);
     }
 
@@ -79,7 +79,7 @@ bool Modbus_Thread::readDevInfo()
     emit msgSig(str, ret);
     temp = mItem->data[0] / 100.0;
     mItem->noldata[0] = QString::number(temp,'f',2);
-    str = tr("功率表 1 数据pow= %1 W").arg(mItem->noldata[0]);
+    str = tr("功率表 1 数据 pow= %1 W").arg(mItem->noldata[0]);
     emit msgSig(str, ret);
 
     for(int i = 2;i<6;i++)
