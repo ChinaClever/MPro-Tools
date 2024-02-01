@@ -51,7 +51,7 @@ bool Log_LogQueryDlg::inputCheck()
 
     QString str = ui->snEdit->text();
     if(!str.isEmpty()) {
-        if(str.size() < 3) ret = false;
+        // if(str.size() < 3) ret = false;
         if(!ret) {
             MsgBox::critical(this, tr("校验码输入有误，请重新输入!!!"));
         }

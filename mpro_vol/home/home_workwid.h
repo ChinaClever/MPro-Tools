@@ -39,11 +39,9 @@ private slots:
     void finishSlot(bool pass, const QString &msg);
     void insertTextSlot(const QString &msg, bool pass);
 
-
     void saveFunSlot();
     void on_startBtn_clicked();
     void on_savebtn_clicked();
-
     void on_snEdit_textChanged(const QString &arg1);
 
 private:

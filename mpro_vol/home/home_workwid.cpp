@@ -300,5 +300,3 @@ void Home_WorkWid::on_snEdit_textChanged(const QString &arg1)
 {
     ui->snEdit->setClearButtonEnabled(1);
 }
-
-
