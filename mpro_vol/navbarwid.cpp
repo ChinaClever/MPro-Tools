@@ -12,7 +12,6 @@ NavBarWid::NavBarWid(QWidget *parent) :
     gridLayout->addWidget(this);
     mUserLand = new UsrLandDlg(this);
     //ui->devBtn->setHidden(true);
-
     QTimer::singleShot(5,this,SLOT(on_loginBtn_clicked()));
     connect(mUserLand,SIGNAL(sendUserNameSig(QString)),this,SLOT(recvUserNameSlot(QString)));
 }
@@ -28,20 +27,14 @@ void NavBarWid::on_homeBtn_clicked()
 }
 
 
-void NavBarWid::on_devBtn_clicked()
+void NavBarWid::on_setBtn_clicked()
 {
     emit navBarSig(1);
 }
 
-
-void NavBarWid::on_setBtn_clicked()
-{
-    emit navBarSig(2);
-}
-
 void NavBarWid::on_logBtn_clicked()
 {
-    emit navBarSig(3);
+    emit navBarSig(2);
 }
 
 void NavBarWid::on_loginBtn_clicked()

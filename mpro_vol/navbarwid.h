@@ -27,9 +27,6 @@ private slots:
     void on_loginBtn_clicked();
     void recvUserNameSlot(QString str);
 
-    void on_devBtn_clicked();
-
-    void on_parBtn_clicked();
 
 private:
     Ui::NavBarWid *ui;

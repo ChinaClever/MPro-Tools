@@ -10,7 +10,11 @@ CONFIG += c++17
 
 CM_PATH = ../com_pbl
 include($$CM_PATH/com_pbl.pri)
-
+include(modbus/modbus.pri)
+include(home/home.pri)
+#include(cfg_com/cfg_com.pri)
+include(setups/setups.pri)
+include(logs/logs.pri)
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
