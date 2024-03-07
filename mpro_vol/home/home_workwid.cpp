@@ -247,14 +247,14 @@ void Home_WorkWid::on_startBtn_clicked()
 {
     bool ret = true;
     if(isStart == false) {
-        if(!ui->snEdit->text().isEmpty())
-        {
+        // if(!ui->snEdit->text().isEmpty())
+        // {
             if(initWid()){
                 mflag = true;
                 timer->start(500);
                 modthread->start();
             }
-        }else MsgBox::critical(this, tr("请先填写PCB码！"));
+        // }else MsgBox::critical(this, tr("请先填写PCB码！"));
     }else{
         ret = MsgBox::question(this, tr("确定需要提前结束？"));
         if(ret) {
