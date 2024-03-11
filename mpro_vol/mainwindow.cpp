@@ -8,7 +8,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     mNavBarWid = new NavBarWid(ui->barWid);
-    QTimer::singleShot(50,this,SLOT(initFunSlot())); //延时初始化
+    // QTimer::singleShot(50,this,SLOT(initFunSlot())); //延时初始化
     connect(mNavBarWid, SIGNAL(navBarSig(int)), this, SLOT(navBarSlot(int)));
 
     // 查詢Qt支持的版本
