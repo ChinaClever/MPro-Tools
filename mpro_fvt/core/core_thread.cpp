@@ -15,9 +15,9 @@ Core_Thread::Core_Thread(QObject *parent)
 
 QStringList Core_Thread::getFs()
 {
-    FileMgr::build().mkpath("usr/data/clever/doc/");
-    QString dir = "usr/data/clever/cfg/"; FileMgr::build().mkpath(dir);
-    QStringList fs; fs << "usr/data/clever/ver.ini" << "usr/data/clever/doc/modbus.xlsx";
+    FileMgr::build().mkpath("usr/data/pdu/doc/");
+    QString dir = "usr/data/pdu/cfg/"; FileMgr::build().mkpath(dir);
+    QStringList fs; fs << "usr/data/pdu/ver.ini" << "usr/data/pdu/doc/modbus.xlsx";
     fs << dir+"alarm.conf" << dir+"devParam.ini" << dir+"cfg.ini" << dir+"inet.ini";
     fs << dir+"alarm.cfg" << dir+"snmpd.conf" << dir+"logo.png" << dir+"mac.conf";
     fs << dir + "sn.conf";
@@ -89,7 +89,7 @@ void Core_Thread::enModbusRtu()
 
 void Core_Thread::writeSnMac(const QString &sn, const QString &mac)
 {
-    QString dir = "usr/data/clever/cfg/"; QFile file(dir + "mac.conf");
+    QString dir = "usr/data/pdu/cfg/"; QFile file(dir + "mac.conf");
     if(file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate)) {
         file.write(mac.toLatin1());
     } file.close();
@@ -104,13 +104,13 @@ void Core_Thread::writeSnMac(const QString &sn, const QString &mac)
 bool Core_Thread::downVer(const QString &ip)
 {
     QString str = tr("下载版本信息:");
-    QStringList fs; fs << "usr/data/clever/ver.ini";
+    QStringList fs; fs << "usr/data/pdu/ver.ini";
     QFile::remove(fs.first());
     Core_Http *http = Core_Http::bulid(this);
     http->initHost(ip); http->downFile(fs);
     for(int i=0; i<1000; i+= 100) {
         if(QFile::exists(fs.first())) break; else cm_mdelay(100);
-    } QString dir = "usr/data/clever";
+    } QString dir = "usr/data/pdu";
     Cfg_App cfg(dir, this); sAppVerIt it;
     bool ret = cfg.app_unpack(it);
     if(ret) {

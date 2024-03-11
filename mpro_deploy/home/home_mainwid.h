@@ -31,6 +31,8 @@ protected:
     bool checkFile(const QByteArray &msg);
     QByteArray readFile(const QString &fn);
     void send(const sCfgItem &it, const QVariant &v);
+    void incrementIPAddress();
+    void incrementAddr();
     void reboot();
 
 private slots:

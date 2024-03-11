@@ -81,20 +81,20 @@ void Home_MainWid::reboot()
     QString cmd = "reboot";
     if(ui->resetCheck->isChecked()) {
         if(ui->batchCheck->isChecked()) cm_mdelay(465);
-        cm_mdelay(255); send(it, cmd);
+        cm_mdelay(655); send(it, cmd);
     }
 }
 
 void Home_MainWid::on_startBtn_clicked()
 {
+    ui->textEdit->clear(); mId = 0;
     if(ui->groupBox_1->isEnabled()) webLogin();
     if(ui->groupBox_2->isEnabled()) devMode();
     if(ui->groupBox_3->isEnabled()) location();
     if(ui->groupBox_4->isEnabled()) netAddr();
     if(ui->groupBox_5->isEnabled()) integrate();
-    setDateTime();
-    setWorkDown();
-    reboot();
+    setDateTime(); setWorkDown(); reboot();
+    incrementAddr();
 }
 
 void Home_MainWid::devMode()
@@ -112,9 +112,49 @@ void Home_MainWid::devMode()
         it.fc = 2;
     }
 
-    v = ui->addrBox->value();
-    send(it, v);
+    v = ui->addrBox->value(); send(it, v);
 }
+
+void Home_MainWid::incrementAddr()
+{
+    int mode = ui->modeBox->currentIndex();
+    if(mode) {
+        int v = ui->addrBox->value();
+        v +=1; if(mode <3 && v>=10) {
+            v = 0; incrementIPAddress();
+        } ui->addrBox->setValue(v);
+    } else incrementIPAddress();
+}
+
+void Home_MainWid::incrementIPAddress()
+{
+    QString ipAddress = ui->ipEdit->text();
+    QHostAddress address(ipAddress);
+
+    if (address.protocol() == QAbstractSocket::IPv4Protocol) {
+        quint32 ipv4 = address.toIPv4Address();
+        ipv4 += 1;
+        address.setAddress(ipv4);
+    } else if (address.protocol() == QAbstractSocket::IPv6Protocol) {
+        Q_IPV6ADDR ipv6 = address.toIPv6Address();
+        // 加 1 操作
+        for (int i = 15; i >= 0; --i) {
+            if (ipv6[i] < 255) {
+                ipv6[i] += 1;
+                break;
+            } else {
+                ipv6[i] = 0;
+            }
+        }
+        address.setAddress(ipv6);
+    } else {
+        // 不支持的地址类型
+    }
+
+    ipAddress = address.toString();
+    ui->ipEdit->setText(ipAddress.remove("::ffff:"));
+}
+
 
 void Home_MainWid::setDateTime()
 {

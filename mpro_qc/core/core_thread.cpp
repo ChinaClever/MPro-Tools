@@ -11,8 +11,8 @@ Core_Thread::Core_Thread(QObject *parent)
     : Core_Object{parent}
 {
     Ssdp_Core::bulid(this);
-    mLogo = "usr/data/clever/cfg/logo.png";
-    QString dir = "usr/data/clever/cfg";
+    mLogo = "usr/data/pdu/cfg/logo.png";
+    QString dir = "usr/data/pdu/cfg";
     FileMgr::build().mkpath(dir);
 }
 

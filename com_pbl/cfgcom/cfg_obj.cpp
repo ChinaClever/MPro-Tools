@@ -31,7 +31,7 @@ QString Cfg_Obj::pathOfCfg(const QString& name)
     dirName = QCoreApplication::applicationName();
     if(!dataDir.exists(dirName)) {dataDir.mkdir(dirName);} dataDir.cd(dirName);
 #else
-    QDir dataDir("/usr/data/clever/"); QString dirName = "cfg";
+    QDir dataDir("/usr/data/pdu/"); QString dirName = "cfg";
     if(!dataDir.exists(dirName)) {dataDir.mkdir(dirName);} dataDir.cd(dirName);
 #endif
     return dataDir.absoluteFilePath(name);
