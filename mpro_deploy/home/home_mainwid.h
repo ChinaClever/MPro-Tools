@@ -17,7 +17,6 @@ class Home_MainWid : public QWidget
 public:
     explicit Home_MainWid(QWidget *parent = nullptr);
     ~Home_MainWid();
-
 protected:    
     void initWid();
     void devMode();
@@ -34,19 +33,33 @@ protected:
     void incrementIPAddress();
     void incrementAddr();
     void reboot();
-
+    void disable(bool v);
+    void v2_able();
+    void v3_able();
 private slots:
     void on_findBtn_clicked();
     void on_startBtn_clicked();
     void onDown(const QString &msg);
     void on_dhcpBox_currentIndexChanged(int index);
-    void on_pushBox_currentIndexChanged(int index);
+    // svoid on_pushBox_currentIndexChanged(int index);
     void on_modeBox_currentIndexChanged(int index);
     void on_batchCheck_clicked(bool checked);
     void on_checkBox_stateChanged(int arg1);
     void on_selectBtn_clicked();
 
     void on_rangeBox_currentIndexChanged(int index);
+
+    void on_snmpBox_currentIndexChanged(int index);
+
+    void on_rtuBox_currentIndexChanged(int index);
+
+    void on_tcpBox_currentIndexChanged(int index);
+
+    void on_pushBox_currentIndexChanged(int index);
+
+    void on_devoBox_currentIndexChanged(int index);
+
+    void on_addrBox_valueChanged(int arg1);
 
 private:
     Ui::Home_MainWid *ui;

@@ -14,6 +14,10 @@ Home_MainWid::Home_MainWid(QWidget *parent) :
     ui->setupUi(this); //initWid();
     groupBox_background_icon(this); mSsdp = Ssdp_Core::bulid(this);
     connect(mSsdp, &Ssdp_Core::sendMsgSig, this, &Home_MainWid::onDown);
+    groupBox_background(ui->tab);
+    groupBox_background(ui->tab_2);
+    groupBox_background(ui->tab_3);
+    disable(0);
 }
 
 Home_MainWid::~Home_MainWid()
@@ -92,7 +96,7 @@ void Home_MainWid::on_startBtn_clicked()
     if(ui->groupBox_2->isEnabled()) devMode();
     if(ui->groupBox_3->isEnabled()) location();
     if(ui->groupBox_4->isEnabled()) netAddr();
-    if(ui->groupBox_5->isEnabled()) integrate();
+    if(ui->tabWidget->isEnabled()) integrate();
     setDateTime(); setWorkDown(); reboot();
     incrementAddr();
 }
@@ -100,19 +104,25 @@ void Home_MainWid::on_startBtn_clicked()
 void Home_MainWid::devMode()
 {
     int v = ui->modeBox->currentIndex();
-    sCfgItem it; if(v<3) {
-        it.type = 13;
-        it.fc = 3;
-        send(it, v);
-        it.fc = 4;
-    } else {
-        it.type = 15;
-        it.fc = 1;
-        send(it, 1);
-        it.fc = 2;
-    }
+        sCfgItem it; if(v) {
+            it.type = 13;
+            it.fc = 3;
+            send(it, v);
 
-    v = ui->addrBox->value(); send(it, v);
+            it.fc = 4;
+            v = ui->addrBox->value(); send(it, v);
+            if(v) ui->comboBox->setEnabled(0);
+        } else {
+            it.type = 15;
+            it.fc = 1;
+            send(it, 1);
+            it.fc = 2;
+            send(it, ui->rtuaddrEdit->text());
+            it.fc = 3;
+            send(it, ui->rtubaudBox->currentText());
+            it.fc = 7;
+            send(it, 1);
+        }
 }
 
 void Home_MainWid::incrementAddr()
@@ -120,7 +130,7 @@ void Home_MainWid::incrementAddr()
     int mode = ui->modeBox->currentIndex();
     if(mode) {
         int v = ui->addrBox->value();
-        v +=1; if(mode <3 && v>=10) {
+        v +=1; if(mode ==1 && v>=10) {
             v = 0; incrementIPAddress();
         } ui->addrBox->setValue(v);
     } else incrementIPAddress();
@@ -182,49 +192,146 @@ void Home_MainWid::location()
 
 void Home_MainWid::netAddr()
 {
-    sCfgItem it; it.type = 41; it.fc = 1;
-    int id = ui->dhcpBox->currentIndex();
-    send(it, id); if(id == 0) {
-        QString v = ui->ipEdit->text();
-        if(v.size()) {it.fc = 2; send(it, v);}
+    if(ui->modeBox->currentIndex() && ui->addrBox->value()== 0)
+    {
+        sCfgItem it; it.type = 41; it.fc = 1;
+        int id = ui->dhcpBox->currentIndex();
+        send(it, id); if(id == 0) {
+            QString v = ui->ipEdit->text();
+            if(v.size()) {it.fc = 2; send(it, v);}
 
-        v = ui->maskEdit->text();
-        if(v.size()) {it.fc = 3; send(it, v);}
+            v = ui->maskEdit->text();
+            if(v.size()) {it.fc = 3; send(it, v);}
 
-        v = ui->gwEdit->text();
-        if(v.size()) {it.fc = 4; send(it, v);}
+            v = ui->gwEdit->text();
+            if(v.size()) {it.fc = 4; send(it, v);}
 
-        v = ui->dnsEdit->text();
-        if(v.size()) {it.fc = 6; send(it, v);}
+            v = ui->dnsEdit->text();
+            if(v.size()) {it.fc = 6; send(it, v);}
+
+            it.fc = 15; send(it, 1);
+        }
     }
 }
 
 void Home_MainWid::integrate()
 {
     sCfgItem it;
-    it.type = 16; it.fc = 1;
-    int v = ui->snmpBox->currentIndex();
-    send(it, v);
+    int v = 0;
+    int tem = ui->tabWidget->currentIndex();
+    if(tem == 0){//Modbus RTU设置
+        it.type = 15; it.fc = 1;
+        v = ui->rtuBox->currentIndex();
+        send(it,v);
 
-    it.type = 15; it.fc = 11;
-    v = ui->modeBox->currentIndex();
-    send(it, v);
+        it.fc = 2;
+        send(it,ui->rtuaddrEdit->text());
 
-    it.type = 17; it.fc = 1;
-    v = ui->rpcBox->currentIndex();
-    send(it, v);
+        it.fc = 3;
+        v = ui->rtubaudBox->currentIndex();
+        send(it,v);
 
-    it.type = 18;
-    v = ui->pushBox->currentIndex();
-    if(v == 1) {
-        it.fc = 2; send(it, ui->hostEdit->text());
-        it.fc = 3; send(it, ui->portEdit->text());
-        it.fc = 1; v = 1;
-    } else v = 0;
-    send(it, v);
+        it.type = 15; it.fc = 11;//Modbus TCP设置
+        v = ui->tcpBox->currentIndex();
+        send(it,v);
+        it.fc = 7;send(it,1);
 
-    v = ui->ctrlBox->currentIndex();
-    it.fc = 8; send(it, v);
+        it.fc = 12;
+        send(it,ui->tcpportEdit->text());
+        it.fc = 14;send(it,1);
+
+    }else if(tem == 1){//SNMP设置
+        tem = ui->snmpBox->currentIndex();
+        if(tem == 0){//禁用v2/v3
+            disable(tem);
+            it.type = 16; it.fc = 1;
+            v = ui->snmpBox->currentIndex();
+            send(it,v);
+
+            it.type = 16; it.fc = 11;
+            send(it,v);
+            it.fc = 17;send(it,0);
+
+        }else if(tem == 1){//启用v2
+            v2_able();
+            it.type = 16; it.fc = 1;
+            send(it,1);
+
+            it.type = 16; it.fc = 2;
+            send(it,ui->v2_getEdit->text());
+
+            it.type = 16; it.fc = 3;
+            send(it,ui->v2_setEdit->text());
+            it.fc = 17;send(it,1);
+
+        }else if(tem == 2){//启用v3
+            v3_able();
+            it.type = 16; it.fc = 11;
+            send(it,1);
+
+            it.type = 16; it.fc = 12;
+            send(it,ui->v3_Edit->text());
+
+            it.type = 16; it.fc = 13;
+            send(it,ui->v3_pwdEdit->text());
+
+            it.type = 16; it.fc = 14;
+            send(it,ui->v3_keyEdit->text());
+            it.fc = 17;send(it,1);
+        }
+
+    }else if(tem == 2){//主动上报
+        it.type = 18; it.fc = 1;
+        v = ui->pushBox->currentIndex();
+        if(v){//启用
+            send(it,v);
+            it.fc = 2;
+            QString str = ui->pushaddrEdit->text();
+            QRegExp ipReg("((25[0-5]|2[0-4]\\d|[01]?\\d\\d?)\\.){3}(25[0-5]|2[0-4]\\d|[01]?\\d\\d?)");
+            if (ipReg.exactMatch(str)) {
+                qDebug() << "IP地址格式正确";
+            } else {
+                qDebug() << "IP地址格式错误";
+            }
+
+            send(it,ui->pushaddrEdit->text());
+            it.fc = 3;
+            send(it,ui->pushportEdit->text());
+            it.fc = 4;
+            send(it,ui->pushtimeEdit->text());
+        }else send(it,v);
+
+        it.type = 18; it.fc = 8;
+        v = ui->pushBox->currentIndex();
+        if(v){//设备反控开启
+            send(it,v);
+            it.fc = 9;
+            send(it,ui->devportEdit->text());
+        }else send(it,v);
+        it.fc = 10;send(it,v);
+    }
+    // int v = ui->snmpBox->currentIndex();
+    // send(it, v);
+
+    // it.type = 15; it.fc = 11;
+    // v = ui->modeBox->currentIndex();
+    // send(it, v);
+
+    // it.type = 17; it.fc = 1;
+    // v = ui->rpcBox->currentIndex();
+    // send(it, v);
+
+    // it.type = 18;
+    // v = ui->pushBox->currentIndex();
+    // if(v == 1) {
+    //     it.fc = 2; send(it, ui->hostEdit->text());
+    //     it.fc = 3; send(it, ui->portEdit->text());
+    //     it.fc = 1; v = 1;
+    // } else v = 0;
+    // send(it, v);
+
+    // v = ui->ctrlBox->currentIndex();
+    // it.fc = 8; send(it, v);
 }
 
 QByteArray Home_MainWid::readFile(const QString &fn)
@@ -275,17 +382,29 @@ void Home_MainWid::on_dhcpBox_currentIndexChanged(int index)
     ui->dnsEdit->setDisabled(index);
 }
 
-void Home_MainWid::on_pushBox_currentIndexChanged(int index)
-{
-    bool en = false; if(index == 1) en = true;
-    ui->hostEdit->setEnabled(index);
-    ui->portEdit->setEnabled(en);
-}
+// void Home_MainWid::on_pushBox_currentIndexChanged(int index)
+// {
+//     bool en = false; if(index == 1) en = true;
+//     ui->hostEdit->setEnabled(index);
+//     ui->portEdit->setEnabled(en);
+// }
 
 
 void Home_MainWid::on_modeBox_currentIndexChanged(int index)
 {
-    ui->addrBox->setEnabled(index);
+    if(ui->rtuBox->currentIndex()){
+        if(index == 1){
+            ui->rtuBox->setCurrentIndex(0);
+            ui->modeBox->setCurrentIndex(1);
+            ui->rtuaddrEdit->setEnabled(0);
+            ui->rtubaudBox->setEnabled(0);
+            ui->addrBox->setEnabled(1);
+            ui->comboBox->setEnabled(1);
+        }
+    }else{
+        ui->addrBox->setEnabled(index);
+        ui->comboBox->setEnabled(index);
+    }
 }
 
 
@@ -314,7 +433,7 @@ void Home_MainWid::setEnableWid(bool en)
     ui->groupBox_2->setEnabled(en);
     ui->groupBox_3->setEnabled(en);
     ui->groupBox_4->setEnabled(en);
-    ui->groupBox_5->setEnabled(en);
+    ui->tabWidget->setEnabled(en);
 }
 
 
@@ -326,8 +445,105 @@ void Home_MainWid::on_rangeBox_currentIndexChanged(int index)
         case 2: ui->groupBox_2->setEnabled(true); break;
         case 3: ui->groupBox_3->setEnabled(true); break;
         case 4: ui->groupBox_4->setEnabled(true); break;
-        case 5: ui->groupBox_5->setEnabled(true); break;
+        case 5: ui->tabWidget->setEnabled(true); break;
         }
     } else setEnableWid(true);
 }
 
+void Home_MainWid::on_snmpBox_currentIndexChanged(int index)
+{
+    int tem = ui->tabWidget->currentIndex();
+    if(tem == 1){//SNMP设置
+        if(index == 0){//禁用v2/v3
+           disable(index);
+        }else if(index == 1){//启用v2
+            v2_able();
+        }else if(index == 2){//启用v3
+            v3_able();
+        }
+    }
+}
+
+void Home_MainWid::on_rtuBox_currentIndexChanged(int index)
+{
+    if(ui->modeBox->currentIndex()){
+        if(index == 1){
+            ui->modeBox->setCurrentIndex(0);
+            ui->rtuBox->setCurrentIndex(1);
+            ui->addrBox->setEnabled(0);
+            ui->comboBox->setEnabled(0);
+            ui->rtuaddrEdit->setEnabled(1);
+            ui->rtubaudBox->setEnabled(1);
+        }
+    }else{
+        ui->rtuaddrEdit->setEnabled(index);
+        ui->rtubaudBox->setEnabled(index);
+    }
+}
+
+void Home_MainWid::on_tcpBox_currentIndexChanged(int index)
+{
+    ui->tcpportEdit->setEnabled(index);
+    ui->tcpportEdit->setEnabled(index);
+}
+
+
+void Home_MainWid::on_pushBox_currentIndexChanged(int index)
+{
+    ui->pushaddrEdit->setEnabled(index);
+    ui->pushportEdit->setEnabled(index);
+    ui->pushtimeEdit->setEnabled(index);
+    ui->chanelBox->setEnabled(index);
+}
+
+
+void Home_MainWid::on_devoBox_currentIndexChanged(int index)
+{
+    ui->devportEdit->setEnabled(index);
+}
+
+
+void Home_MainWid::on_addrBox_valueChanged(int arg1)
+{
+    if(arg1) {ui->comboBox->hide();ui->label_20->hide();}
+    else {ui->comboBox->show();ui->label_20->show();}
+}
+void Home_MainWid::disable(bool v)
+{
+    ui->v2_getEdit->setEnabled(v);
+    ui->v2_setEdit->setEnabled(v);
+
+    ui->v3_Edit->hide();
+    ui->v3_keyEdit->hide();
+    ui->v3_pwdEdit->hide();
+    ui->label_35->hide();
+    ui->label_33->hide();
+    ui->label_37->hide();
+    ui->label_40->hide();
+}
+void Home_MainWid::v2_able()//启用v2
+{
+    ui->v2_getEdit->setEnabled(1);
+    ui->v2_setEdit->setEnabled(1);
+
+    ui->v3_Edit->show();
+    ui->v3_keyEdit->show();
+    ui->v3_pwdEdit->show();
+    ui->label_35->show();
+    ui->label_33->show();
+    ui->label_37->show();
+    ui->label_40->show();
+
+    ui->v3_Edit->setEnabled(0);
+    ui->v3_keyEdit->setEnabled(0);
+    ui->v3_pwdEdit->setEnabled(0);
+}
+void Home_MainWid::v3_able()
+{
+    ui->v2_getEdit->setEnabled(0);
+    ui->v2_setEdit->setEnabled(0);
+
+    ui->v3_Edit->setEnabled(1);
+    ui->v3_keyEdit->setEnabled(1);
+    ui->v3_pwdEdit->setEnabled(1);
+}
