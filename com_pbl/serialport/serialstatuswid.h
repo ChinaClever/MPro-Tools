@@ -19,10 +19,8 @@ public:
     void disEnable() {mEnable=false;}
     SerialPort *getSerialPort(){return mSerialDlg->getSerialPort();}
     SerialPort *initSerialPort(const QString &str);
-
 protected:
     void updateSerialWid();
-
 private slots:
     void on_comBtn_clicked();
 

@@ -43,7 +43,7 @@ bool SerialPort::open(const QString &name,qint32 baudRate)
         if(ret) {
             mSerial->setBaudRate(baudRate);  //波特率
             mSerial->setDataBits(QSerialPort::Data8); //数据位
-            mSerial->setParity(QSerialPort::NoParity);    //无奇偶校验
+            mSerial->setParity(QSerialPort::EvenParity);    //无奇偶校验
             mSerial->setStopBits(QSerialPort::OneStop);   //无停止位
             mSerial->setFlowControl(QSerialPort::NoFlowControl);  //无控制
             // connect(mSerial,SIGNAL(readyRead()),this,SLOT(serialReadSlot()));    //连接槽
@@ -175,7 +175,7 @@ void SerialPort::recvSlot()
 {
     if(isOpen) {
         /* 处理所有还没有被处理的各类事件，主要是不用用户感觉到ka */
-        QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+        //QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
 
         QByteArray dataTemp;
         while (!mSerial->atEnd()) {
@@ -294,7 +294,15 @@ bool SerialPort::setBaudRate(qint32 baudRate)
 
     return ret;
 }
+bool SerialPort::setparity()//设置奇偶校验
+{
+    qint32 ret = 0;
+    if(isOpen) {
+        ret = mSerial->setParity(QSerialPort::EvenParity);
+    }
 
+    return ret;
+}
 qint32 SerialPort::baudRate()
 {
     qint32 ret = 0;

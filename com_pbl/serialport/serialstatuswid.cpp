@@ -95,6 +95,8 @@ void SerialStatusWid::updateSerialWid()
         CfgCom::bulid()->setSerialName(com, str);
         str += tr(" 已打开");
         pe.setColor(QPalette::WindowText,Qt::black);
+
+
     } else {
         str += tr(" 未打开");
         pe.setColor(QPalette::WindowText,Qt::red);
@@ -103,4 +105,5 @@ void SerialStatusWid::updateSerialWid()
     ui->serialLab->setText(str);
     ui->serialLab->setPalette(pe);
 }
+
 

@@ -37,7 +37,7 @@ public:
     qint32 baudRate();
     bool setBaudRate(qint32 baudRate);
     bool loopTest();
-
+    bool setparity();
 signals:
 
 private slots:

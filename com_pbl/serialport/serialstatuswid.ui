@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>140</width>
-    <height>70</height>
+    <width>193</width>
+    <height>66</height>
    </rect>
   </property>
   <property name="maximumSize">
    <size>
     <width>16777215</width>
-    <height>80</height>
+    <height>160</height>
    </size>
   </property>
   <property name="font">

@@ -3,6 +3,7 @@
 #include "cfgserial.h"
 
 #define MINTOR_NUMER 5
+#define TEM_NUMER 4
 
 struct sCfgComIt
 {
@@ -19,16 +20,20 @@ struct sCfgComIt
     uchar recvfn[MINTOR_NUMER];
     uchar recvlen[MINTOR_NUMER];
     ushort data[MINTOR_NUMER];
+    ushort volErr, curErr, powErr; // 电流误差
+    uchar result;
     QString noldata[MINTOR_NUMER];
     QString nolmin[MINTOR_NUMER];
     QString nolmax[MINTOR_NUMER];
-    ushort volErr, curErr, powErr; // 电流误差
-    uchar result;
-
     int cnt;
     int all;
     int ok;
     int err;
+
+    double tem[TEM_NUMER];
+    int doors[TEM_NUMER-2];
+    QString serial;
+    QString op_ver;
 };
 
 

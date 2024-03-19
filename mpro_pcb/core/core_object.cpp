@@ -109,31 +109,38 @@ void Core_Object::irqCheck()
     Core_Http::bulid()->execute(cmd);
 }
 
+
 bool Core_Object::jsonAnalysis()
 {
     QJsonObject obj; sCoreItem *it = &coreItem;
     QByteArray msg = it->jsonPacket.toLatin1();
     bool ret = checkInput(msg, obj);
     if(ret) {
-        getOutputVol(obj); getSn(obj);
-        getMac(obj); getParameter(obj); getAlarmStatus(obj);
-        it->datetime = getValue(obj, "datetime").toString();
-        obj = getObject(obj, "pdu_data"); getThreshold(obj);
-        getTgData(obj); getEnvData(obj);
+        // getOutputVol(obj);
+        getSn(obj);
+        // getMac(obj);
+        getParameter(obj);
+        // getAlarmStatus(obj);
+        // it->datetime = getValue(obj, "datetime").toString();
+        // getThreshold(obj);
+        // getTgData(obj);
+
+        obj = getObject(obj, "pdu_data");
+        // getThreshold(obj);
+        getEnvData(obj);
     }
     return ret;
 }
 
-
 void Core_Object::getSn(const QJsonObject &object)
 {
     QJsonObject obj = getObject(object, "pdu_version");
-    coreItem.sn = getValue(obj, "serialNumber").toString();
-    coreItem.mcutemp = getArray(obj, "mcu_temp").toVariantList();
-    coreItem.actual.ver.fwVer = getValue(obj, "ver").toString();
+    // coreItem.sn = getValue(obj, "serialNumber").toString();
+    // coreItem.mcutemp = getArray(obj, "mcu_temp").toVariantList();
+    // coreItem.actual.ver.fwVer = getValue(obj, "ver").toString();
     //coreItem.actual.ver.devType = getValue(obj, "dev").toString();
     coreItem.actual.ver.opVers = getArray(obj, "op_vers").toVariantList();
-    coreItem.actual.ver.opSn = getArray(obj, "op_sn").toVariantList();
+    // coreItem.actual.ver.opSn = getArray(obj, "op_sn").toVariantList();
 }
 
 void Core_Object::getMac(const QJsonObject &object)

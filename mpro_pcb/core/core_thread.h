@@ -2,6 +2,8 @@
 #define CORE_THREAD_H
 #include "json_pack.h"
 #include "core_object.h"
+#include "serialstatuswid.h"
+#include "setup_mainwid.h"
 
 class Core_Thread : public Core_Object
 {
@@ -16,32 +18,20 @@ signals:
     void msgSig(const QString &msg, bool pass);
     void finshSig(bool pass, const QString &msg);    
     void overSig();
-
+    void serilSig();
 private:
-    bool fwCheck();
-    bool tgCheck();
     bool snCheck();
     bool envCheck();
-    bool macCheck();
     bool searchDev();
     bool timeCheck();
-    bool alarmCheck();
-    bool devNumCheck();
-    bool outletCheck();
-    bool mcuTempCheck();
-    bool outputVolCheck();
-    bool supplyVolCheck();
-    bool parameterCheck();
-    bool thresholdCheck();
-    bool compareImages();
-    bool bigEleCheck();
-    bool logoCheck(const QString &ip);
-    bool downLogo(const QString &ip);
-    bool workDown(const QString &ip);
-    bool sendSerial();
+    bool workDown();
+    bool onserial(SerialPort  *Item);
 private:
     QString mLogo;
     QStringList m_ips;
+    SerialStatusWid *mComWid;
+    SerialPort *mSerial;
+    sCfgComIt *mItem;
 };
 
 #endif // CORE_THREAD_H
