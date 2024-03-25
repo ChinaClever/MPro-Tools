@@ -62,14 +62,14 @@ bool Core_Thread::envCheck()
 {
     bool res = false; bool ret = false;
     sMonitorData *it = &coreItem.actual.data;
-    for(int i=0; i<4 && i< it->temps.size(); i++) {
+    for(int i=0; i<3 && i< it->temps.size(); i++) {
         double value = it->temps.at(i).toDouble();
         mItem->tem[i] = value;
         QString str = tr("传感器温度%1：%2°C").arg(i+1).arg(value);
         if(value <= 0) {
             ret = res = false; str += tr("错误; ");
             str += tr("检查传感器盒子连接状态");
-        }else ret = true;
+        }else {ret = res = true;}
         emit msgSig(str, ret);
     }
 
@@ -80,7 +80,7 @@ bool Core_Thread::envCheck()
         if(value > 0) ret = true;else ret = false;
         emit msgSig(str, ret);
     }
-    if(ret && res) res = true;
+    if(ret && res) res = true;    
     else res = false;
 
     return res;
@@ -99,22 +99,23 @@ bool Core_Thread::onserial(SerialPort *Item)
     QByteArray byteArry2 = QByteArray::fromHex(hexString2.toLatin1());
 
     rtuSet(1);//开启modbus TRU
+    sleep(2);
     if(Item->isOpened()){//第一次发送命令
         int len = Item->write(byteArry1);
         sleep(2);
         if(len){
             Item->read(array1,5);
             qDebug()<<"array.size1"<<array1.size();
-            if(array1.size()){ret = true;str = tr("接收数据成功！");}else{
+            if(array1.size()){ret = true;str = tr("串口1接收数据成功！");}else{
                 len = Item->write(byteArry1);
                 if(len){
                     str = tr("再次发送第1条指令");
                     emit msgSig(str, true);
                     Item->read(array1,5);
                     qDebug()<<"array.size1"<<array1.size();
-                    if(array1.size()){ret = true;str = tr("接收数据成功！");
-                    }else{ret = false;str = tr("接收数据失败！");}
-                }else{ret = false; str = tr("接收数据失败！");}
+                    if(array1.size()){ret = true;str = tr("串口1接收数据成功！");
+                    }else{ret = false;str = tr("串口1接收数据失败！");}
+                }else{ret = false; str = tr("串口1接收数据失败！");}
             }
         }
         emit msgSig(str, ret);
@@ -124,13 +125,12 @@ bool Core_Thread::onserial(SerialPort *Item)
         if(len){
             Item->read(array2,5);
             qDebug()<<"array.size2"<<array2.size();
-            if(array2.size()){res = true;str2 = tr("接收数据成功！");}
-            else{ res = false;str2 = tr("接收数据失败！");}
+            if(array2.size()){res = true;str2 = tr("串口2接收数据成功！");}
+            else{ res = false;str2 = tr("串口2接收数据失败！");}
         }
         emit msgSig(str2, res);
-        sleep(1);
+        sleep(2);
         rtuSet(0);//关闭modbus TRU
-
     }
     if(ret && res){ret = res = true;}
     else{ret = res = false;}
@@ -139,8 +139,8 @@ bool Core_Thread::onserial(SerialPort *Item)
 }
 bool Core_Thread::workDown()
 {
-    bool res = true;
-    bool ret = true;
+    bool res = false;
+    bool ret = false;
     QString str = tr("传感器盒子检测 ");
     Core_Http *http = Core_Http::bulid(this);
     http->initHost();
@@ -148,6 +148,7 @@ bool Core_Thread::workDown()
     sleep(2);
     readMetaData();
     res = jsonAnalysis();
+
     if(res) ret = envCheck(); if(!ret) res = false;
     if(ret) str += tr("成功！");else str += tr("失败！");
 
@@ -165,9 +166,13 @@ void Core_Thread::run()
         res = onserial(mItem->coms.ser);
         if(res) str = tr("串口通讯成功！");
         else str = tr("串口通讯失败！");
+
         mItem->serial = str;
         emit msgSig(str, res);
         ret = workDown();//传感器盒子
+        if(ret) {msgSig("网口通讯成功！", ret);mItem->netserial = "网口通讯成功！";}
+        else {msgSig("网口通讯失败！", ret);mItem->netserial = "网口通讯失败！";}
+
         reg = snCheck();//执行板序列号读取
         if(ret && res && reg) res = ret = true; else ret = res = false;
         emit finshSig(ret,"最终结果");

@@ -5,6 +5,7 @@
 #include "usermainwid.h"
 #include "logmainwid.h"
 #include "core_thread.h"
+#include "backcolourcom.h"
 
 namespace Ui {
 class Home_WorkWid;

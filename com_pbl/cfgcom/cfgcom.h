@@ -33,7 +33,9 @@ struct sCfgComIt
     double tem[TEM_NUMER];
     int doors[TEM_NUMER-2];
     QString serial;
+    QString netserial;
     QString op_ver;
+    QString lcdable;
 };
 
 

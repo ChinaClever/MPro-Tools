@@ -3,6 +3,7 @@
 #include <QWidget>
 #include <QHeaderView>
 #include <QColor>
+#include <QGridLayout>
 
 namespace cm {
 
@@ -34,5 +35,4 @@ void groupBox_background(QWidget *target);
 void set_background_icon(QWidget *widget, const QString &icon);
 void set_background_color(QWidget *widget, const QColor &color);
 void set_background_icon(QWidget *widget, const QString &icon, const QSize &size);
-
 #endif // BACKCOLOURCOM_H

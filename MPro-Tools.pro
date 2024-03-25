@@ -1,6 +1,7 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
+    mpro_deployB \
     mpro_ota \
     mpro_app \
     mpro_deploy \

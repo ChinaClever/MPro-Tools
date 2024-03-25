@@ -50,8 +50,9 @@ void Home_WorkWid::initFunSlot()
 void Home_WorkWid::logWrite()
 {
     sLogItem logIt;
-    QString str = tr("T1 = %1°C，T2 = %2°C，T3 = %3°C，T4 = %4°C，门禁1 =%5，门禁2 =%6，执行板版本号：%7，%8").arg(mItem->tem[0])
-                      .arg(mItem->tem[1]).arg(mItem->tem[2]).arg(mItem->tem[3]).arg(mItem->doors[0])
+    QString str = tr("%1，T1 = %2°C，T2 = %3°C，T3 = %4°C，门禁1 =%5，门禁2 =%6，执行板版本号：%7，%8")
+                      .arg(mItem->netserial).arg(mItem->tem[0])
+                      .arg(mItem->tem[1]).arg(mItem->tem[2]).arg(mItem->doors[0])
                       .arg(mItem->doors[1]).arg(mItem->op_ver).arg(mItem->serial);
 
     logIt.data = str;
@@ -182,6 +183,9 @@ void Home_WorkWid::on_startBtn_clicked()
         if(initWid()){
             timer->start(500);
             mCorethread->start();
+            ret = MsgBox::question(this, tr("确定显示屏是否正常显示？"));
+            if(ret) mItem->lcdable = tr("显示屏显示正常！");
+            else mItem->lcdable = tr("显示屏未亮！");
         }
     }else{
         ret = MsgBox::question(this, tr("确定需要提前结束？"));

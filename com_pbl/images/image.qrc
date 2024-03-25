@@ -6,5 +6,7 @@
         <file>titlebar.jpg</file>
         <file>resultpix.jpg</file>
         <file>back.jpg</file>
+        <file>things.png</file>
+        <file>things.jpg</file>
     </qresource>
 </RCC>

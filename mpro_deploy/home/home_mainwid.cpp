@@ -171,7 +171,7 @@ void Home_MainWid::setDateTime()
     sCfgItem it; it.type = 43;  it.fc = 1;
     QDateTime dateTime = QDateTime::currentDateTime();
     QString v = dateTime.toString("yyyy-MM-dd hh:mm:ss");
-    if(ui->timeCheckBox->isChecked()) send(it, v);
+    send(it, v);
 }
 
 void Home_MainWid::location()
@@ -192,9 +192,10 @@ void Home_MainWid::location()
 
 void Home_MainWid::netAddr()
 {
-    if(ui->modeBox->currentIndex() && ui->addrBox->value()== 0)
+    sCfgItem it; it.type = 41; it.fc = 1;
+    if((ui->rangeBox->currentIndex() == 0 && ui->modeBox->currentIndex()== 1 && ui->addrBox->value()==0) ||
+        ui->rangeBox->currentIndex() == 4)
     {
-        sCfgItem it; it.type = 41; it.fc = 1;
         int id = ui->dhcpBox->currentIndex();
         send(it, id); if(id == 0) {
             QString v = ui->ipEdit->text();
@@ -219,96 +220,99 @@ void Home_MainWid::integrate()
     sCfgItem it;
     int v = 0;
     int tem = ui->tabWidget->currentIndex();
-    if(tem == 0){//Modbus RTU设置
-        it.type = 15; it.fc = 1;
-        v = ui->rtuBox->currentIndex();
-        send(it,v);
-
-        it.fc = 2;
-        send(it,ui->rtuaddrEdit->text());
-
-        it.fc = 3;
-        v = ui->rtubaudBox->currentIndex();
-        send(it,v);
-
-        it.type = 15; it.fc = 11;//Modbus TCP设置
-        v = ui->tcpBox->currentIndex();
-        send(it,v);
-        it.fc = 7;send(it,1);
-
-        it.fc = 12;
-        send(it,ui->tcpportEdit->text());
-        it.fc = 14;send(it,1);
-
-    }else if(tem == 1){//SNMP设置
-        tem = ui->snmpBox->currentIndex();
-        if(tem == 0){//禁用v2/v3
-            disable(tem);
-            it.type = 16; it.fc = 1;
-            v = ui->snmpBox->currentIndex();
+    if((ui->rangeBox->currentIndex() == 0 && ui->modeBox->currentIndex() == 1 && ui->addrBox->value() ==0)
+        ||(ui->rangeBox->currentIndex() ==5)){
+        // if(tem == 0){//Modbus RTU设置
+            it.type = 15; it.fc = 1;
+            v = ui->rtuBox->currentIndex();
             send(it,v);
 
-            it.type = 16; it.fc = 11;
-            send(it,v);
-            it.fc = 17;send(it,0);
-
-        }else if(tem == 1){//启用v2
-            v2_able();
-            it.type = 16; it.fc = 1;
-            send(it,1);
-
-            it.type = 16; it.fc = 2;
-            send(it,ui->v2_getEdit->text());
-
-            it.type = 16; it.fc = 3;
-            send(it,ui->v2_setEdit->text());
-            it.fc = 17;send(it,1);
-
-        }else if(tem == 2){//启用v3
-            v3_able();
-            it.type = 16; it.fc = 11;
-            send(it,1);
-
-            it.type = 16; it.fc = 12;
-            send(it,ui->v3_Edit->text());
-
-            it.type = 16; it.fc = 13;
-            send(it,ui->v3_pwdEdit->text());
-
-            it.type = 16; it.fc = 14;
-            send(it,ui->v3_keyEdit->text());
-            it.fc = 17;send(it,1);
-        }
-
-    }else if(tem == 2){//主动上报
-        it.type = 18; it.fc = 1;
-        v = ui->pushBox->currentIndex();
-        if(v){//启用
-            send(it,v);
             it.fc = 2;
-            QString str = ui->pushaddrEdit->text();
-            QRegExp ipReg("((25[0-5]|2[0-4]\\d|[01]?\\d\\d?)\\.){3}(25[0-5]|2[0-4]\\d|[01]?\\d\\d?)");
-            if (ipReg.exactMatch(str)) {
-                qDebug() << "IP地址格式正确";
-            } else {
-                qDebug() << "IP地址格式错误";
+            send(it,ui->rtuaddrEdit->text());
+
+            it.fc = 3;
+            v = ui->rtubaudBox->currentIndex();
+            send(it,v);
+
+            it.type = 15; it.fc = 11;//Modbus TCP设置
+            v = ui->tcpBox->currentIndex();
+            send(it,v);
+            it.fc = 7;send(it,1);
+
+            it.fc = 12;
+            send(it,ui->tcpportEdit->text());
+            it.fc = 14;send(it,1);
+
+        // }else if(tem == 1){//SNMP设置
+            tem = ui->snmpBox->currentIndex();
+            if(tem == 0){//禁用v2/v3
+                disable(tem);
+                it.type = 16; it.fc = 1;
+                v = ui->snmpBox->currentIndex();
+                send(it,v);
+
+                it.type = 16; it.fc = 11;
+                send(it,v);
+                it.fc = 17;send(it,0);
+
+            }else if(tem == 1){//启用v2
+                v2_able();
+                it.type = 16; it.fc = 1;
+                send(it,1);
+
+                it.type = 16; it.fc = 2;
+                send(it,ui->v2_getEdit->text());
+
+                it.type = 16; it.fc = 3;
+                send(it,ui->v2_setEdit->text());
+                it.fc = 17;send(it,1);
+
+            }else if(tem == 2){//启用v3
+                v3_able();
+                it.type = 16; it.fc = 11;
+                send(it,1);
+
+                it.type = 16; it.fc = 12;
+                send(it,ui->v3_Edit->text());
+
+                it.type = 16; it.fc = 13;
+                send(it,ui->v3_pwdEdit->text());
+
+                it.type = 16; it.fc = 14;
+                send(it,ui->v3_keyEdit->text());
+                it.fc = 17;send(it,1);
             }
 
-            send(it,ui->pushaddrEdit->text());
-            it.fc = 3;
-            send(it,ui->pushportEdit->text());
-            it.fc = 4;
-            send(it,ui->pushtimeEdit->text());
-        }else send(it,v);
+        // }else if(tem == 2){//主动上报
+            it.type = 18; it.fc = 1;
+            v = ui->pushBox->currentIndex();
+            if(v){//启用
+                send(it,v);
+                it.fc = 2;
+                QString str = ui->pushaddrEdit->text();
+                QRegExp ipReg("((25[0-5]|2[0-4]\\d|[01]?\\d\\d?)\\.){3}(25[0-5]|2[0-4]\\d|[01]?\\d\\d?)");
+                if (ipReg.exactMatch(str)) {
+                    qDebug() << "IP地址格式正确";
+                } else {
+                    qDebug() << "IP地址格式错误";
+                }
 
-        it.type = 18; it.fc = 8;
-        v = ui->pushBox->currentIndex();
-        if(v){//设备反控开启
-            send(it,v);
-            it.fc = 9;
-            send(it,ui->devportEdit->text());
-        }else send(it,v);
-        it.fc = 10;send(it,v);
+                send(it,ui->pushaddrEdit->text());
+                it.fc = 3;
+                send(it,ui->pushportEdit->text());
+                it.fc = 4;
+                send(it,ui->pushtimeEdit->text());
+            }else send(it,v);
+
+            it.type = 18; it.fc = 8;
+            v = ui->pushBox->currentIndex();
+            if(v){//设备反控开启
+                send(it,v);
+                it.fc = 9;
+                send(it,ui->devportEdit->text());
+            }else send(it,v);
+            it.fc = 10;send(it,v);
+        // }
     }
     // int v = ui->snmpBox->currentIndex();
     // send(it, v);
