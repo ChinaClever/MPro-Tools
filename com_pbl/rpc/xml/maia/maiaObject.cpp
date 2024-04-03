@@ -261,6 +261,8 @@ QString MaiaObject::prepareCall(QString method, QList<QVariant> args) {
 		params.appendChild(param);
 	}
 
+    //qDebug().noquote() << doc.toString().toUtf8(); ////////===========
+
 	return doc.toString();
 }
 

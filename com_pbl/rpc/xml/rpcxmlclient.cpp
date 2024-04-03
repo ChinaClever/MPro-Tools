@@ -11,7 +11,8 @@ RpcXmlClient::RpcXmlClient(QObject *parent)
     //	rpc = new MaiaXmlRpcClient(QUrl("http://phpxmlrpc.sourceforge.net/server.php"), this);
     //	rpc = new MaiaXmlRpcClient(QUrl("https://rpc.gandi.net/xmlrpc/2.0/"), this);
     //  rpc = new MaiaXmlRpcClient(QUrl("http://localhost:8082/RPC2"), this);
-    rpc = new MaiaXmlRpcClient(QUrl("http://localhost:8082"), this);
+    // rpc = new MaiaXmlRpcClient(QUrl("http://localhost:8082"), this);
+    rpc = new MaiaXmlRpcClient(QUrl("http://192.168.1.32:6082"), this);
 
     QSslConfiguration config = rpc->sslConfiguration();
     config.setProtocol(QSsl::AnyProtocol);
@@ -24,8 +25,8 @@ RpcXmlClient::RpcXmlClient(QObject *parent)
 
 
 void RpcXmlClient::doClient() {
-    QVariantList args; args << 0<< 3;
-    rpc->call("pduOutputNameGet", args,
+    QVariantList args; args << 0<< 0;
+    rpc->call("pduMetaData", args,
               this, SLOT(testResponse(QVariant &)),
               this, SLOT(testFault(int, const QString &)));
 }

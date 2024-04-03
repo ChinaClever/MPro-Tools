@@ -148,7 +148,7 @@ void Setup_MainWid::initMac()
 {
     updateMac();
     sMac *it = MacAddr::bulid()->macItem;
-    //ui->spinBox->setValue(it->cntMac);
+    // ui->spinBox->setValue(it->cntMac);
     ui->startMacLab->setText(it->startMac);
     ui->endMacLab->setText(it->endMac);
 }

@@ -16,8 +16,11 @@ public:
 
 signals:
     void msgSig(const QString &msg, bool pass);
-    void finshSig(bool pass, const QString &msg);    
-    void overSig();
+    void finshSig(bool pass, const QString &msg);
+    void overSig(); void startSig();
+
+public slots:
+    void startSlot() {run();}
 
 protected:
     void timeSync();

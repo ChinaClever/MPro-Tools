@@ -11,6 +11,7 @@ Core_Thread::Core_Thread(QObject *parent)
     Ssdp_Core::bulid(this);
     Core_Http::bulid(this);
     mPro = sDataPacket::bulid()->getPro();
+    connect(this, &Core_Thread::startSig, &Core_Thread::startSlot);
 }
 
 QStringList Core_Thread::getFs()
@@ -153,8 +154,11 @@ void Core_Thread::run()
             ret = downVer(ip); timeSync();
             if(ret) ret = workDown(ip);
             if(ret) enModbusRtu(); cm_mdelay(150);
-            emit finshSig(ret, ip+" "); sleep(2);
+            emit finshSig(ret, ip+" ");
+#if 0
+            cm_mdelay(2000);
             Json_Pack::bulid()->http_post("debugdata/add","192.168.1.12");
+#endif
         }m_ips.clear();
     } emit overSig();
 }

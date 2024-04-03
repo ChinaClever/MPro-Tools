@@ -5,6 +5,7 @@
  */
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+// #include "rpc/xml/rpcxmlclient.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -24,6 +25,7 @@ void MainWindow::initFunSlot()
 {
     mHomeWid = new Home_MainWid(ui->stackedWid);
     ui->stackedWid->addWidget(mHomeWid);
+    // new RpcXmlClient(this);
 }
 
 
