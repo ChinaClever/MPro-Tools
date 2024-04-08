@@ -16,7 +16,7 @@ class NavBarWid : public QWidget
 public:
     explicit NavBarWid(QWidget *parent = nullptr);
     ~NavBarWid();
-
+    void initVersion();
 private:
     Ui::NavBarWid *ui;
 };

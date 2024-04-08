@@ -80,6 +80,8 @@ bool Core_Thread::envCheck()
         if(value > 0) ret = true;else ret = false;
         emit msgSig(str, ret);
     }
+    if(ret || res){msgSig("网口通讯成功！", ret);mItem->netserial = "网口通讯成功！";}
+    else {msgSig("网口通讯失败！", ret);mItem->netserial = "网口通讯失败！";}
     if(ret && res) res = true;    
     else res = false;
 
@@ -170,8 +172,7 @@ void Core_Thread::run()
         mItem->serial = str;
         emit msgSig(str, res);
         ret = workDown();//传感器盒子
-        if(ret) {msgSig("网口通讯成功！", ret);mItem->netserial = "网口通讯成功！";}
-        else {msgSig("网口通讯失败！", ret);mItem->netserial = "网口通讯失败！";}
+
 
         reg = snCheck();//执行板序列号读取
         if(ret && res && reg) res = ret = true; else ret = res = false;

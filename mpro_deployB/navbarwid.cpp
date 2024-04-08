@@ -16,8 +16,13 @@ NavBarWid::NavBarWid(QWidget *parent) :
     QGridLayout *gridLayout = new QGridLayout(parent);
     gridLayout->setContentsMargins(0, 0, 0, 6);
     gridLayout->addWidget(this);
+    initVersion();
 }
-
+void NavBarWid::initVersion()
+{
+    QString version = tr("V0.0.1");
+    ui->label->setText("MPro快捷设置工具 " + version);
+}
 NavBarWid::~NavBarWid()
 {
     delete ui;

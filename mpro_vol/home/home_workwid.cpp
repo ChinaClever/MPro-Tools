@@ -38,7 +38,9 @@ void Home_WorkWid::initLayout()
     gridLayout->addWidget(this);
 }
 
-void Home_WorkWid::initFunSlot()
+void Home_WorkWid::
+
+    initFunSlot()
 {
     mItem = CfgCom::bulid()->item;
     mItem->cnt = 0;

@@ -25,19 +25,6 @@
       <string>网络地址</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_6">
-      <item row="7" column="1">
-       <widget class="QCheckBox" name="netcheckBox">
-        <property name="layoutDirection">
-         <enum>Qt::RightToLeft</enum>
-        </property>
-        <property name="text">
-         <string>设置</string>
-        </property>
-        <property name="checked">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="0">
        <widget class="QLabel" name="label_3">
         <property name="text">
@@ -136,6 +123,19 @@
         </property>
        </widget>
       </item>
+      <item row="7" column="0" colspan="2">
+       <widget class="QCheckBox" name="netcheckBox">
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="text">
+         <string>设置</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -162,19 +162,6 @@
        <widget class="QLabel" name="label_23">
         <property name="text">
          <string>Modbus 地址：</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="2">
-       <widget class="QCheckBox" name="rtucheckBox">
-        <property name="layoutDirection">
-         <enum>Qt::RightToLeft</enum>
-        </property>
-        <property name="text">
-         <string>设置</string>
-        </property>
-        <property name="checked">
-         <bool>false</bool>
         </property>
        </widget>
       </item>
@@ -245,6 +232,19 @@
        <widget class="QSpinBox" name="rtu_addrspinBox">
         <property name="minimum">
          <number>1</number>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0" colspan="3">
+       <widget class="QCheckBox" name="rtucheckBox">
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="text">
+         <string>设置</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
         </property>
        </widget>
       </item>
@@ -905,9 +905,9 @@ QTabBar::tab:selected{  //选中后的变化
        <widget class="QCheckBox" name="snmpcheckBox">
         <property name="geometry">
          <rect>
-          <x>260</x>
+          <x>2</x>
           <y>400</y>
-          <width>53</width>
+          <width>311</width>
           <height>23</height>
          </rect>
         </property>
@@ -917,7 +917,7 @@ QTabBar::tab:selected{  //选中后的变化
          </font>
         </property>
         <property name="layoutDirection">
-         <enum>Qt::RightToLeft</enum>
+         <enum>Qt::LeftToRight</enum>
         </property>
         <property name="text">
          <string>设置</string>
@@ -1031,9 +1031,9 @@ QTabBar::tab:selected{  //选中后的变化
        <widget class="QCheckBox" name="tcpcheckBox">
         <property name="geometry">
          <rect>
-          <x>260</x>
+          <x>2</x>
           <y>160</y>
-          <width>53</width>
+          <width>311</width>
           <height>23</height>
          </rect>
         </property>
@@ -1043,7 +1043,7 @@ QTabBar::tab:selected{  //选中后的变化
          </font>
         </property>
         <property name="layoutDirection">
-         <enum>Qt::RightToLeft</enum>
+         <enum>Qt::LeftToRight</enum>
         </property>
         <property name="text">
          <string>设置</string>
@@ -1168,14 +1168,14 @@ QTabBar::tab:selected{  //选中后的变化
      <widget class="QCheckBox" name="webCheckBox">
       <property name="geometry">
        <rect>
-        <x>0</x>
+        <x>9</x>
         <y>130</y>
-        <width>360</width>
+        <width>351</width>
         <height>23</height>
        </rect>
       </property>
       <property name="layoutDirection">
-       <enum>Qt::RightToLeft</enum>
+       <enum>Qt::LeftToRight</enum>
       </property>
       <property name="text">
        <string>设置</string>
