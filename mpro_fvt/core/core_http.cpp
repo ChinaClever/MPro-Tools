@@ -93,7 +93,7 @@ auto Core_Http::sslConfig()
     QSslConfiguration SSLConfig;
     SSLConfig = QSslConfiguration::defaultConfiguration();
     SSLConfig.setPeerVerifyMode(QSslSocket::VerifyNone);
-    //SSLConfig.setProtocol(QSsl::TlsV1_3OrLater);
+    //SSLConfig.setProtocol(QSsl::TlsV1_2OrLater);
     return SSLConfig;
 }
 
