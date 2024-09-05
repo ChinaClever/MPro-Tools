@@ -495,7 +495,7 @@ bool Core_Thread::workDown(const QString &ip)
     ret = mcuTempCheck(); if(!ret) res = false;
     ret = outletCheck(); if(!ret) res = false;
     ret = logoCheck(ip); if(!ret) res = false;
-    ret = envCheck(); if(!ret) res = false;
+    // ret = envCheck(); if(!ret) res = false; /////// =======
     ret = tgCheck(); if(!ret) res = false;
 
     if(res) {
