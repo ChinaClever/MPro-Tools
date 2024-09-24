@@ -14,6 +14,7 @@ struct sParameter {
     uint webBackground; // 网页背景颜色
     uint supplyVol;
 
+
     uint lineNum; //设备单三相
     uint boardNum;   //　执行板数量
     uint loopNum; // 回路数量
@@ -72,6 +73,7 @@ struct sCoreItem
     QString datetime;
     QString mac,sn;
     QVariantList mcutemp;
+    bool checkMac;
     int alarm;
 };
 

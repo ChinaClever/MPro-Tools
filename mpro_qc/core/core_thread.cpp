@@ -70,7 +70,8 @@ bool Core_Thread::mcuTempCheck()
     int cnt = coreItem.actual.param.boardNum;
     QVariantList list = coreItem.mcutemp;
     for(int i=0; i<cnt && i<list.size(); ++i) {
-        int temp = list.at(i).toInt(); bool ret = true;
+        int temp = list.at(i).toInt();
+        bool ret = true; if(!temp) continue;
         QString str = tr("第%1块执行板温度%2°c").arg(i+1).arg(temp);
         if(temp > 65 || temp < 5){ res = ret = false; str += tr("错误");}
         emit msgSig(str, ret); //cout << str;
@@ -80,12 +81,12 @@ bool Core_Thread::mcuTempCheck()
 }
 
 bool Core_Thread::macCheck()
-{
-    bool ret = false;
-    QString v = coreItem.mac;
-    QString str = tr("MAC地址，");
-    if(v.contains("2C:26:")) {str += v; ret = true;}
-    else {str += tr("错误：mac=%1").arg(v);}
+{   
+    QString v = coreItem.mac;  bool ret = false;
+    QString str = tr("MAC地址，"); if(coreItem.checkMac) {
+        if(v.contains("2C:26:")) {str += v; ret = true;}
+        else {str += tr("错误：mac=%1").arg(v);}
+    } else {ret = true; str += tr("跳过检查：mac=%1").arg(v);}
     emit msgSig(str, ret);
     return ret;
 }
