@@ -222,6 +222,15 @@ bool Core_Thread::parameterCheck()
                    .arg(desire->standNeutral).arg(actual->standNeutral);
     } emit msgSig(str, ret);
 
+    str = tr("协议："); ret = true;
+    if(desire->oldProtocol == actual->oldProtocol) {
+        if(desire->oldProtocol) str += tr("定制"); else str += tr("标准");
+    } else {
+        res = ret = false; str += tr("期望值%1,实际值%2")
+                   .arg(desire->oldProtocol).arg(actual->oldProtocol);
+    } emit msgSig(str, ret);
+
+
 //    str = tr("传感器盒子："); ret = true;
 //    if(desire->sensorBoxEn == actual->sensorBoxEn) {
 //        if(desire->sensorBoxEn) str += tr("存在"); else str += tr("不带");

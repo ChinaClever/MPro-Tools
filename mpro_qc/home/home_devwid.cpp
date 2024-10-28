@@ -99,6 +99,7 @@ void Home_DevWid::updateParams()
     it->devSpec = ui->devSpecBox->currentIndex()+1;
     it->lineNum = ui->lineNumBox->currentIndex()?3:1;
     it->standNeutral = ui->standardBox->currentIndex();
+    it->oldProtocol = ui->protocolSpec->currentIndex();
     it->sensorBoxEn = ui->sensorBox->currentIndex();
     it->isBreaker = ui->breakerBox->currentIndex();
     it->language = ui->languageBox->currentIndex();
