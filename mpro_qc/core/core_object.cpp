@@ -148,6 +148,7 @@ void Core_Object::getOutputVol(const QJsonObject &object)
     //cout << coreItem.actual.rate.outputVols.size() << coreItem.actual.rate.outputVols;
 
     QJsonObject obj = getObject(object, "uut_info");
+    coreItem.uuid = getValue(obj, "uuid").toString();
     coreItem.actual.ver.devType = getValue(obj, "pdu_type").toString();
 }
 
@@ -246,7 +247,7 @@ QJsonArray Core_Object::getArray(const QJsonObject &object, const QString &key)
 
 double Core_Object::getData(const QJsonObject &object, const QString &key)
 {
-    double ret = -1;
+    double ret = 0; /////========== -1
     QJsonValue value = getValue(object, key);
     if(value.isDouble()) {
         ret = value.toDouble();

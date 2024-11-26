@@ -6,6 +6,7 @@
 #include "core_thread.h"
 #include <QImage>
 #include <QPixmap>
+#include "dbmacs.h"
 
 Core_Thread::Core_Thread(QObject *parent)
     : Core_Object{parent}
@@ -47,7 +48,7 @@ bool Core_Thread::timeCheck()
     QDateTime dt = QDateTime::fromString(coreItem.datetime, fmd);
     QDateTime time = QDateTime::currentDateTime();
     int secs = qAbs(time.secsTo(dt));
-    if(secs > 600) str += tr("相差过大："); else ret = true;
+    if(secs > 600 && coreItem.timeCheck) str += tr("相差过大："); else ret = true;
     str += coreItem.datetime;
     emit msgSig(str, ret);
     return ret;
@@ -60,7 +61,17 @@ bool Core_Thread::snCheck()
     QString str = tr("序列号，");
     if(sn.contains("2I3")) {str += sn; ret = true;}
     else {str += tr("错误：sn=%1").arg(sn);}
-    emit msgSig(str, ret);
+
+    QString uuid = coreItem.uuid;
+    emit msgSig(str, ret); if(ret) {
+        if(mHashSn.contains(sn)) {
+            if(mHashSn.value(sn) != uuid) {
+                ret = false; emit msgSig(tr("SN：%1已被分配给UUID:%2")
+                                .arg(sn, uuid), ret);
+            }
+        } else mHashSn[sn] = uuid;
+    }
+
     return ret;
 }
 
@@ -87,7 +98,21 @@ bool Core_Thread::macCheck()
         if(v.contains("2C:26:")) {str += v; ret = true;}
         else {str += tr("错误：mac=%1").arg(v);}
     } else {ret = true; str += tr("跳过检查：mac=%1").arg(v);}
+
     emit msgSig(str, ret);
+    QString uuid = coreItem.uuid;
+    QString sn = coreItem.sn; if(ret) {
+        if(mHashMac.contains(v)) {
+            if(mHashMac.value(v) != uuid) { ret = false;
+                 emit msgSig(tr("MAC：%1已被分配给SN:%3 UUID:%2 ")
+                                .arg(v, uuid, mHashMac.value(v)), ret);
+            }
+        } else {
+            mHashMac[v] = uuid; int rtn = DbLogs::bulid()->contains(v, sn);
+            if(rtn) { ret = false; emit msgSig(tr("MAC：%1已被分配, 在数据库已存在").arg(v), ret); }
+        }
+    }
+
     return ret;
 }
 
@@ -164,8 +189,8 @@ bool Core_Thread::logoCheck(const QString &ip)
     if(coreItem.desire.param.standNeutral<2) {
         emit msgSig(tr("标准和中性版本跳过Logo检测"), true);
     } else if (coreItem.logo.isEmpty()) {
-         emit msgSig(tr("未指定Logo此项检测跳过"), true);
-     } else {
+        emit msgSig(tr("未指定Logo此项检测跳过"), true);
+    } else {
         ret = downLogo(ip);
         if(ret) {
             ret = compareImages();
@@ -176,7 +201,7 @@ bool Core_Thread::logoCheck(const QString &ip)
     }
 
     return ret;
- }
+}
 
 bool Core_Thread::parameterCheck()
 {
@@ -187,7 +212,7 @@ bool Core_Thread::parameterCheck()
         str += tr("%1系列").arg((char)(desire->devSpec+'A'-1));
     } else {
         res = ret = false; str += tr("期望值%1,实际值%2")
-                .arg(desire->devSpec).arg(actual->devSpec);
+                   .arg(desire->devSpec).arg(actual->devSpec);
     } emit msgSig(str, ret);
 
     str = tr("语言："); ret = true;
@@ -231,13 +256,13 @@ bool Core_Thread::parameterCheck()
     } emit msgSig(str, ret);
 
 
-//    str = tr("传感器盒子："); ret = true;
-//    if(desire->sensorBoxEn == actual->sensorBoxEn) {
-//        if(desire->sensorBoxEn) str += tr("存在"); else str += tr("不带");
-//    } else {
-//        res = ret = false; str += tr("期望值%1,实际值%2")
-//                   .arg(desire->sensorBoxEn).arg(actual->sensorBoxEn);
-//    } emit msgSig(str, ret);
+    //    str = tr("传感器盒子："); ret = true;
+    //    if(desire->sensorBoxEn == actual->sensorBoxEn) {
+    //        if(desire->sensorBoxEn) str += tr("存在"); else str += tr("不带");
+    //    } else {
+    //        res = ret = false; str += tr("期望值%1,实际值%2")
+    //                   .arg(desire->sensorBoxEn).arg(actual->sensorBoxEn);
+    //    } emit msgSig(str, ret);
 
     return res;
 }
@@ -298,7 +323,7 @@ bool Core_Thread::fwCheck()
     } emit msgSig(str, ret);
 
     str = tr("设备类型："); ret = true;
-        if(desire->devType == actual->devType) {
+    if(desire->devType == actual->devType) {
         str += desire->devType;
     } else {
         res = ret = false; str += tr("期望值%1,实际值%2")
@@ -398,7 +423,7 @@ bool Core_Thread::outletCheck()
             str = tr("输出位%1额定电流：").arg(i+1);
             ret = false; str += tr("期望值%1A,实际值%2A")
                        .arg(d).arg(s);
-             emit msgSig(str, ret);
+            emit msgSig(str, ret);
         }
     }
 
@@ -420,7 +445,7 @@ bool Core_Thread::outputVolCheck()
     if(spec > 1) {
         for(int i=0; i<vols.size()&&(i<num); ++i) {
             int v = vols.at(i).toInt();
-             int s = qAbs(v - value); //cout << v << s;
+            int s = qAbs(v - value); //cout << v << s;
             if(spec == 3 && !v){ continue; } if(s > 50 || !v) {
                 str = tr("输出位%1电压相差过大：相电压：%2V 输出位电压：%3V")
                           .arg(i+1).arg(value/10.0).arg(v/10.0);
@@ -482,7 +507,7 @@ bool Core_Thread::envCheck()
         emit msgSig(str, ret);
     }
 
-     return res;
+    return res;
 }
 
 

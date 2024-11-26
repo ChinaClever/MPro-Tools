@@ -107,6 +107,7 @@ void Home_DevWid::updateParams()
     it->loopNum = ui->loopNumBox->value();
     it->outputNum = ui->outputNumBox->value();
     Core_Object::coreItem.checkMac = ui->MacBox->isChecked();
+    Core_Object::coreItem.timeCheck = ui->timeCheckBox->isChecked();
 
     sVersion *ver = &mIt->ver;
     ver->devType = ui->typeEdit->text();
