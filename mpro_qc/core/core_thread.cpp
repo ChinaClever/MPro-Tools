@@ -104,8 +104,8 @@ bool Core_Thread::macCheck()
     QString sn = coreItem.sn; if(ret) {
         if(mHashMac.contains(v)) {
             if(mHashMac.value(v) != uuid) { ret = false;
-                 emit msgSig(tr("MAC：%1已被分配给SN:%3 UUID:%2 ")
-                                .arg(v, uuid, mHashMac.value(v)), ret);
+                 emit msgSig(tr("MAC：%1已被分配给UUID:%2 ")
+                                .arg(v, mHashMac.value(v)), ret);
             }
         } else {
             mHashMac[v] = uuid; int rtn = DbLogs::bulid()->contains(v, sn);
