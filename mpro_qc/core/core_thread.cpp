@@ -108,8 +108,9 @@ bool Core_Thread::macCheck()
                                 .arg(v, mHashMac.value(v)), ret);
             }
         } else {
-            mHashMac[v] = uuid; int rtn = DbLogs::bulid()->contains(v, sn);
+            int rtn = DbLogs::bulid()->contains(v, sn);
             if(rtn) { ret = false; emit msgSig(tr("MAC：%1已被分配, 在数据库已存在").arg(v), ret); }
+            else mHashMac[v] = uuid;
         }
     }
 
