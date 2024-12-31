@@ -228,6 +228,28 @@
        <string>开启</string>
       </property>
      </widget>
+     <widget class="QPushButton" name="tlsBtn">
+      <property name="geometry">
+       <rect>
+        <x>990</x>
+        <y>60</y>
+        <width>140</width>
+        <height>35</height>
+       </rect>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>35</height>
+       </size>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
+      </property>
+      <property name="text">
+       <string>证书选择</string>
+      </property>
+     </widget>
     </widget>
    </item>
    <item row="1" column="0">
@@ -435,22 +457,6 @@
         </property>
         <property name="value">
          <double>3.520000000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="6">
-       <widget class="QPushButton" name="tlsBtn">
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>35</height>
-         </size>
-        </property>
-        <property name="layoutDirection">
-         <enum>Qt::LeftToRight</enum>
-        </property>
-        <property name="text">
-         <string>证书选择</string>
         </property>
        </widget>
       </item>
