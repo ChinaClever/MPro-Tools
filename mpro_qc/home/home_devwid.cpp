@@ -192,20 +192,17 @@ void Home_DevWid::on_loopCurBox_valueChanged(int arg1)
 }
 
 
+void Home_DevWid::on_tlsBtn_clicked()
+{
+    sCoreItem *it = &Core_Object::coreItem;
+    it->tlsFile = QFileDialog::getOpenFileName(this, "设备证书选择",
+                                            QStandardPaths::writableLocation(QStandardPaths::DesktopLocation),
+                                            "Pem (*.pem)");
+}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+void Home_DevWid::on_standardBox_currentIndexChanged(int index)
+{
+    ui->tlsBtn->setHidden(!index);
+}
 

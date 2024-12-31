@@ -13,7 +13,11 @@ Core_Thread::Core_Thread(QObject *parent)
 {
     Ssdp_Core::bulid(this);
     mLogo = "usr/data/pdu/cfg/logo.png";
+    mTls = "usr/data/pdu/certs/client-cert.pem";
     QString dir = "usr/data/pdu/cfg";
+    FileMgr::build().mkpath(dir);
+
+    dir = "usr/data/pdu/certs";
     FileMgr::build().mkpath(dir);
 }
 
@@ -104,7 +108,7 @@ bool Core_Thread::macCheck()
     QString sn = coreItem.sn; if(ret) {
         if(mHashMac.contains(v)) {
             if(mHashMac.value(v) != uuid) { ret = false;
-                 emit msgSig(tr("MAC：%1已被分配给UUID:%2 ")
+                emit msgSig(tr("MAC：%1已被分配给UUID:%2 ")
                                 .arg(v, mHashMac.value(v)), ret);
             }
         } else {
@@ -182,6 +186,51 @@ bool Core_Thread::compareImages()
     } else {
         return false;
     }
+}
+
+
+bool Core_Thread::downTlsCert(const QString &ip)
+{
+    QString str = tr("Tls证书下载：");
+    QStringList fs; fs << mTls;
+
+    QFile::remove(mTls);
+    Core_Http *http = Core_Http::bulid(this);
+    http->initHost(ip); http->downFile(fs);
+    for(int i=0; i<1000; i+= 100) {
+        if(QFile::exists(mTls)) break; else cm_mdelay(100);
+    }
+
+    bool ret = QFile::exists(mTls);
+    if(ret) str += tr("成功"); else str += tr("失败");
+    emit msgSig(str, ret);
+    return ret;
+}
+
+bool Core_Thread::compareTls()
+{
+    if(File::fileSize(mTls) != File::fileSize(coreItem.tlsFile))  return false;
+    return File::md5(mTls) == File::md5(coreItem.tlsFile);
+}
+
+bool Core_Thread::tlsCertCheck(const QString &ip)
+{
+    bool ret = true;
+    if(coreItem.desire.param.standNeutral) {
+        if(coreItem.tlsFile.size()) {
+            ret = downTlsCert(ip);
+            if(ret) {
+                ret = compareTls();
+                QString str = tr("证书差异检查：");
+                if(ret) str += tr("通过"); else str += tr("失败");
+                emit msgSig(str, ret);
+            }
+
+        } else emit msgSig(tr("未指定证书此项检测跳过"), true);
+    }
+
+    return ret;
+
 }
 
 bool Core_Thread::logoCheck(const QString &ip)
@@ -531,6 +580,7 @@ bool Core_Thread::workDown(const QString &ip)
     ret = mcuTempCheck(); if(!ret) res = false;
     ret = outletCheck(); if(!ret) res = false;
     ret = logoCheck(ip); if(!ret) res = false;
+    ret = tlsCertCheck(ip); if(!ret) res = false;
     // ret = envCheck(); if(!ret) res = false; /////// =======
     ret = tgCheck(); if(!ret) res = false;
 

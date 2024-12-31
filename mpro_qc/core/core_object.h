@@ -75,7 +75,7 @@ struct sCoreItem
     QString mac,sn,uuid;
     QVariantList mcutemp;
     bool checkMac, timeCheck;
-    int alarm;
+    int alarm; QString tlsFile;
 };
 
 

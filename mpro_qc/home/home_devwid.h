@@ -52,6 +52,10 @@ private slots:
 
     void on_boxDisenBtn_clicked();
 
+    void on_tlsBtn_clicked();
+
+    void on_standardBox_currentIndexChanged(int index);
+
 private:
     Ui::Home_DevWid *ui;
     Core_Http *mHttp;
