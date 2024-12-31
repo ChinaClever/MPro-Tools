@@ -289,9 +289,11 @@ bool Core_Thread::parameterCheck()
                    .arg(desire->vh).arg(actual->vh);
     } emit msgSig(str, ret);
 
-    str = tr("中性："); ret = true;
+    str = tr("版本："); ret = true;
     if(desire->standNeutral == actual->standNeutral) {
-        if(desire->standNeutral) str += tr("中性"); else str += tr("标准");
+        if(desire->standNeutral==1) str += tr("中性");
+        else if(desire->standNeutral==2) str += tr("定制");
+        else str += tr("标准");
     } else {
         res = ret = false; str += tr("期望值%1,实际值%2")
                    .arg(desire->standNeutral).arg(actual->standNeutral);
