@@ -4,7 +4,7 @@
  *      Author: Lzy
  */
 #include "core_http.h"
-
+#include "filemgr.h"
 
 Core_Http::Core_Http(QObject *parent)
     : QObject{parent}
@@ -84,7 +84,8 @@ void Core_Http::downFile(const QStringList &fs)
     foreach (const auto &fn, fs) {
         QJsonObject json; json.insert("file", fn);
         bool ret = http_down("download", json, fn, m_ip, m_port);
-        if(ret) cm_mdelay(243); else break;
+        if(!ret) FileMgr::build().delFileOrDir(fn);
+        if(ret) cm_mdelay(243); else if(!fn.contains(".pem")) break;
     }
 }
 
@@ -168,7 +169,7 @@ bool Core_Http::http_down(const QString &method, QJsonObject &json, const QStrin
             .sslConfiguration(sslConfig())
             .download(file)  // 启用自动设置文件名字
             .onDownloadFileSuccess([&](QString fileName) { emit httpSig("Download completed: "+fileName);})
-    .onDownloadFileFailed([&](QString error) { emit httpSig("Download failed: "+error+": "+file); ret = false;})
+        .onDownloadFileFailed([&](QString error) { emit httpSig("Download failed: "+error+": "+file); ret = false;})
     .timeout(2500) // 1s超时
             .body(json)
             .block()

@@ -127,7 +127,7 @@
          </size>
         </property>
         <property name="text">
-         <string>0.2_0.2_1000M_20231102</string>
+         <string>1.0_20240102</string>
         </property>
        </widget>
       </item>
@@ -165,7 +165,7 @@
          </size>
         </property>
         <property name="text">
-         <string>APP</string>
+         <string>MPro</string>
         </property>
        </widget>
       </item>

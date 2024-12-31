@@ -56,15 +56,16 @@ void Home_MainWid::setTextColor(const QString &str)
 
 
 void Home_MainWid::onMsg(const QString &msg)
-{    
+{
+    if(msg.contains("Download failed: Url") && msg.contains(".pem")) return;
+
     QString str = QString::number(mId++) + "、"+ msg + "\n";
     setTextColor(str); //ui->textEdit->moveCursor(QTextCursor::Start);
     ui->textEdit->insertPlainText(str);
-
     if(msg.contains("Download failed: Url")) {
         QString str = tr("文件下载错误：\n") + msg;
         MsgBox::critical(this, str); mId = 0;
-    } else if(mId == 10 && msg.contains("logo.png")) {
+    } else if(mId == 10 /*&& msg.contains("logo.png")*/) {
         QString str = tr("配置文件下载成功\n");
         MsgBox::information(this, str);
     }

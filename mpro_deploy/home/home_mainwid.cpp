@@ -94,7 +94,7 @@ void Home_MainWid::on_startBtn_clicked()
     if(ui->groupBox_4->isEnabled()) netAddr();
     if(ui->groupBox_5->isEnabled()) integrate();
     setDateTime(); setWorkDown(); reboot();
-    incrementAddr();
+    incrementAddr();  setBr();
 }
 
 void Home_MainWid::devMode()
@@ -112,7 +112,16 @@ void Home_MainWid::devMode()
         it.fc = 2;
     }
 
+
     v = ui->addrBox->value(); send(it, v);
+}
+
+void Home_MainWid::setBr()
+{
+    sCfgItem it;
+    it.type = 15;
+    it.fc = 3;
+    send(it, 0);
 }
 
 void Home_MainWid::incrementAddr()

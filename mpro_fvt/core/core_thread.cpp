@@ -18,11 +18,15 @@ Core_Thread::Core_Thread(QObject *parent)
 QStringList Core_Thread::getFs()
 {
     FileMgr::build().mkpath("usr/data/pdu/doc/");
-    QString dir = "usr/data/pdu/cfg/"; FileMgr::build().mkpath(dir);
-    QStringList fs; fs << "usr/data/pdu/ver.ini" << "usr/data/pdu/doc/modbus.xlsx";
+    QString dir = "usr/data/pdu/certs/"; FileMgr::build().mkpath(dir);
+    QStringList fs; fs << dir + "client-key.pem" << dir + "client-cert.pem";
+
+    dir = "usr/data/pdu/cfg/"; FileMgr::build().mkpath(dir);
+    fs << "usr/data/pdu/ver.ini" << "usr/data/pdu/doc/modbus.xlsx";
     fs << dir+"alarm.conf" << dir+"devParam.ini" << dir+"cfg.ini" << dir+"inet.ini";
     fs << dir+"alarm.cfg" << dir+"snmpd.conf" << dir+"logo.png" << dir+"mac.conf";
     fs << dir + "sn.conf";
+
     return fs;
 }
 
@@ -32,6 +36,7 @@ bool Core_Thread::fsCheck()
     QStringList fs = getFs();
     fs.removeLast(); fs.removeLast();
     foreach (const auto fn, fs) {
+        if(fn.contains(".pem")) continue;
         if(!QFile::exists(fn)) {
             ret = false;
             emit msgSig(tr("文件未找到")+fn, ret);
@@ -139,6 +144,7 @@ bool Core_Thread::workDown(const QString &ip)
     QStringList fs = getFs(); bool res = true;
     foreach (const auto fn, fs) {
         bool ret = http->uploadFile(fn);
+        if(!ret && fn.contains(".pem")) continue;
         if(!ret) res = false;
         emit msgSig(fn, ret);
         cm_mdelay(20);

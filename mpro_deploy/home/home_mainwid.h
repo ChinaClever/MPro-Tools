@@ -34,6 +34,7 @@ protected:
     void incrementIPAddress();
     void incrementAddr();
     void reboot();
+    void setBr();
 
 private slots:
     void on_findBtn_clicked();
