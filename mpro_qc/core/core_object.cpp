@@ -172,6 +172,7 @@ void Core_Object::getParameter(const QJsonObject &object)
     it->boardNum = getData(obj, "board_num");
     it->language = getData(obj, "language");
     it->isBreaker = getData(obj, "breaker");
+    it->webBackground = getData(obj, "web_background");
     it->vh = getData(obj, "vh");
 
     sVersion *ver = &coreItem.actual.ver;

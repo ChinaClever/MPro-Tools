@@ -106,6 +106,7 @@ void Home_DevWid::updateParams()
     it->boardNum = ui->boardNumBox->value();
     it->loopNum = ui->loopNumBox->value();
     it->outputNum = ui->outputNumBox->value();
+    it->webBackground = ui->colourSpec->currentIndex();
     Core_Object::coreItem.checkMac = ui->MacBox->isChecked();
     Core_Object::coreItem.timeCheck = ui->timeCheckBox->isChecked();
 

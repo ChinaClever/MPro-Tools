@@ -307,6 +307,14 @@ bool Core_Thread::parameterCheck()
                    .arg(desire->oldProtocol).arg(actual->oldProtocol);
     } emit msgSig(str, ret);
 
+    str = tr("网页背景色："); ret = true;
+    if(desire->webBackground == actual->webBackground) {
+        if(desire->webBackground) str += tr("定制"); else str += tr("标准-蓝色");
+    } else {
+        res = ret = false; str += tr("期望值%1,实际值%2")
+                   .arg(desire->webBackground).arg(actual->webBackground);
+    } emit msgSig(str, ret);
+
 
     //    str = tr("传感器盒子："); ret = true;
     //    if(desire->sensorBoxEn == actual->sensorBoxEn) {
