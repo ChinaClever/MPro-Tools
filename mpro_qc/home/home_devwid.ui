@@ -525,6 +525,11 @@
             <string>定制</string>
            </property>
           </item>
+          <item>
+           <property name="text">
+            <string>NORDEN</string>
+           </property>
+          </item>
          </widget>
         </item>
         <item row="0" column="6">
@@ -829,6 +834,11 @@
           <item>
            <property name="text">
             <string>定制MPDU二期协议</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>定制MPDU一期长城协议</string>
            </property>
           </item>
          </widget>
