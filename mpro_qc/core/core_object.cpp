@@ -164,7 +164,7 @@ void Core_Object::getParameter(const QJsonObject &object)
     it->devSpec = getData(obj, "pdu_spec");
     it->sensorBoxEn = getData(obj, "sensor_box");
     it->standNeutral = getData(obj, "stand_neutral");
-    it->oldProtocol = getData(obj, "old_protocol");
+    it->oldProtocol = getData(obj, "protocol");
     it->supplyVol = getData(obj, "supply_vol");
     it->lineNum = getData(obj, "line_num");
     it->loopNum = getData(obj, "loop_num");

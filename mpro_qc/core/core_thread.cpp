@@ -81,14 +81,16 @@ bool Core_Thread::snCheck()
 
 bool Core_Thread::mcuTempCheck()
 {
-    bool res = true;
+    bool res = true; int maxTemp = 65;
     int cnt = coreItem.actual.param.boardNum;
+    int outputNum = coreItem.actual.param.outputNum;
+    if(outputNum > 26) maxTemp += 20;
     QVariantList list = coreItem.mcutemp;
     for(int i=0; i<cnt && i<list.size(); ++i) {
         int temp = list.at(i).toInt();
         bool ret = true; if(!temp) continue;
         QString str = tr("第%1块执行板温度%2°c").arg(i+1).arg(temp);
-        if(temp > 65 || temp < 5){ res = ret = false; str += tr("错误");}
+        if(temp > maxTemp || temp < 5){ res = ret = false; str += tr("错误");}
         emit msgSig(str, ret); //cout << str;
     }
 

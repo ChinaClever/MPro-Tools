@@ -833,12 +833,22 @@
           </item>
           <item>
            <property name="text">
-            <string>定制MPDU二期协议</string>
+            <string>定制MPDU二期协议/MODBUS-RTU</string>
            </property>
           </item>
           <item>
            <property name="text">
             <string>定制MPDU一期长城协议</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>定制一期MPDU卡塔尔协议</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>定制MPDU二期协议/MODBUS-TCP</string>
            </property>
           </item>
          </widget>
