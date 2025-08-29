@@ -27,6 +27,7 @@ struct sThreshold
     double lineVol;
     double lineCur;
     double linePow;
+    QVariantList lineVolValues;
 
     double loopVol;
     double loopCur;

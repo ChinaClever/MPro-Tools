@@ -503,14 +503,41 @@ bool Core_Thread::outputVolCheck()
     int spec = coreItem.actual.param.devSpec;
     int num = coreItem.actual.param.outputNum;
     int value = coreItem.actual.rate.volValue * 10.0;
+    int lineNum = coreItem.actual.param.lineNum;
     QVariantList vols = coreItem.actual.rate.outputVols;
+
     if(spec > 1) {
-        for(int i=0; i<vols.size()&&(i<num); ++i) {
+        int end = num / lineNum;
+        for(int k = 0; k<lineNum; ++k) {
+            int vol = coreItem.actual.rate.lineVolValues.at(k).toDouble() * 10.0;
+            for(int i=0; i<vols.size()&&(i<end); ++i) {
+                int v = vols.at(i+k*end).toInt();
+                int s = qAbs(v - vol); //cout << v << s;
+                if(spec == 3 && !v){ continue; } if(s > 50 || !v) {
+                    str = tr("输出位%1电压相差过大：相电压：%2V 输出位电压：%3V")
+                              .arg(i+k*end+1).arg(vol/10.0).arg(v/10.0);
+                    ret = false;  emit msgSig(str, ret);
+                }
+            }
+        }
+
+        // for(int i=0; i<vols.size()&&(i<num); ++i) {
+        //     int v = vols.at(i).toInt();
+        //     int s = qAbs(v - value); //cout << v << s;
+        //     if(spec == 3 && !v){ continue; } if(s > 50 || !v) {
+        //         str = tr("输出位%1电压相差过大：相电压：%2V 输出位电压：%3V")
+        //                   .arg(i+1).arg(value/10.0).arg(v/10.0);
+        //         ret = false;  emit msgSig(str, ret);
+        //     }
+        // }
+
+        for(int i=1; i<vols.size()&&(i<num); ++i) {
             int v = vols.at(i).toInt();
-            int s = qAbs(v - value); //cout << v << s;
-            if(spec == 3 && !v){ continue; } if(s > 50 || !v) {
-                str = tr("输出位%1电压相差过大：相电压：%2V 输出位电压：%3V")
-                          .arg(i+1).arg(value/10.0).arg(v/10.0);
+            value = vols.at(i-1).toInt();
+            int s = qAbs(v - value)/10.0; //cout << v << s;
+            if(spec == 3 && !v){ continue; } if(s > 5 || !v) {
+                str = tr("输出位%1(%2V) 与输出位%3(%4V) 电压相差过大")
+                          .arg(i).arg(value/10.0).arg(i+1).arg(v/10.0);
                 ret = false;  emit msgSig(str, ret);
             }
         }

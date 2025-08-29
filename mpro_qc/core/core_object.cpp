@@ -205,6 +205,7 @@ void Core_Object::getThreshold(const QJsonObject &object)
     it->lineCur = getRating(obj, "cur");
     it->linePow = getRating(obj, "pow");
     it->volValue = getRating(obj, "vol", "value");
+    it->lineVolValues = getArray(obj, "vol_value").toVariantList();
 
     obj = getObject(object, "loop_item_list");
     it->loopVol = getRating(obj, "vol");
