@@ -6,7 +6,8 @@
 #include "home_workwid.h"
 #include "ui_home_workwid.h"
 #include <QStandardPaths>
-
+#include "http/JQLibrary/JQNet"
+#include "http/httpclient.h"
 
 Home_WorkWid::Home_WorkWid(QWidget *parent) :
     QWidget(parent),
@@ -162,6 +163,10 @@ void Home_WorkWid::updateResult()
     str = QTime::currentTime().toString("hh:mm:ss");
     ui->endLab->setText(str);
     timer->stop();
+    // 测试成功后打印标签
+    if(mResult) {
+        printLabel();
+    }
 }
 
 
@@ -352,3 +357,61 @@ void Home_WorkWid::on_userEdit_selectionChanged()
     ui->userEdit->setClearButtonEnabled(1);
 }
 
+sLabelData Home_WorkWid::getLabelData()
+{
+    sLabelData label;
+    sCoreItem *it = &Core_Object::coreItem;
+
+    // DT时间 - 格式：YYYYMMDD HH:mm (如：2024/7/14 9:44)
+    QDateTime currentTime = QDateTime::currentDateTime();
+    label.dt = currentTime.toString("yyyy/M/d h:m");
+
+
+    // ON订单号：取自界面“单号”输入
+    label.on = ui->userEdit->text();
+
+    label.pn = mPro->getPro()->pn;
+    if(label.pn.isEmpty()) {
+        label.pn = "---";
+    }
+
+    // SN序列号
+    label.sn = it->sn;
+    if(label.sn.isEmpty()) {
+        label.sn = mPro->getPro()->productSN;
+    }
+    if(label.sn.isEmpty()) {
+        label.sn = "---";
+    }
+
+    label.mac = it->mac;
+    label.uuid = it->uuid;
+    label.cn = it->cn;
+
+
+    // // 二维码链接（由ON、PN、SN组成的可跳转网页链接）
+    // // 格式：https://your-domain.com/label?ON=xxx&PN=xxx&SN=xxx
+    // QString baseUrl = "https://your-domain.com/label"; // TODO: 替换为实际域名
+    // label.qrcode = QString("%1?ON=%2&PN=%3&SN=%4")
+    //                    .arg(baseUrl)
+    //                    .arg(label.on)
+    //                    .arg(label.pn)
+    //                    .arg(label.sn);
+
+    return label;
+}
+
+void Home_WorkWid::printLabel()
+{
+    sLabelData label = getLabelData();
+
+    // 验证必要数据
+    if(label.sn.isEmpty() || label.pn.isEmpty()) {
+        qDebug() << "标签数据不完整，跳过打印";
+        return;
+    }
+
+    // 调用仅传结构体的打印接口
+    QString result = printLabel::toIni(&label);
+    qDebug() << "打印结果:" << result;
+}
