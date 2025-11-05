@@ -14,6 +14,7 @@ include(home/home.pri)
 include(setups/setups.pri)
 include(json/json.pri)
 
+
 CM_PATH = ../com_pbl
 include($$CM_PATH/com_pbl.pri)
 

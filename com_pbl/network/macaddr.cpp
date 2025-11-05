@@ -4,7 +4,13 @@
  *      Author: Lzy
  */
 #include "macaddr.h"
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+#include <QRegExp>
 #include <QRegExpValidator>
+#else
+#include <QRegularExpression>
+#include <QRegularExpressionValidator>
+#endif
 #include "print.h"
 #define MAC_ADDR_LEN 6
 
@@ -25,10 +31,17 @@ MacAddr *MacAddr::bulid()
 bool MacAddr::isMacAddress(const QString &mac)
 {
     QString mac_addr = mac;
+
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     QRegExp rx("^([A-Fa-f0-9]{2}[-,:]){5}[A-Fa-f0-9]{2}$");
-    QRegExpValidator v(rx, 0);
+    QRegExpValidator v(rx, nullptr);
+#else
+    QRegularExpression rx("^([A-Fa-f0-9]{2}[-,:]){5}[A-Fa-f0-9]{2}$");
+    QRegularExpressionValidator v(rx, nullptr);
+#endif
+
     int pos = 0;
-    if(v.validate(mac_addr, pos) == QValidator::Acceptable)
+    if (v.validate(mac_addr, pos) == QValidator::Acceptable)
         return true;
 
     return false;

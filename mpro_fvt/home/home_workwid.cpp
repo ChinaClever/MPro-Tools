@@ -394,3 +394,4 @@ void Home_WorkWid::on_userEdit_selectionChanged()
 {
     ui->userEdit->setClearButtonEnabled(1);
 }
+
