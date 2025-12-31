@@ -8,6 +8,10 @@ struct sCfgComIt
     sSerial coms;
     int logCount;
     uchar pcNum;
+
+    int labelPrint;
+    QString meta;
+    QString ipAddr;
 };
 
 class CfgCom : public CfgSerial

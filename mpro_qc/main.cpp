@@ -15,6 +15,7 @@ int main(int argc, char *argv[])
         QCoreApplication::setOrganizationDomain("clever.com");
         QCoreApplication::setApplicationName("Pro-QC");
     }
+    qRegisterMetaType<sLabelData>("sLabelData");
     MainWindow w;
     w.show();
     return a.exec();

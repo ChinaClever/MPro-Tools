@@ -14,10 +14,24 @@ Home_WorkWid::Home_WorkWid(QWidget *parent) :
     ui(new Ui::Home_WorkWid)
 {
     ui->setupUi(this);
+    printThread = new QThread(this);
+    printer = new printLabel;
     Ssdp_Core::bulid(this);
     mCoreThread = Core_Thread::bulid(this);
     QTimer::singleShot(450,this,SLOT(initFunSlot()));
     mPro=sDataPacket::bulid();
+    printer->moveToThread(printThread);
+
+    connect(this, &Home_WorkWid::PrintLabelSig,
+            printer, &printLabel::doPrint);
+
+    connect(printer, &printLabel::finished,
+            this, &Home_WorkWid::onPrintFinished);
+
+    connect(printThread, &QThread::finished,
+            printer, &QObject::deleteLater);
+
+    printThread->start();
     //Core_Http::bulid(this)->initHost("192.168.1.89");
     //Core_Http::bulid(this)->execute("killall cores");
 }
@@ -25,6 +39,25 @@ Home_WorkWid::Home_WorkWid(QWidget *parent) :
 Home_WorkWid::~Home_WorkWid()
 {
     delete ui;
+}
+
+void Home_WorkWid::onPrintFinished(const QString &res)
+{
+    qDebug() << "打印返回:" << res;
+
+    if (res.startsWith("SUCCESS")) {
+        ui->timeLab->setText("测试成功\n打印完成");
+    } else {
+        ui->timeLab->setText("测试成功\n打印失败");
+        ui->timeLab->setStyleSheet(
+            "background-color:orange;color:white;font:34pt \"微软雅黑\";");
+    }
+}
+
+void Home_WorkWid::startPrint()
+{
+    sLabelData label = getLabelData();
+    emit PrintLabelSig(label);
 }
 
 void Home_WorkWid::initLayout()
@@ -99,8 +132,10 @@ void Home_WorkWid::insertTextSlot(const QString &msg, bool pass)
     // mPro->init();
     QString str = QString::number(mId++) + "、"+ msg + "\n";
     setTextColor(pass); ui->textEdit->insertPlainText(str);
-    mPro->getPro()->itemName<<msg;
-    mPro->getPro()->uploadPass<<pass;
+    mPro->getPro()->itemName << msg;
+    mPro->getPro()->uploadPass << pass;
+    cout << mPro->getPro()->itemName.size();
+
     // setTextColor(mPro->updatePro(str,pass)); ui->textEdit->insertPlainText(mPro->getPro()->itemName);
 }
 
@@ -163,10 +198,17 @@ void Home_WorkWid::updateResult()
     str = QTime::currentTime().toString("hh:mm:ss");
     ui->endLab->setText(str);
     timer->stop();
+
     // 测试成功后打印标签
-    if(mResult) {
-        printLabel();
+    sCfgComIt *cfg = CfgCom::bulid()->item;
+    if(mResult && cfg->labelPrint) {
+        startPrint();
     }
+
+    if(!cfg->ipAddr.isEmpty()) {
+        Json_Pack::bulid()->http_post(cfg->meta, cfg->ipAddr);
+    }
+    //Json_Pack::bulid()->http_post("testdata/add","192.168.1.12");
 }
 
 
@@ -401,17 +443,4 @@ sLabelData Home_WorkWid::getLabelData()
     return label;
 }
 
-void Home_WorkWid::printLabel()
-{
-    sLabelData label = getLabelData();
 
-    // 验证必要数据
-    if(label.sn.isEmpty() || label.pn.isEmpty()) {
-        qDebug() << "标签数据不完整，跳过打印";
-        return;
-    }
-
-    // 调用仅传结构体的打印接口
-    QString result = printLabel::toIni(&label);
-    qDebug() << "打印结果:" << result;
-}

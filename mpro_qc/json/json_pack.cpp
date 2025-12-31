@@ -74,15 +74,16 @@ void Json_Pack::http_post(const QString &method, const QString &ip, int port)
 {
     QJsonObject json; head(json);
 
+    qDebug()<<json;
     AeaQt::HttpClient http;
     http.clearAccessCache();
     http.clearConnectionCache();
     QString url = "http://%1:%2/%3";
     http.post(url.arg(ip).arg(port).arg(method))
         .header("content-type", "application/json")
-        .onSuccess([&](QString result) {qDebug()<<"1111111"<<result;emit httpSig(result,true);})
-        .onFailed([&](QString error) {qDebug()<<"222222222"<<error;emit httpSig(error,false); })
-        .onTimeout([&](QNetworkReply *) {qDebug()<<"3333333333"<<"http_post timeout";emit httpSig("http_post timeout",false); }) // 超时处理
+        .onSuccess([&](QString result) {emit httpSig(result,true);})
+        .onFailed([&](QString error) {emit httpSig(error,false); })
+        .onTimeout([&](QNetworkReply *) {emit httpSig("http_post timeout",false); }) // 超时处理
         .timeout(1000) // 1s超时
         .block()
         .body(json)

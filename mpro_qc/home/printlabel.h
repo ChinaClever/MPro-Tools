@@ -1,7 +1,7 @@
 #ifndef PRINTLABEL_H
 #define PRINTLABEL_H
 #include <QString>
-
+#include <QObject>
 // 在文件开头或合适位置添加
 struct sLabelData
 {
@@ -14,13 +14,23 @@ struct sLabelData
     QString cn;
     QString qrcode; // 二维码链接
 };
-
-class printLabel
+Q_DECLARE_METATYPE(sLabelData)
+class printLabel : public QObject
 {
+    Q_OBJECT
 public:
-    printLabel();
-    static QString toIni(sLabelData*);
-    static QString httpPostIni(const QString& data,const QString ip,const QString& host);
+    explicit printLabel(QObject *parent = nullptr);
+
+public slots:
+    void doPrint(const sLabelData &data);
+
+signals:
+    void finished(const QString &result);
+
+private:
+    QString httpPostIni(const QString &data,
+                        const QString &ip,
+                        const QString &host);
 };
 
 #endif // PRINTLABEL_H

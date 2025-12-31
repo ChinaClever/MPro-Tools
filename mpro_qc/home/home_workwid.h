@@ -7,6 +7,7 @@
 #include "datapacket.h"
 #include "json_pack.h"
 #include "printlabel.h"
+#include "setup_mainwid.h"
 
 
 namespace Ui {
@@ -33,11 +34,11 @@ public:
 
 signals:
     void startSig();
+    void PrintLabelSig(sLabelData);
 
 private:
     sLabelData getLabelData();
-    void printLabel();
-
+    void startPrint();
     bool initWid();
     bool initUser();
     bool inputCheck();
@@ -52,6 +53,7 @@ private:
     void setTextColor(bool pass);
 
 private slots:
+    void onPrintFinished(const QString &res);
     void updateWidSlot();
     void timeoutDone();
     void initFunSlot();
@@ -80,6 +82,9 @@ private:
     sCount mCnt;
     int mId=1;
     sDataPacket *mPro;
+
+    QThread *printThread;
+    printLabel *printer;
 };
 
 #endif // HOME_WORKWID_H

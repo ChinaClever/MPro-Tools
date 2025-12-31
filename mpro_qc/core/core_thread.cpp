@@ -650,8 +650,6 @@ void Core_Thread::run()
             if(ret) ret = workDown(ip);
             else emit msgSig(tr("目标设备不存在:")+ip, ret);
             emit finshSig(ret, ip+" ");
-            //sleep(2); Json_Pack::bulid()->http_post("testdata/add","192.168.1.12");
-
         } m_ips.clear();
     }  emit overSig();
 }

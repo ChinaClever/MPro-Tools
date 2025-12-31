@@ -50,7 +50,7 @@ public:
     inline HttpRequest send(const QString &url, Operation op = GetOperation);
 
 private:
-#if (QT_VERSION < QT_VERSION_CHECK(5, 8, 0))
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     inline QNetworkReply *sendCustomRequest(const QNetworkRequest &request, const QByteArray &verb, const QByteArray &data);
     inline QNetworkReply *sendCustomRequest(const QNetworkRequest &request, const QByteArray &verb, QHttpMultiPart *multiPart);
 #endif
