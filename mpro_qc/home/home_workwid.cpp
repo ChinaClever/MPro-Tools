@@ -81,6 +81,7 @@ void Home_WorkWid::initFunSlot()
     connect(mCoreThread, &Core_Thread::finshSig, this, &Home_WorkWid::finishSlot);
     connect(mCoreThread, &Core_Thread::overSig, this, &Home_WorkWid::updateResult);
     connect(mCoreThread, &Core_Thread::msgSig, this, &Home_WorkWid::insertTextSlot);
+    connect(mCoreThread, &Core_Thread::msgSigEn, this, &Home_WorkWid::insertTextSlotEn);
     connect(Json_Pack::bulid(this), &Json_Pack::httpSig, this, &Home_WorkWid::insertTextSlot);
     //QTimer::singleShot(450,this,SLOT(updateCntSlot()));
 }
@@ -109,7 +110,7 @@ void Home_WorkWid::finishSlot(bool pass, const QString &msg)
         str += tr("失败！");
         mPro->getPro()->uploadPassResult = 0;
     } mCnt.all += 1;
-    insertTextSlot(str, pass);
+    insertTextSlot(str, pass,"","","");
     updateCntSlot(); logWrite();
 }
 
@@ -126,7 +127,7 @@ void Home_WorkWid::setTextColor(bool pass)
     ui->textEdit->mergeCurrentCharFormat(fmt);//textEdit使用当前的字符格式
 }
 
-void Home_WorkWid::insertTextSlot(const QString &msg, bool pass)
+void Home_WorkWid::insertTextSlot(const QString &msg, bool pass, const QString Request, const QString testStep, const QString testItem)
 {
 
     // mPro->init();
@@ -134,7 +135,11 @@ void Home_WorkWid::insertTextSlot(const QString &msg, bool pass)
     setTextColor(pass); ui->textEdit->insertPlainText(str);
     mPro->getPro()->itemName << msg;
     mPro->getPro()->uploadPass << pass;
+    mPro->getPro()->testRequest<<Request;
+    mPro->getPro()->testStep<<testStep;
+    mPro->getPro()->testItem<<testItem;
     cout << mPro->getPro()->itemName.size();
+    qDebug() <<  msg <<' ' << pass << ' ' << Request <<' '<< testStep<<' '<<testItem;
 
     // setTextColor(mPro->updatePro(str,pass)); ui->textEdit->insertPlainText(mPro->getPro()->itemName);
 }
@@ -205,9 +210,7 @@ void Home_WorkWid::updateResult()
         startPrint();
     }
 
-    if(!cfg->ipAddr.isEmpty()) {
-        Json_Pack::bulid()->http_post(cfg->meta, cfg->ipAddr);
-    }
+
     //Json_Pack::bulid()->http_post("testdata/add","192.168.1.12");
 }
 
@@ -219,6 +222,7 @@ bool Home_WorkWid::initUser()
     mPro->getPro()->pn = ui->userEdit->text();
 
     int cnt = ui->cntSpin->value();
+    mPro->getPro()->orderNum = QString::number(cnt);
     if(cnt < 1) {MsgBox::critical(this, tr("请先填写订单剩余数量！")); return false;}
     return true;
 }
@@ -312,7 +316,7 @@ bool Home_WorkWid::updateWid()
     QString str = it->sn;
     if(str.isEmpty()) str = "--- ---";
     ui->snLab->setText(str);
-    mPro->getPro()->productSN = str;
+    mPro->getPro()->moduleSn = str;
 
     str = it->actual.ver.fwVer;
     if(str.isEmpty()) str = "--- ---";
@@ -420,7 +424,7 @@ sLabelData Home_WorkWid::getLabelData()
     // SN序列号
     label.sn = it->sn;
     if(label.sn.isEmpty()) {
-        label.sn = mPro->getPro()->productSN;
+        label.sn = mPro->getPro()->moduleSn;
     }
     if(label.sn.isEmpty()) {
         label.sn = "---";

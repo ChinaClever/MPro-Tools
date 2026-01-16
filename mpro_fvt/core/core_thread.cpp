@@ -122,7 +122,7 @@ bool Core_Thread::downVer(const QString &ip)
     bool ret = cfg.app_unpack(it);
     if(ret) {
         it.sn = m_sn = createSn();
-        mPro->productSN = m_sn;
+        mPro->moduleSn = m_sn;
         cfg.app_serialNumber(it.sn);
         QString mac = m_mac = updateMacAddr();
         writeSnMac(it.sn, mac); //str += "ok\n";

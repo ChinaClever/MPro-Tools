@@ -43,7 +43,7 @@ QString Core_Object::updateMacAddr(int step)
         writeMac(it->mac.toLatin1());
 #else
         QString url = "mac/test?work_order=%1&serial_id=%2";
-        url = url.arg(mPro->pn).arg(mPro->productSN);
+        url = url.arg(mPro->pn).arg(mPro->moduleSn);
         sleep(1);
         QString temp = Json_Pack::bulid()->http_get(url,"192.168.1.12");
         QJsonDocument jsonDoc = QJsonDocument::fromJson(temp.toUtf8());

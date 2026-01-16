@@ -109,6 +109,10 @@ void Home_WorkWid::insertTextSlot(const QString &msg, bool pass)
     setTextColor(pass); ui->textEdit->insertPlainText(str);
     mPro->getPro()->itemName<<msg;
     mPro->getPro()->uploadPass<<pass;
+    // mPro->getPro()->testRequest<<Request;
+    // mPro->getPro()->testStep<<testStep;
+    // mPro->getPro()->testItem<<testItem;
+
 }
 
 void Home_WorkWid::updateCntSlot()
@@ -198,6 +202,8 @@ bool Home_WorkWid::initUser()
     mPro->getPro()->pn = ui->userEdit->text();
 
     int cnt = ui->cntSpin->value();
+    mPro->getPro()->orderNum = cnt;
+
     if(cnt < 1) {MsgBox::critical(this, tr("请先填写订单剩余数量！")); return false;}
     return true;
 }
@@ -304,7 +310,7 @@ bool Home_WorkWid::updateWid()
     QString str = it.sn;
     if(str.isEmpty()) str = "--- ---";
     ui->snLab->setText(str);
-    mPro->getPro()->productSN = str;
+    mPro->getPro()->moduleSn = str;
 
     str = it.dev;
     if(str.isEmpty()) str = "--- ---";

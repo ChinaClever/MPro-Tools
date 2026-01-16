@@ -162,16 +162,17 @@ struct sProgress
 
     QString productType;
     QString productSN;
+    QString moduleSn;
     QString macAddress;
     QString softwareVersion;
     // QString clientName;
     QString testTime;
     QString testStartTime;
     QString testEndTime;
-    QStringList no, itemName;
+    QStringList no, itemName,testRequest,testStep,testItem;
     QList<bool> uploadPass;
     uchar uploadPassResult;
-    QString pn;
+    QString pn,orderNum;        //单号，数量
 
 };
 

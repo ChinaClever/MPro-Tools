@@ -21,7 +21,7 @@ void sDataPacket::init()
     pro->startTime = QTime::currentTime();
 
     pro->productType.clear();
-    pro->productSN.clear();
+    pro->moduleSn.clear();
     pro->macAddress.clear();
     pro->testTime.clear();
 
@@ -32,6 +32,9 @@ void sDataPacket::init()
     pro->testEndTime.clear();
     pro->no.clear();
     pro->itemName.clear();
+    pro->testRequest.clear();
+    pro->testStep.clear();
+    pro->testItem.clear();
     pro->uploadPass.clear();
     pro->pn.clear();
     pro->uploadPassResult = 0;

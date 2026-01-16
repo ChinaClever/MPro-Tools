@@ -29,7 +29,7 @@ void Json_Pack::head(QJsonObject &obj)
     mPro->testTime = QString::number(QDateTime::fromString(mPro->testStartTime,"yyyy-MM-dd HH:mm:ss").secsTo(t));
     obj.insert("softwareType", mPro->softwareType);
     obj.insert("productType", mPro->productType);
-    obj.insert("productSN", mPro->productSN);
+    obj.insert("moduleSn", mPro->moduleSn);
     obj.insert("macAddress", mPro->macAddress);
     obj.insert("result", mPro->uploadPassResult);
     obj.insert("softwareVersion", mPro->softwareVersion);
@@ -47,12 +47,12 @@ void Json_Pack::head(QJsonObject &obj)
 // void Json_Pack::part_head(QJsonObject &obj)
 // {
 //     obj.insert("work_order", "mPro->pn");
-//     obj.insert("serial_id", mPro->productSN);
+//     obj.insert("serial_id", mPro->moduleSn);
 
 // }
 void Json_Pack::part_head(QJsonObject &obj)
 {
-    obj.insert("serial_id", mPro->productSN);
+    obj.insert("serial_id", mPro->moduleSn);
     obj.insert("work_order", mPro->pn);
 
 

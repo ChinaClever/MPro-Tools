@@ -38,7 +38,7 @@ bool Core_Thread::searchDev()
         QString str = tr("未找到任何目标设备"); // cm_mdelay(150);
         if(ips.size()) str = tr("已找到%1个设备").arg(ips.size());
         else {ret = false;} m_ips = ips;
-        emit msgSig(str, ret); //cout << ips;
+        emit msgSig(str, ret,"","",""); //cout << ips;
     }
     return ret;
 }
@@ -48,13 +48,21 @@ bool Core_Thread::timeCheck()
 {
     bool ret = false;
     QString str = tr("设备时间，");
+    QString strEn = tr("Equipment time，");
+
     QString fmd = "yyyy-MM-dd hh:mm:ss";
     QDateTime dt = QDateTime::fromString(coreItem.datetime, fmd);
     QDateTime time = QDateTime::currentDateTime();
     int secs = qAbs(time.secsTo(dt));
-    if(secs > 600 && coreItem.timeCheck) str += tr("相差过大："); else ret = true;
+    if(secs > 600 && coreItem.timeCheck) {
+        str += tr("相差过大：");
+        strEn += tr("The difference is too large:");
+    }else ret = true;
     str += coreItem.datetime;
-    emit msgSig(str, ret);
+    strEn += coreItem.datetime;
+
+    emit msgSig(str, ret,"时间符合要求","参数检查","时间检查");
+    emit msgSig(str, ret,"Time meets requirements", "Parameter check", "Time check" );
     return ret;
 }
 
@@ -63,15 +71,22 @@ bool Core_Thread::snCheck()
     bool ret = false;
     QString sn = coreItem.sn;
     QString str = tr("序列号，");
-    if(sn.contains("2I3")) {str += sn; ret = true;}
-    else {str += tr("错误：sn=%1").arg(sn);}
+    QString strEn = tr("SN,");
+
+
+    if(sn.contains("2I3")) {str += sn; strEn += sn; ret = true;}
+    else {str += tr("错误：sn=%1").arg(sn); strEn += tr("error：sn=%1").arg(sn);}
 
     QString uuid = coreItem.uuid;
-    emit msgSig(str, ret); if(ret) {
+    emit msgSig(str, ret, "序列号不重复","参数检查","序列号检查");
+    emit msgSigEn(str, ret,"SN unique", "Parameter check", "SN check");
+
+    if(ret) {
         if(mHashSn.contains(sn)) {
             if(mHashSn.value(sn) != uuid) {
-                ret = false; emit msgSig(tr("SN：%1已被分配给UUID:%2")
-                                .arg(sn, uuid), ret);
+                ret = false;
+                emit msgSig(tr("SN：%1已被分配给UUID:%2").arg(sn, uuid), ret, "序列号不重复","参数检查","序列号检查");
+                emit msgSig(tr("SN:%1 has been assigned to UUID:%2").arg(sn, uuid), ret, "SN unique", "Parameter check", "SN check");
             }
         } else mHashSn[sn] = uuid;
     }
@@ -91,7 +106,7 @@ bool Core_Thread::mcuTempCheck()
         bool ret = true; if(!temp) continue;
         QString str = tr("第%1块执行板温度%2°c").arg(i+1).arg(temp);
         if(temp > maxTemp || temp < 5){ res = ret = false; str += tr("错误");}
-        emit msgSig(str, ret); //cout << str;
+        emit msgSig(str, ret,"执行板温度在期望值范围内","参数检查","执行板温度检查"); //cout << str;
     }
 
     return res;
@@ -100,22 +115,24 @@ bool Core_Thread::mcuTempCheck()
 bool Core_Thread::macCheck()
 {   
     QString v = coreItem.mac;  bool ret = false;
+    QString request;
     QString str = tr("MAC地址，"); if(coreItem.checkMac) {
-        if(v.contains("2C:26:")) {str += v; ret = true;}
+        request = "MAC地址前缀为 2C:26:";
+        if(v.contains("2C:26:")) {str += v; ret = true; }
         else {str += tr("错误：mac=%1").arg(v);}
-    } else {ret = true; str += tr("跳过检查：mac=%1").arg(v);}
+    } else {ret = true; str += tr("跳过检查：mac=%1").arg(v);request = "客户定制MAC地址";}
 
-    emit msgSig(str, ret);
+    emit msgSig(str, ret,request,"参数检查","MAC地址检查");
     QString uuid = coreItem.uuid;
     QString sn = coreItem.sn; if(ret) {
         if(mHashMac.contains(v)) {
             if(mHashMac.value(v) != uuid) { ret = false;
                 emit msgSig(tr("MAC：%1已被分配给UUID:%2 ")
-                                .arg(v, mHashMac.value(v)), ret);
+                                .arg(v, mHashMac.value(v)), ret,"uuid不重复","参数检查","uuid检查");
             }
         } else {
             int rtn = DbLogs::bulid()->contains(v, sn);
-            if(rtn) { ret = false; emit msgSig(tr("MAC：%1已被分配, 在数据库已存在").arg(v), ret); }
+            if(rtn) { ret = false; emit msgSig(tr("MAC：%1已被分配, 在数据库已存在").arg(v), ret,"uuid不重复","参数检查","uuid检查"); }
             else mHashMac[v] = uuid;
         }
     }
@@ -130,7 +147,7 @@ bool Core_Thread::supplyVolCheck()
     QString str = tr("12电源检查：vol = %1V").arg(vol / 1000.0);
     if(vol < 11*1000 || vol > 13*1000) {
         str += tr("异常"); ret = false;
-    } emit msgSig(str, ret);
+    } emit msgSig(str, ret,"电源符合规格","参数检查","电源检查");
 
     return ret;
 }
@@ -149,7 +166,7 @@ bool Core_Thread::downLogo(const QString &ip)
 
     bool ret =QFile::exists(mLogo);
     if(ret) str += tr("成功"); else str += tr("失败");
-    emit msgSig(str, ret);
+    emit msgSig(str, ret,"","","");
     return ret;
 }
 
@@ -205,7 +222,7 @@ bool Core_Thread::downTlsCert(const QString &ip)
 
     bool ret = QFile::exists(mTls);
     if(ret) str += tr("成功"); else str += tr("失败");
-    emit msgSig(str, ret);
+    emit msgSig(str, ret,"","","");
     return ret;
 }
 
@@ -225,10 +242,10 @@ bool Core_Thread::tlsCertCheck(const QString &ip)
                 ret = compareTls();
                 QString str = tr("证书差异检查：");
                 if(ret) str += tr("通过"); else str += tr("失败");
-                emit msgSig(str, ret);
+                emit msgSig(str, ret,"证书和期望一致" ,"参数检查","证书检查");
             }
 
-        } else emit msgSig(tr("未指定证书此项检测跳过"), true);
+        } else emit msgSig(tr("未指定证书此项检测跳过"), true,"证书和期望一致" ,"参数检查","证书检查");
     }
 
     return ret;
@@ -239,16 +256,16 @@ bool Core_Thread::logoCheck(const QString &ip)
 {
     bool ret = true;
     if(coreItem.desire.param.standNeutral<2) {
-        emit msgSig(tr("标准和中性版本跳过Logo检测"), true);
+        emit msgSig(tr("标准和中性版本跳过Logo检测"), true,"Logo和期望值一致" ,"参数检查","Logo检查");
     } else if (coreItem.logo.isEmpty()) {
-        emit msgSig(tr("未指定Logo此项检测跳过"), true);
+        emit msgSig(tr("未指定Logo此项检测跳过"), true,"Logo和期望值一致" ,"参数检查","Logo检查");
     } else {
         ret = downLogo(ip);
         if(ret) {
             ret = compareImages();
             QString str = tr("Logo图片差异检查：");
             if(ret) str += tr("通过"); else str += tr("失败");
-            emit msgSig(str, ret);
+            emit msgSig(str, ret,"Logo和期望值一致" ,"参数检查","Logo检查");
         }
     }
 
@@ -265,7 +282,7 @@ bool Core_Thread::parameterCheck()
     } else {
         res = ret = false; str += tr("期望值%1,实际值%2")
                    .arg(desire->devSpec).arg(actual->devSpec);
-    } emit msgSig(str, ret);
+    } emit msgSig(str, ret,"规格和期望值一致" ,"参数检查","规格检查");
 
     str = tr("语言："); ret = true;
     if(desire->language == actual->language) {
@@ -273,7 +290,7 @@ bool Core_Thread::parameterCheck()
     } else {
         res = ret = false; str += tr("期望值%1,实际值%2")
                    .arg(desire->language).arg(actual->language);
-    } emit msgSig(str, ret);
+    } emit msgSig(str, ret,"语言和期望值一致","参数检查","语言检查");
 
     str = tr("断路器："); ret = true;
     if(desire->isBreaker == actual->isBreaker) {
@@ -281,7 +298,7 @@ bool Core_Thread::parameterCheck()
     } else {
         res = ret = false; str += tr("期望值%1,实际值%2")
                    .arg(desire->isBreaker).arg(actual->isBreaker);
-    } emit msgSig(str, ret);
+    } emit msgSig(str, ret,"断路器和期望值一致","参数检查","断路器检查");
 
     str = tr("屏幕："); ret = true;
     if(desire->vh == actual->vh) {
@@ -289,7 +306,7 @@ bool Core_Thread::parameterCheck()
     } else {
         res = ret = false; str += tr("期望值%1,实际值%2")
                    .arg(desire->vh).arg(actual->vh);
-    } emit msgSig(str, ret);
+    } emit msgSig(str, ret,"屏幕方向和期望值一致","参数检查","屏幕方向检查");
 
     str = tr("版本："); ret = true;
     if(desire->standNeutral == actual->standNeutral) {
@@ -299,7 +316,7 @@ bool Core_Thread::parameterCheck()
     } else {
         res = ret = false; str += tr("期望值%1,实际值%2")
                    .arg(desire->standNeutral).arg(actual->standNeutral);
-    } emit msgSig(str, ret);
+    } emit msgSig(str, ret,"版本和期望值一致","参数检查","版本检查");
 
     str = tr("协议："); ret = true;
     if(desire->oldProtocol == actual->oldProtocol) {
@@ -307,7 +324,7 @@ bool Core_Thread::parameterCheck()
     } else {
         res = ret = false; str += tr("期望值%1,实际值%2")
                    .arg(desire->oldProtocol).arg(actual->oldProtocol);
-    } emit msgSig(str, ret);
+    } emit msgSig(str, ret,"协议和期望值一致" ,"参数检查","协议检查");
 
     str = tr("网页背景色："); ret = true;
     if(desire->webBackground == actual->webBackground) {
@@ -315,7 +332,7 @@ bool Core_Thread::parameterCheck()
     } else {
         res = ret = false; str += tr("期望值%1,实际值%2")
                    .arg(desire->webBackground).arg(actual->webBackground);
-    } emit msgSig(str, ret);
+    } emit msgSig(str, ret,"网页背景色和期望值一致","参数检查","网页背景色检查");
 
 
     //    str = tr("传感器盒子："); ret = true;
@@ -324,7 +341,7 @@ bool Core_Thread::parameterCheck()
     //    } else {
     //        res = ret = false; str += tr("期望值%1,实际值%2")
     //                   .arg(desire->sensorBoxEn).arg(actual->sensorBoxEn);
-    //    } emit msgSig(str, ret);
+    //    } emit msgSig(str, ret,"传感器盒子和期望值一致","参数检查","传感器检查");
 
     return res;
 }
@@ -341,7 +358,7 @@ bool Core_Thread::devNumCheck()
     } else {
         res = ret = false; str += tr("期望值%1,实际值%2")
                    .arg(desire->lineNum).arg(actual->lineNum);
-    } emit msgSig(str, ret);
+    } emit msgSig(str, ret, "相数和期望值一致","参数检查","相数检查");
 
     str = tr("执行板数量："); ret = true;
     if(desire->boardNum == actual->boardNum) {
@@ -349,7 +366,7 @@ bool Core_Thread::devNumCheck()
     } else {
         res = ret = false; str += tr("期望值%1,实际值%2")
                    .arg(desire->boardNum).arg(actual->boardNum);
-    } emit msgSig(str, ret);
+    } emit msgSig(str, ret,"执行版数量和期望值一致","参数检查","执行版数量检查");
 
     str = tr("回路数量："); ret = true;
     if(desire->loopNum == actual->loopNum) {
@@ -357,7 +374,7 @@ bool Core_Thread::devNumCheck()
     } else {
         res = ret = false; str += tr("期望值%1,实际值%2")
                    .arg(desire->loopNum).arg(actual->loopNum);
-    } emit msgSig(str, ret);
+    } emit msgSig(str, ret,"回路数量和期望值一致","参数检查","回路数量检查");
 
     str = tr("输出位数量："); ret = true;
     if(desire->outputNum == actual->outputNum) {
@@ -365,7 +382,7 @@ bool Core_Thread::devNumCheck()
     } else {
         res = ret = false; str += tr("期望值%1,实际值%2")
                    .arg(desire->outputNum).arg(actual->outputNum);
-    } emit msgSig(str, ret);
+    } emit msgSig(str, ret,"输出位数量和期望值一致","参数检查","输出位数量检查");
 
     return res;
 }
@@ -382,7 +399,7 @@ bool Core_Thread::fwCheck()
     } else {
         res = ret = false; str += tr("期望值%1,实际值%2")
                    .arg(desire->fwVer, actual->fwVer);
-    } emit msgSig(str, ret);
+    } emit msgSig(str, ret, "软件版本号和期望值一致","参数检查","软件版本号检查");
 
     str = tr("设备类型："); ret = true;
     if(desire->devType == actual->devType) {
@@ -390,7 +407,7 @@ bool Core_Thread::fwCheck()
     } else {
         res = ret = false; str += tr("期望值%1,实际值%2")
                    .arg(desire->devType, actual->devType);
-    } emit msgSig(str, ret);
+    } emit msgSig(str, ret,"设备类型和期望值一致","参数检查","设备类型检查");
 
     int num = coreItem.actual.param.loopNum;
     for(int i=0; i<num; ++i) {
@@ -402,7 +419,7 @@ bool Core_Thread::fwCheck()
         } else {
             res = ret = false;
             str += tr("期望值%1,实际值%2") .arg(a).arg(b);
-        } emit msgSig(str.arg(i+1), ret);
+        } emit msgSig(str.arg(i+1), ret,"回路输出位数量和期望值一致","参数检查","回路输出位数量检查");
     }
 
     return res;
@@ -419,7 +436,7 @@ bool Core_Thread::thresholdCheck()
     } else {
         res = ret = false; str += tr("期望值%1,实际值%2")
                    .arg(desire->lineVol).arg(actual->lineVol);
-    } emit msgSig(str, ret);
+    } emit msgSig(str, ret,"相额定电压和期望值一致","参数检查","相额定电压检查");
 
     str = tr("相额定电流："); ret = true;
     if(desire->lineCur == actual->lineCur) {
@@ -427,7 +444,7 @@ bool Core_Thread::thresholdCheck()
     } else {
         res = ret = false; str += tr("期望值%1,实际值%2")
                    .arg(desire->lineCur).arg(actual->lineCur);
-    } emit msgSig(str, ret);
+    } emit msgSig(str, ret,"相额定电流期望值一致","参数检查","相额定电流检查");
 
     str = tr("相额定功率："); ret = true;
     if(desire->linePow == actual->linePow) {
@@ -435,7 +452,7 @@ bool Core_Thread::thresholdCheck()
     } else {
         res = ret = false; str += tr("期望值%1,实际值%2")
                    .arg(desire->linePow).arg(actual->linePow);
-    } emit msgSig(str, ret);
+    } emit msgSig(str, ret,"相额定功率期望值一致","参数检查","相额定功率检查");
 
 
     str = tr("回路额定电压："); ret = true;
@@ -444,7 +461,7 @@ bool Core_Thread::thresholdCheck()
     } else {
         res = ret = false; str += tr("期望值%1,实际值%2")
                    .arg(desire->loopVol).arg(actual->loopVol);
-    } emit msgSig(str, ret);
+    } emit msgSig(str, ret,"回路额定电压和期望值一致","参数检查","回路额定电压检查");
 
 
     str = tr("回路额定电流："); ret = true;
@@ -453,7 +470,7 @@ bool Core_Thread::thresholdCheck()
     } else {
         res = ret = false; str += tr("期望值%1,实际值%2")
                    .arg(desire->loopCur).arg(actual->loopCur);
-    } emit msgSig(str, ret);
+    } emit msgSig(str, ret,"回路额定电流和期望值一致","参数检查","回路额定电流检查");
 
     str = tr("回路额定功率："); ret = true;
     if(desire->loopPow == actual->loopPow) {
@@ -461,7 +478,7 @@ bool Core_Thread::thresholdCheck()
     } else {
         res = ret = false; str += tr("期望值%1,实际值%2")
                    .arg(desire->loopPow).arg(actual->loopPow);
-    } emit msgSig(str, ret);
+    }  emit msgSig(str, ret,"回路额定功率和期望值一致","参数检查","回路额定功率检查");
 
     return res;
 }
@@ -485,13 +502,13 @@ bool Core_Thread::outletCheck()
             str = tr("输出位%1额定电流：").arg(i+1);
             ret = false; str += tr("期望值%1A,实际值%2A")
                        .arg(d).arg(s);
-            emit msgSig(str, ret);
+            emit msgSig(str, ret,"输出位额定电流和期望值一致","参数检查","输出位额定电流检查");
         }
     }
 
     if(ret) {
         str = tr("输出位额定电流检查：OK");
-        emit msgSig(str, ret);
+        emit msgSig(str, ret ,"输出位额定电流和期望值一致","参数检查","输出位额定电流检查");
     }
 
     return ret;
@@ -516,7 +533,7 @@ bool Core_Thread::outputVolCheck()
                 if(spec == 3 && !v){ continue; } if(s > 50 || !v) {
                     str = tr("输出位%1电压相差过大：相电压：%2V 输出位电压：%3V")
                               .arg(i+k*end+1).arg(vol/10.0).arg(v/10.0);
-                    ret = false;  emit msgSig(str, ret);
+                    ret = false;  emit msgSig(str, ret,"输出位电压和期望值在误差范围内","参数检查","输出位电压检查");
                 }
             }
         }
@@ -538,14 +555,15 @@ bool Core_Thread::outputVolCheck()
             if(spec == 3 && !v){ continue; } if(s > 5 || !v) {
                 str = tr("输出位%1(%2V) 与输出位%3(%4V) 电压相差过大")
                           .arg(i).arg(value/10.0).arg(i+1).arg(v/10.0);
-                ret = false;  emit msgSig(str, ret);
+                ret = false;  emit msgSig(str, ret,"两两输出位电压的差值在误差范围内","参数检查","输出位电压差值检查");
             }
         }
     }
 
     if(ret) {
         str = tr("输出位电压检查：OK");
-        emit msgSig(str, ret);
+        emit msgSig(str, ret,"输出位电压误差在期望值范围内","参数检查","输出位电压检查");
+
     }
 
     return ret;
@@ -556,7 +574,7 @@ bool Core_Thread::alarmCheck()
     bool ret = false; if(coreItem.alarm) {
         QString str = tr("设备有报警，请检查：");
         str += "status=" + QString::number(coreItem.alarm);
-        emit msgSig(str, ret);
+        emit msgSig(str, ret,"设备没有告警信息","参数检查","告警检查");
     } else ret = true;
     return ret;
 }
@@ -566,10 +584,10 @@ bool Core_Thread::tgCheck()
     bool res = true; bool ret = true;
     sMonitorData *it = &coreItem.actual.data;
     QString str = tr("设备总功率：%1kva").arg(it->apparent_pow);
-    if(it->apparent_pow >1) {res = ret = false;  str += tr("过大");} emit msgSig(str, ret);
+    if(it->apparent_pow >1) {res = ret = false;  str += tr("过大");} emit msgSig(str, ret,"设备总功率在期望值范围内" ,"参数检查","设备总功率检查");
 
     str = tr("设备总电能：%1kwh").arg(it->tg_ele); ret = true;
-    if(it->tg_ele > 10) {res = ret = false;  str += tr("过大");} emit msgSig(str, ret);
+    if(it->tg_ele > 10) {res = ret = false;  str += tr("过大");} emit msgSig(str, ret,"设备总电能在期望值范围内" ,"参数检查","设备总功率检查");
 
     return res;
 }
@@ -586,14 +604,14 @@ bool Core_Thread::envCheck()
             ret = res = false; str += tr("错误; ");
             if(i > 1) str += tr("检查传感器盒子连接状态");
         }
-        emit msgSig(str, ret);
+        emit msgSig(str, ret,"传感器温度在期望值范围内" ,"参数检查","传感器温度检查");
     }
 
     for(int i=0; i<2 && i< it->doors.size(); ++i) {
         int value = it->doors.at(i).toInt();
         QString str = tr("门禁%1：%2").arg(i+1).arg(value);
         if(0 == value) {ret = res = false; str += tr("错误");}
-        emit msgSig(str, ret);
+        emit msgSig(str, ret,"门禁状态和期望值一致" ,"参数检查","门禁检查");
     }
 
     return res;
@@ -603,7 +621,7 @@ bool Core_Thread::envCheck()
 bool Core_Thread::workDown(const QString &ip)
 {
     bool res = true, ret;
-    emit msgSig(tr("目标设备:")+ip, true);
+    emit msgSig(tr("目标设备:")+ip, true,"","","");
     Core_Http *http = Core_Http::bulid(this);
     http->initHost(ip); readMetaData(); jsonAnalysis();
     ret = timeCheck(); if(!ret) res = false;
@@ -629,12 +647,12 @@ bool Core_Thread::workDown(const QString &ip)
         if(0 == desire->sensorBoxEn) boxSet(0);
         if(coreItem.actual.param.devSpec > 2) {
             relayCtrl(1); relayDelay(1); //relayDelay(0);
-        } emit msgSig("清除所有电能", true); clearAllEle();
-        emit msgSig("清除运行时间", true); setRunTime();
-        emit msgSig("清除设备日志", true); clearLogs();
+        } emit msgSig("清除所有电能", true,"","",""); clearAllEle();
+        emit msgSig("清除运行时间", true,"","",""); setRunTime();
+        emit msgSig("清除设备日志", true,"","",""); clearLogs();
 
         cm_mdelay(1000);
-        emit msgSig("恢复出厂设置", true);
+        emit msgSig("恢复出厂设置", true,"","","");
         factoryRestore(); cm_mdelay(100);
     }
 
@@ -648,8 +666,30 @@ void Core_Thread::run()
         foreach (const auto &ip, m_ips) {
             ret = cm_pingNet(ip);
             if(ret) ret = workDown(ip);
-            else emit msgSig(tr("目标设备不存在:")+ip, ret);
+            else emit msgSig(tr("目标设备不存在:")+ip, ret,"","","");
             emit finshSig(ret, ip+" ");
         } m_ips.clear();
     }  emit overSig();
+    sCfgComIt *cfg = CfgCom::bulid()->item;
+
+    // Json_Pack *packer = Json_Pack::bulid();
+    // sProgress *pro = Json_Pack::bulid()->getPro();
+    // int num = pro->uploadPass.size();
+    // for(int i = 0; i < num; i ++ ){
+    //     qDebug() << pro->testStep<< ' '<<pro->testItem << ' '<<pro->itemName<<' '<<pro->testRequest;
+    // }
+
+    if(!cfg->ipAddr.isEmpty()) {
+        sleep(2);
+        Json_Pack *packer = Json_Pack::bulid();
+        sProgress *pro = Json_Pack::bulid()->getPro();
+        int num = pro->uploadPass.size();
+        qDebug()<<"num: "<<num<<endl;;
+        for(int i = 0 ; i < num; i ++ ){
+            QJsonObject json,jsonEn; packer->head(json);
+            packer->head(jsonEn);
+            Json_Pack::bulid()->http_post(cfg->meta, json, i, cfg->ipAddr);
+        }
+
+    }
 }
