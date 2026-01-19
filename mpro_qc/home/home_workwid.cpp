@@ -370,6 +370,19 @@ void Home_WorkWid::on_findBtn_clicked()
     MsgBox::information(this, str);
 }
 
+void Home_WorkWid::insertTextSlotEn(const QString &msg,
+                                    bool pass,
+                                    const QString Request,
+                                    const QString testStep,
+                                    const QString testItem)
+{
+    mPro->getPro()->itemNameEn << msg;
+    mPro->getPro()->uploadPassEn << pass;
+    mPro->getPro()->testRequestEn<<Request;
+    mPro->getPro()->testStepEn<<testStep;
+    mPro->getPro()->testItemEn<<testItem;
+}
+
 void Home_WorkWid::on_auCheckBox_clicked(bool checked)
 {
     ui->ipEdit->setDisabled(checked);

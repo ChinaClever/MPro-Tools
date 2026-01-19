@@ -43,6 +43,7 @@ void sDataPacket::init()
 
 
     pro->uploadPass.clear();
+    pro->uploadPassEn.clear();
     pro->pn.clear();
     pro->orderNum.clear();
     pro->uploadPassResult = 0;

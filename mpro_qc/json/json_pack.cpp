@@ -55,31 +55,54 @@ void Json_Pack::pduInfo(QJsonObject &obj,const int id)
 }
 
 
-int Json_Pack::objData(QJsonObject &subObj,const int id)
+int Json_Pack::objData(QJsonObject &Obj,const int id)
 {
- //   QJsonArray jsonArray;
- //   int num = mPro->uploadPass.size();
- //   qDebug()<<"aaaaaaaa"<<mPro->itemName.size()<<num;
- //   for(int i=0; i<num; ++i)
-//    {
-        //QJsonObject subObj;
-        //subObj.insert("no",QString::number(i+1));
- qDebug()<<"hhhhhh";
-        subObj.insert("testProcess", mPro->itemName.at(id));
-        subObj.insert("testResult", mPro->uploadPass.at(id)?1:0);
+    QJsonArray jsonArray;
 
-        subObj.insert("testRequest", mPro->testRequest.at(id));
-        subObj.insert("testStep", mPro->testStep.at(id));
-        subObj.insert("testItem", mPro->testItem.at(id));
+    int num = 0;
+
+    if(!id){ //Chinese
+        num = mPro->uploadPass.size();
+        for(int i=0; i<num; ++i)
+        {
+            QJsonObject subObj;
+            subObj.insert("no",QString::number(i+1));
+            subObj.insert("testProcess", mPro->itemName.at(i));
+            subObj.insert("testResult", mPro->uploadPass.at(i)?1:0);
+
+            subObj.insert("testRequest", mPro->testRequest.at(i));
+            subObj.insert("testStep", mPro->testStep.at(i));
+            subObj.insert("testItem", mPro->testItem.at(i));
 
 
-        //qDebug()<<subObj;
-        //jsonArray.append(subObj);
- //   }
-   // obj.insert("testStep" ,QJsonValue(jsonArray));
+            qDebug()<<subObj;
+            jsonArray.append(subObj);
+        }
+        Obj.insert("testData" ,QJsonValue(jsonArray));
+    }
 
-  //  return num;
-        return 0;
+    else if(id == 1){
+        num = mPro->uploadPassEn.size();
+        for(int i=0; i<num; ++i)
+        {
+            QJsonObject subObj;
+            subObj.insert("no",QString::number(i+1));
+            subObj.insert("testProcess", mPro->itemNameEn.at(i));
+            subObj.insert("testResult", mPro->uploadPassEn.at(i)?1:0);
+
+            subObj.insert("testRequest", mPro->testRequestEn.at(i));
+            subObj.insert("testStep", mPro->testStepEn.at(i));
+            subObj.insert("testItem", mPro->testItemEn.at(i));
+
+
+            qDebug()<<subObj;
+            jsonArray.append(subObj);
+        }
+        Obj.insert("testData" ,QJsonValue(jsonArray));
+
+    }
+
+    return num;
 }
 
 void Json_Pack::http_post(const QString &method, QJsonObject &json, const int id, const QString &ip, int port)

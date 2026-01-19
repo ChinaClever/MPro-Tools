@@ -176,6 +176,8 @@ struct sProgress
 
 
     QList<bool> uploadPass;
+    QList<bool> uploadPassEn;
+
     uchar uploadPassResult;
     QString pn,orderNum;
 
