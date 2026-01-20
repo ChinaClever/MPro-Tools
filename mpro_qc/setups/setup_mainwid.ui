@@ -52,16 +52,27 @@
      <layout class="QGridLayout" name="gridLayout_3">
       <item row="0" column="1">
        <widget class="QCheckBox" name="LabelPrint">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="text">
-         <string/>
+         <string>打印</string>
         </property>
        </widget>
       </item>
       <item row="2" column="1">
-       <widget class="QLineEdit" name="IpLine"/>
+       <widget class="QLineEdit" name="IpLine">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+       </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QLineEdit" name="Meta"/>
+       <widget class="QLineEdit" name="Meta">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+       </widget>
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="label_2">
@@ -284,6 +295,15 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>IpLine</tabstop>
+  <tabstop>LabelPrint</tabstop>
+  <tabstop>Meta</tabstop>
+  <tabstop>pcNumSpin</tabstop>
+  <tabstop>logCountSpin</tabstop>
+  <tabstop>pcBtn</tabstop>
+  <tabstop>verBtn</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

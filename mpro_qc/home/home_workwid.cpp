@@ -138,8 +138,8 @@ void Home_WorkWid::insertTextSlot(const QString &msg, bool pass, const QString R
     mPro->getPro()->testRequest<<Request;
     mPro->getPro()->testStep<<testStep;
     mPro->getPro()->testItem<<testItem;
-    cout << mPro->getPro()->itemName.size();
-    qDebug() <<  msg <<' ' << pass << ' ' << Request <<' '<< testStep<<' '<<testItem;
+    // cout << mPro->getPro()->itemName.size();
+    // cout <<  msg <<' ' << pass << ' ' << Request <<' '<< testStep<<' '<<testItem;
 
     // setTextColor(mPro->updatePro(str,pass)); ui->textEdit->insertPlainText(mPro->getPro()->itemName);
 }
@@ -339,13 +339,12 @@ void Home_WorkWid::timeoutDone()
 
 void Home_WorkWid::on_startBtn_clicked()
 {
-    mPro->getPro()->testStartTime = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
     if(isStart == false) {
         if(initWid()) {
-
             timer->start(500);
             //mCoreThread->run();
             mCoreThread->start();
+            mPro->getPro()->testStartTime = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
         }
     } else {
         bool ret = MsgBox::question(this, tr("确定需要提前结束？"));

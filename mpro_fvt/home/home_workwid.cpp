@@ -345,13 +345,13 @@ void Home_WorkWid::timeoutDone()
 
 void Home_WorkWid::on_startBtn_clicked()
 {
-    mPro->getPro()->testStartTime = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
     if(isStart == false) {
         if(initWid()) {
             timer->start(500);
             //mCoreThread->run();
             //mCoreThread->start();
             emit mCoreThread->startSig();
+            mPro->getPro()->testStartTime = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
         }
     } else {
         bool ret = MsgBox::question(this, tr("确定需要提前结束？"));

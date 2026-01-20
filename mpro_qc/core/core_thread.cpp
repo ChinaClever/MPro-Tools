@@ -878,14 +878,9 @@ void Core_Thread::run()
             emit finshSig(ret, ip+" ");
         } m_ips.clear();
     }  emit overSig();
-    sCfgComIt *cfg = CfgCom::bulid()->item;
 
-    // Json_Pack *packer = Json_Pack::bulid();
-    // sProgress *pro = Json_Pack::bulid()->getPro();
-    // int num = pro->uploadPass.size();
-    // for(int i = 0; i < num; i ++ ){
-    //     qDebug() << pro->testStep<< ' '<<pro->testItem << ' '<<pro->itemName<<' '<<pro->testRequest;
-    // }
+
+    sCfgComIt *cfg = CfgCom::bulid()->item;
 
     if(!cfg->ipAddr.isEmpty()) {
         sleep(2);
