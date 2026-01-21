@@ -150,6 +150,7 @@ void Core_Object::getOutputVol(const QJsonObject &object)
     QJsonObject obj = getObject(object, "uut_info");
     coreItem.uuid = getValue(obj, "uuid").toString();
     coreItem.actual.ver.devType = getValue(obj, "pdu_type").toString();
+    coreItem.cn = getValue(obj, "sn").toString();
 }
 
 void Core_Object::getAlarmStatus(const QJsonObject &object)

@@ -4,38 +4,31 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++17
 
+include(backcolour/backcolour.pri)
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-include(core/core.pri)
-include(logs/logs.pri)
-include(home/home.pri)
-include(setups/setups.pri)
-include(json/json.pri)
-
-
-CM_PATH = ../com_pbl
-include($$CM_PATH/com_pbl.pri)
-
 SOURCES += \
     main.cpp \
-    mainwindow.cpp \
-    navbarwid.cpp
+    mainwindow.cpp
 
 HEADERS += \
-    mainwindow.h \
-    navbarwid.h
+    mainwindow.h
 
 FORMS += \
-    mainwindow.ui \
-    navbarwid.ui
+    mainwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-DISTFILES += \
-    json/Json协议/test.json
+RESOURCES += \
+    images/image.qrc
 
+DISTFILES += \
+    images/back.jpg \
+    images/box_back.jpg \
+    images/logo.jpg \
+    images/title_back.jpg

@@ -6,6 +6,8 @@
 #include "logmainwid.h"
 #include "datapacket.h"
 #include "json_pack.h"
+#include "printlabel.h"
+
 
 namespace Ui {
 class Home_WorkWid;
@@ -33,6 +35,9 @@ signals:
     void startSig();
 
 private:
+    sLabelData getLabelData();
+    void printLabel();
+
     bool initWid();
     bool initUser();
     bool inputCheck();
@@ -62,6 +67,8 @@ private slots:
     void on_ipEdit_textChanged(const QString &arg1);
 
     void on_userEdit_selectionChanged();
+
+
 
 private:
     Ui::Home_WorkWid *ui;

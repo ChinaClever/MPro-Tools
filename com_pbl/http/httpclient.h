@@ -4,7 +4,6 @@
          .onSuccess([](QString result) { qDebug()<<"success!"; })
          .onFailed([](QString error) { qDebug()<<"failed!"; })
          .exec();
- ==========================================================
 **********************************************************/
 #ifndef QTHUB_COM_HTTPCLIENT_HPP
 #define QTHUB_COM_HTTPCLIENT_HPP
@@ -40,7 +39,7 @@ class HttpClient : public QNetworkAccessManager
 public:
     inline static HttpClient *instance();
     inline HttpClient(QObject *parent = nullptr);
-    inline QString getVersion() const;
+    inline QString getVersion() {return "1.1.2";}
 
     inline HttpRequest head(const QString &url);
     inline HttpRequest get(const QString &url);
@@ -145,6 +144,7 @@ public:
     inline HttpRequest &onSuccess(const QObject *receiver, const char *method);
     inline HttpRequest &onSuccess(std::function<void (QNetworkReply*)> lambda);
     inline HttpRequest &onSuccess(std::function<void (QVariantMap)> lambda);
+    inline HttpRequest &onSuccess(std::function<void (QJsonObject)> lambda);
     inline HttpRequest &onSuccess(std::function<void (QByteArray)> lambda);
     inline HttpRequest &onSuccess(std::function<void ()> lambda);
 
@@ -152,6 +152,7 @@ public:
     inline HttpRequest &onFinished(const QObject *receiver, const char *method);
     inline HttpRequest &onFinished(std::function<void (QNetworkReply*)> lambda);
     inline HttpRequest &onFinished(std::function<void (QVariantMap)> lambda);
+    inline HttpRequest &onFinished(std::function<void (QJsonObject)> lambda);
     inline HttpRequest &onFinished(std::function<void (QByteArray)> lambda);
     inline HttpRequest &onFinished(std::function<void ()> lambda);
 
@@ -331,12 +332,15 @@ signals:
     void finished(QNetworkReply *reply);
     void finished();
     void finished(QByteArray result);
+    void finished(QString result);
     void finished(QVariantMap resultMap);
+    void finished(QJsonObject resultJsonObject);
 
     void downloadProgress(qint64, qint64);
     void uploadProgress(qint64, qint64);
 
     void error(QByteArray error);
+    void error(QString error);
     void error();
     void error(QNetworkReply::NetworkError error);
     void error(QNetworkReply *reply);
@@ -432,16 +436,21 @@ public:
 
     HttpResponse *exec()
     {
+        // todo: fixme
         HttpClient &client = *HttpClient::instance();
         client.get(m_httpRequest.m_request.url().toString())
-              .timeout(30)
-              .block(m_httpRequest.m_isBlock)
-              .attribute(QNetworkRequest::FollowRedirectsAttribute, true)
-              .onHead(this, SLOT(onHead(QList<QNetworkReply::RawHeaderPair>)))
-              .onHead(this, SLOT(onHead(QMap<QString,QString>)))
-              .onReadyRead(this, SLOT(onReadyRead(QNetworkReply*)))
-              .onFailed(this, SLOT(onResponse(QNetworkReply::NetworkError)))
-              .exec();
+            .timeout(30)
+            .block(m_httpRequest.m_isBlock)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+            .attribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::ManualRedirectPolicy) // Qt 6
+#else
+            .attribute(QNetworkRequest::FollowRedirectsAttribute, true)
+#endif
+            .onHead(this, SLOT(onHead(QList<QNetworkReply::RawHeaderPair>)))
+            .onHead(this, SLOT(onHead(QMap<QString,QString>)))
+            .onReadyRead(this, SLOT(onReadyRead(QNetworkReply*)))
+            .onFailed(this, SLOT(onResponse(QNetworkReply::NetworkError)))
+            .exec();
 
         m_response = new HttpResponse(m_httpRequest, nullptr);
         return m_response;
@@ -469,9 +478,10 @@ private slots:
             if (key.contains("Content-Disposition", Qt::CaseInsensitive)) {
                 QString dispositionHeader = value;
                 // fixme rx
-                QRegExp rx("attachment;\\s*filename=([\\S]+)");
-                if (rx.exactMatch(dispositionHeader)) {
-                    m_fileName = rx.cap(1);
+                QRegularExpression rx("attachment;\\s*filename=([\\S]+)");
+                QRegularExpressionMatch match = rx.match(dispositionHeader);
+                if (match.hasMatch()) {
+                    m_fileName = match.captured(1);
                 }
             }
 
@@ -480,7 +490,7 @@ private slots:
             }
 
             if (key.contains("Content-Range", Qt::CaseInsensitive) ||
-                    key.contains("Accept-Ranges", Qt::CaseInsensitive)) {
+                key.contains("Accept-Ranges", Qt::CaseInsensitive)) {
                 m_isSupportContinueDownload = true;
             }
         }
@@ -514,6 +524,7 @@ private slots:
                     emit response->downloadFileFinished(m_httpRequest.m_downloader.fileName);
 
                     emit response->finished();
+                    emit response->finished(QString(""));
                     emit response->finished(QByteArray(""));
                     emit response->finished(QVariantMap{});
                     emit response->finished(nullptr);
@@ -556,29 +567,30 @@ class HttpBlocker : public QEventLoop
 {
     Q_OBJECT
 public:
-    HttpBlocker(QNetworkReply *reply, bool isBlock) : QEventLoop(reply)
+    HttpBlocker(QNetworkReply *reply) : QEventLoop(nullptr)
     {
-        if (isBlock) {
+        if (reply) {
             connect(reply, SIGNAL(finished()), this, SLOT(quit()));
             this->exec();
         }
+        this->deleteLater();
     }
 };
 
 #define _logger(l1, l2, str) \
 do { \
-    if (l1 >= l2) { \
-        if (l2 >= HttpRequest::Debug) { \
-            qDebug().noquote() << str; \
+        if (l1 >= l2) { \
+            if (l2 >= HttpRequest::Debug) { \
+                qDebug().noquote() << str; \
         } \
-        else if (l2 == HttpRequest::Warn) { \
-            qWarning().noquote() << str; \
+            else if (l2 == HttpRequest::Warn) { \
+                qWarning().noquote() << str; \
         } \
-        else if (l2 == HttpRequest::Error) { \
-            qCritical().noquote() << str; \
+            else if (l2 == HttpRequest::Error) { \
+                qCritical().noquote() << str; \
         } \
-        else if (l2 == HttpRequest::Fatal) { \
-            qFatal("%s\n", str); \
+            else if (l2 == HttpRequest::Fatal) { \
+                qFatal("%s\n", str); \
         } \
     } \
 } while(0);
@@ -614,13 +626,13 @@ HttpRequest &HttpRequest::header(QNetworkRequest::KnownHeaders header, const QVa
 
 HttpRequest &HttpRequest::headers(const QMap<QNetworkRequest::KnownHeaders, QVariant> &headers)
 {
-   QMapIterator<QNetworkRequest::KnownHeaders, QVariant> iter(headers);
-   while (iter.hasNext()) {
-       iter.next();
-       header(iter.key(), iter.value());
-   }
+    QMapIterator<QNetworkRequest::KnownHeaders, QVariant> iter(headers);
+    while (iter.hasNext()) {
+        iter.next();
+        header(iter.key(), iter.value());
+    }
 
-   return *this;
+    return *this;
 }
 
 HttpRequest &HttpRequest::header(const QString &key, const QVariant &value)
@@ -631,13 +643,13 @@ HttpRequest &HttpRequest::header(const QString &key, const QVariant &value)
 
 HttpRequest &HttpRequest::headers(const QMap<QString, QVariant> &headers)
 {
-   QMapIterator<QString, QVariant> iter(headers);
-   while (iter.hasNext()) {
-       iter.next();
-       header(iter.key(), iter.value());
-   }
+    QMapIterator<QString, QVariant> iter(headers);
+    while (iter.hasNext()) {
+        iter.next();
+        header(iter.key(), iter.value());
+    }
 
-   return *this;
+    return *this;
 }
 
 HttpRequest &HttpRequest::body(const QVariantMap &keyValueMap)
@@ -666,8 +678,8 @@ HttpRequest &HttpRequest::bodyWithFormUrlencoded(const QVariantMap &keyValueMap)
         i.next();
 
         value += QString("%1=%2")
-                .arg(QUrl::toPercentEncoding(i.key()).data())
-                .arg(QUrl::toPercentEncoding(i.value().toString()).data());
+                     .arg(QUrl::toPercentEncoding(i.key()).data())
+                     .arg(QUrl::toPercentEncoding(i.value().toString()).data());
         if (i.hasNext()) {
             value += "&";
         }
@@ -743,8 +755,7 @@ HttpRequest &HttpRequest::download()
 HttpRequest &HttpRequest::download(const QString &file)
 {
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 9, 0))
-    this->attribute(QNetworkRequest::RedirectPolicyAttribute, true); // RedirectPolicyAttribute
-    //this->attribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
+    this->attribute(QNetworkRequest::RedirectPolicyAttribute, true);
 #else
     this->attribute(QNetworkRequest::FollowRedirectsAttribute, true);
 #endif
@@ -868,12 +879,14 @@ HttpRequest &HttpRequest::logLevel(HttpRequest::LogLevel level) { m_logLevel = l
 HttpRequest &HttpRequest::onFinished(const QObject *receiver, const char  *method) { return onResponse(h_onFinished, receiver, method); }
 HttpRequest &HttpRequest::onFinished(std::function<void (QNetworkReply *)> lambda) { return onResponse(h_onFinished, QVariant::fromValue(lambda)); }
 HttpRequest &HttpRequest::onFinished(std::function<void (QVariantMap)>     lambda) { return onResponse(h_onFinished, QVariant::fromValue(lambda)); }
+HttpRequest &HttpRequest::onFinished(std::function<void (QJsonObject)>     lambda) { return onResponse(h_onFinished, QVariant::fromValue(lambda)); }
 HttpRequest &HttpRequest::onFinished(std::function<void (QByteArray)>      lambda) { return onResponse(h_onFinished, QVariant::fromValue(lambda)); }
 HttpRequest &HttpRequest::onFinished(std::function<void ()>                lambda) { return onResponse(h_onFinished, QVariant::fromValue(lambda)); }
 
 HttpRequest &HttpRequest::onSuccess(const QObject *receiver, const char  *method) { return onFinished(receiver, method); }
 HttpRequest &HttpRequest::onSuccess(std::function<void (QNetworkReply *)> lambda) { return onFinished(lambda); }
 HttpRequest &HttpRequest::onSuccess(std::function<void (QVariantMap)>     lambda) { return onFinished(lambda); }
+HttpRequest &HttpRequest::onSuccess(std::function<void (QJsonObject)>     lambda) { return onFinished(lambda); }
 HttpRequest &HttpRequest::onSuccess(std::function<void (QByteArray)>      lambda) { return onFinished(lambda); }
 HttpRequest &HttpRequest::onSuccess(std::function<void ()>                lambda) { return onFinished(lambda); }
 
@@ -953,13 +966,13 @@ HttpRequest &HttpRequest::onResponse(HandleType type, QString key, QVariant valu
 QString HttpRequest::toString()
 {
     QString str = \
-            "General: \n" \
-            "    Request URL: %{url} \n" \
-            "    Request Method: %{method} \n" \
-            "Request Headers: \n" \
-            "%{requestHeaders} \n" \
-            "Request Body: \n" \
-            "%{requestBody}";
+        "General: \n" \
+        "    Request URL: %{url} \n" \
+        "    Request Method: %{method} \n" \
+        "Request Headers: \n" \
+        "%{requestHeaders} \n" \
+        "Request Body: \n" \
+        "%{requestBody}";
 
     str.replace("%{url}", m_request.url().toString());
     str.replace("%{method}", networkOperation2String(m_op));
@@ -976,7 +989,7 @@ HttpResponse *HttpRequest::exec(const HttpRequest &_httpRequest, HttpResponse *h
     QByteArray op = networkOperation2String(httpRequest.m_op).toUtf8();
     if (op.isEmpty()) {
         QString str = QString("Url: [%1]; Method: [%2] not support!").arg(httpRequest.m_request.url().toString()).arg(QString(op));
-        printError(httpRequest.m_logLevel, str);
+        // printError(httpRequest.m_logLevel, str);
         return nullptr;
     }
 
@@ -1015,8 +1028,8 @@ HttpResponse *HttpRequest::exec(const HttpRequest &_httpRequest, HttpResponse *h
 
             // note: "form-data; name=\"%1\";filename=\"%2\"" != "form-data; name=\"%1\";filename=\"%2\";"
             QString dispositionHeader = QString("form-data; name=\"%1\";filename=\"%2\"")
-                    .arg(key)
-                    .arg(QFileInfo(filePath).fileName());
+                                            .arg(key)
+                                            .arg(QFileInfo(filePath).fileName());
             QHttpPart part;
             part.setHeader(QNetworkRequest::ContentDispositionHeader, dispositionHeader);
             part.setBodyDevice(file);
@@ -1063,10 +1076,13 @@ HttpResponse *HttpRequest::exec(const HttpRequest &_httpRequest, HttpResponse *h
 
     if (httpRequest.m_reply == nullptr) {
         // fixme: todo onError
-        printError(httpRequest.m_logLevel, "Http reply invalid");
-        Q_ASSERT(httpRequest.m_reply);
+        // printError(httpRequest.m_logLevel, "Http reply invalid");
+        // Q_ASSERT(httpRequest.m_reply);
         return nullptr;
     }
+
+    static int count = 0;
+    httpRequest.m_reply->setProperty("count", count++);
 
     // fixme
     if (!httpRequest.m_ignoreSslErrors.isEmpty()) {
@@ -1077,7 +1093,7 @@ HttpResponse *HttpRequest::exec(const HttpRequest &_httpRequest, HttpResponse *h
         httpRequest.m_reply->setReadBufferSize(httpRequest.m_readBufferSize);
     }
 
-    printDebug(httpRequest.m_logLevel, toString());
+    // printDebug(httpRequest.m_logLevel, toString());
 
     if (httpResponse) {
         httpResponse->setParent(httpRequest.m_reply);
@@ -1095,13 +1111,13 @@ inline QDebug operator<<(QDebug debug, const QNetworkAccessManager::Operation &o
     debug.nospace();
 
     switch (op) {
-        case QNetworkAccessManager::HeadOperation: return debug  << "HeadOperation";
-        case QNetworkAccessManager::GetOperation:  return debug  << "GetOperation";
-        case QNetworkAccessManager::PostOperation: return debug  << "PostOperation";
-        case QNetworkAccessManager::PutOperation:  return debug  << "PutOperation";
-        case QNetworkAccessManager::DeleteOperation: return debug  << "DeleteOperation";
-        case QNetworkAccessManager::CustomOperation: return debug  << "CustomOperation";
-        default: return debug  << "UnknownOperation";
+    case QNetworkAccessManager::HeadOperation: return debug  << "HeadOperation";
+    case QNetworkAccessManager::GetOperation:  return debug  << "GetOperation";
+    case QNetworkAccessManager::PostOperation: return debug  << "PostOperation";
+    case QNetworkAccessManager::PutOperation:  return debug  << "PutOperation";
+    case QNetworkAccessManager::DeleteOperation: return debug  << "DeleteOperation";
+    case QNetworkAccessManager::CustomOperation: return debug  << "CustomOperation";
+    default: return debug  << "UnknownOperation";
     }
 }
 
@@ -1111,29 +1127,29 @@ inline QDebug operator<<(QDebug debug, const HttpRequest::HandleType &handleType
     debug.nospace();
 
     switch (handleType) {
-        case HttpRequest::h_onFinished: return debug << "onFinished";
-        case HttpRequest::h_onError:    return debug << "onError";
-        case HttpRequest::h_onDownloadProgress: return debug << "onDownloadProgress";
-        case HttpRequest::h_onUploadProgress:   return debug << "onUploadProgress";
-        // todo: onUploadProgressSuccess and onUploadProgressFaied
-        case HttpRequest::h_onDownloadFileSuccess:  return debug << "onDownloadFileSuccess";
-        case HttpRequest::h_onDownloadFileFailed:   return debug << "onDownloadFileFailed";
-        case HttpRequest::h_onTimeout:          return debug << "onTimeout";
-        case HttpRequest::h_onReadyRead:        return debug << "onReadyRead";
-        case HttpRequest::h_onEncrypted:        return debug << "onEncrypted";
-        case HttpRequest::h_onMetaDataChanged:  return debug << "onMetaChanged";
-        case HttpRequest::h_onPreSharedKeyAuthenticationRequired: return debug << "onPreSharedKeyAuthenticationRequired";
-        case HttpRequest::h_onRedirectAllowed:  return debug << "onRedirectAllowed";
-        case HttpRequest::h_onRedirected:       return debug << "onRedirected";
-        case HttpRequest::h_onSslErrors:        return debug << "onSslErrors";
-        case HttpRequest::h_onRetried:          return debug << "onRetried";
-        case HttpRequest::h_onRepeated:         return debug << "onRepeated";
-        case HttpRequest::h_onAuthenticationRequired:      return debug << "onAuthenticationRequired";
-        case HttpRequest::h_onAuthenticationRequireFailed: return debug << "onAuthenticationRequireFailed";
-        case HttpRequest::h_onHead:                    return debug << "onHead";
-        case HttpRequest::h_onDownloadFileProgess:     return debug << "onDownloadFileProgress";
-        case HttpRequest::h_onDownloadFileNameChanged: return debug << "onDownloadFileNameChanged";
-        default: return debug << "Unknow";
+    case HttpRequest::h_onFinished: return debug << "onFinished";
+    case HttpRequest::h_onError:    return debug << "onError";
+    case HttpRequest::h_onDownloadProgress: return debug << "onDownloadProgress";
+    case HttpRequest::h_onUploadProgress:   return debug << "onUploadProgress";
+    // todo: onUploadProgressSuccess and onUploadProgressFaied
+    case HttpRequest::h_onDownloadFileSuccess:  return debug << "onDownloadFileSuccess";
+    case HttpRequest::h_onDownloadFileFailed:   return debug << "onDownloadFileFailed";
+    case HttpRequest::h_onTimeout:          return debug << "onTimeout";
+    case HttpRequest::h_onReadyRead:        return debug << "onReadyRead";
+    case HttpRequest::h_onEncrypted:        return debug << "onEncrypted";
+    case HttpRequest::h_onMetaDataChanged:  return debug << "onMetaChanged";
+    case HttpRequest::h_onPreSharedKeyAuthenticationRequired: return debug << "onPreSharedKeyAuthenticationRequired";
+    case HttpRequest::h_onRedirectAllowed:  return debug << "onRedirectAllowed";
+    case HttpRequest::h_onRedirected:       return debug << "onRedirected";
+    case HttpRequest::h_onSslErrors:        return debug << "onSslErrors";
+    case HttpRequest::h_onRetried:          return debug << "onRetried";
+    case HttpRequest::h_onRepeated:         return debug << "onRepeated";
+    case HttpRequest::h_onAuthenticationRequired:      return debug << "onAuthenticationRequired";
+    case HttpRequest::h_onAuthenticationRequireFailed: return debug << "onAuthenticationRequireFailed";
+    case HttpRequest::h_onHead:                    return debug << "onHead";
+    case HttpRequest::h_onDownloadFileProgess:     return debug << "onDownloadFileProgress";
+    case HttpRequest::h_onDownloadFileNameChanged: return debug << "onDownloadFileNameChanged";
+    default: return debug << "Unknow";
     }
 }
 
@@ -1176,11 +1192,11 @@ bool httpResponseConnect(L sender, T senderSignal, const QString &lambdaString, 
 }
 
 #define HTTP_RESPONSE_CONNECT_X(sender, senderSignal, lambdaString, lambda, ...) \
-    httpResponseConnect< std::function<void (__VA_ARGS__)> > ( \
-             sender, \
-             static_cast<void (HttpResponse::*)(__VA_ARGS__)>(&HttpResponse::senderSignal), \
-             lambdaString, \
-             lambda);
+httpResponseConnect< std::function<void (__VA_ARGS__)> > ( \
+                                                       sender, \
+                                                       static_cast<void (HttpResponse::*)(__VA_ARGS__)>(&HttpResponse::senderSignal), \
+                                                       lambdaString, \
+                                                       lambda);
 
 HttpResponse *HttpRequest::exec()
 {
@@ -1247,11 +1263,6 @@ HttpClient::HttpClient(QObject *parent) : QNetworkAccessManager(parent)
 {
 }
 
-QString HttpClient::getVersion() const
-{
-    return "1.1.0";
-}
-
 HttpRequest HttpClient::head(const QString &url)
 {
     return HttpRequest(QNetworkAccessManager::HeadOperation, this).url(url);
@@ -1306,8 +1317,8 @@ QNetworkReply *HttpClient::sendCustomRequest(const QNetworkRequest &request, con
 
 HttpResponse::HttpResponse(const HttpRequest &httpRequest, QObject *parent)
     : QObject(parent),
-      m_httpRequest(httpRequest),
-      m_retriesRemaining(httpRequest.m_retryCount)
+    m_httpRequest(httpRequest),
+    m_retriesRemaining(httpRequest.m_retryCount)
 {
     this->setHttpRequest(httpRequest);
 }
@@ -1326,7 +1337,11 @@ void HttpResponse::setHttpRequest(const HttpRequest &httpRequest)
     if (reply) {
         connect(reply, SIGNAL(finished()),                         this, SLOT(onFinished()));
         connect(reply, SIGNAL(finished()),                         this, SLOT(onHandleHead()));
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+        connect(reply, SIGNAL(errorOccurred(QNetworkReply::NetworkError)), this, SLOT(onError(QNetworkReply::NetworkError)));
+#else
         connect(reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(onError(QNetworkReply::NetworkError)));
+#endif
 
         connect(reply, SIGNAL(downloadProgress(qint64, qint64)),   this, SLOT(onDownloadProgress(qint64, qint64)));
         connect(reply, SIGNAL(uploadProgress(qint64, qint64)),     this, SLOT(onUploadProgress(qint64, qint64)));
@@ -1341,9 +1356,9 @@ void HttpResponse::setHttpRequest(const HttpRequest &httpRequest)
         connect(reply, SIGNAL(redirected(QUrl)),                   this, SLOT(onRedirected(QUrl)));
         connect(reply, SIGNAL(sslErrors(QList<QSslError>)),        this, SLOT(onSslErrors(QList<QSslError>)));
 
-    #if (QT_VERSION >= QT_VERSION_CHECK(5, 9, 0))
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 9, 0))
         connect(reply, SIGNAL(redirectAllowed()),                  this, SLOT(onRedirectAllowed()));
-    #endif
+#endif
 
         connect(reply, SIGNAL(preSharedKeyAuthenticationRequired(QSslPreSharedKeyAuthenticator*)), this, SLOT(onPreSharedKeyAuthenticationRequired(QSslPreSharedKeyAuthenticator*)));
 
@@ -1362,7 +1377,9 @@ void HttpResponse::setHttpRequest(const HttpRequest &httpRequest)
                 if (key == HttpRequest::h_onFinished) {
                     ret += HTTP_RESPONSE_CONNECT_X(this, finished, lambdaString, lambda, void);
                     ret += HTTP_RESPONSE_CONNECT_X(this, finished, lambdaString, lambda, QByteArray);
+                    ret += HTTP_RESPONSE_CONNECT_X(this, finished, lambdaString, lambda, QString);
                     ret += HTTP_RESPONSE_CONNECT_X(this, finished, lambdaString, lambda, QVariantMap);
+                    ret += HTTP_RESPONSE_CONNECT_X(this, finished, lambdaString, lambda, QJsonObject);
                     ret += HTTP_RESPONSE_CONNECT_X(this, finished, lambdaString, lambda, QNetworkReply*);
                 }
                 else if (key == HttpRequest::h_onDownloadProgress) {
@@ -1374,6 +1391,7 @@ void HttpResponse::setHttpRequest(const HttpRequest &httpRequest)
                 else if (key == HttpRequest::h_onError) {
                     ret += HTTP_RESPONSE_CONNECT_X(this, error, lambdaString, lambda, void);
                     ret += HTTP_RESPONSE_CONNECT_X(this, error, lambdaString, lambda, QByteArray);
+                    ret += HTTP_RESPONSE_CONNECT_X(this, error, lambdaString, lambda, QString);
                     ret += HTTP_RESPONSE_CONNECT_X(this, error, lambdaString, lambda, QNetworkReply*);
                     ret += HTTP_RESPONSE_CONNECT_X(this, error, lambdaString, lambda, QNetworkReply::NetworkError);
                 }
@@ -1434,7 +1452,7 @@ void HttpResponse::setHttpRequest(const HttpRequest &httpRequest)
                     ret += HTTP_RESPONSE_CONNECT_X(this, downloadFileNameChanged, lambdaString, lambda, QString);
                 }
                 else {
-                    printWarn(httpRequest.m_logLevel, QString("%1 unsupported").arg(key));
+                    // printWarn(httpRequest.m_logLevel, QString("%1 unsupported").arg(key));
                 }
 
                 if (ret == 0) {
@@ -1442,37 +1460,37 @@ void HttpResponse::setHttpRequest(const HttpRequest &httpRequest)
                     if (isMethod(qPrintable(method)))
                         method.remove(0, 1);
 
-                    printWarn(httpRequest.m_logLevel, QString("%1 method[%2] is invalid").arg(key).arg(method));
+                    // printWarn(httpRequest.m_logLevel, QString("%1 method[%2] is invalid").arg(key).arg(method));
                 }
             }
         }
     }
 
-    if (reply && httpRequest.m_isBlock) {
-        new HttpBlocker(reply, httpRequest.m_isBlock);
-    }
-
-    HttpRequest oldRequest = m_httpRequest;
+    const HttpRequest &oldRequest = m_httpRequest;
     m_httpRequest = httpRequest;
 
     if (oldRequest.m_reply != httpRequest.m_reply) {
         emit replyChanged(httpRequest.m_reply);
+    }
+
+    if (reply && httpRequest.m_isBlock) {
+        new HttpBlocker(reply);
     }
 }
 
 QString HttpResponse::toString() const
 {
     QString str = \
-            "General: \n" \
-            "    Request URL: %{url} \n" \
-            "    Request Method: %{method} \n" \
-            "    Request Status: %{status}(%{statusString}) \n" \
-            "Request Headers: \n" \
-            "%{requestHeaders} \n" \
-            "Response Headers: \n" \
-            "%{responseHeaders} \n" \
-            "Request Body: \n" \
-            "%{requestBody}";
+        "General: \n" \
+        "    Request URL: %{url} \n" \
+        "    Request Method: %{method} \n" \
+        "    Request Status: %{status}(%{statusString}) \n" \
+        "Request Headers: \n" \
+        "%{requestHeaders} \n" \
+        "Response Headers: \n" \
+        "%{responseHeaders} \n" \
+        "Request Body: \n" \
+        "%{requestBody}";
 
     QNetworkReply *reply = this->m_httpRequest.m_reply;
     str.replace("%{url}", this->m_httpRequest.m_request.url().toString());
@@ -1495,7 +1513,7 @@ void HttpResponse::onFinished()
     for (QObject *o : reply->children()) {
         HttpResponse *response = qobject_cast<HttpResponse*>(o);
         if (response) {
-            printDebug(m_httpRequest.m_logLevel, response->toString());
+            // printDebug(m_httpRequest.m_logLevel, response->toString());
         }
     }
 
@@ -1518,21 +1536,29 @@ void HttpResponse::onFinished()
 
     if (this->receivers(SIGNAL(finished())) > 0 ||
         this->receivers(SIGNAL(finished(QByteArray))) > 0 ||
-        this->receivers(SIGNAL(finished(QVariantMap))) > 0)
+        this->receivers(SIGNAL(finished(QString))) > 0 ||
+        this->receivers(SIGNAL(finished(QVariantMap))) > 0 ||
+        this->receivers(SIGNAL(finished(QJsonObject))) > 0
+        )
     {
         QByteArray result = reply->readAll();
         emit finished();
 
         emit finished(result);
 
-        QVariantMap resultMap = QJsonDocument::fromJson(result).object().toVariantMap();
+        emit finished(QString(result));
+
+        QJsonObject json = QJsonDocument::fromJson(result).object();
+        emit finished(json);
+
+        QVariantMap resultMap = json.toVariantMap();
         emit finished(resultMap);
     }
 
     if (--m_httpRequest.m_repeatCount > 0) {
         HttpRequest httpRequest = m_httpRequest;
         httpRequest.repeat(m_httpRequest.m_repeatCount)
-                   .exec();
+            .exec();
     }
     else {
         emit repeated();
@@ -1547,13 +1573,13 @@ void HttpResponse::onError(QNetworkReply::NetworkError error)
 {
     QNetworkReply *reply = m_httpRequest.m_reply;
 
-    printInfo(m_httpRequest.m_logLevel, QString("%1 error: %2").arg(reply->url().toString()).arg(error));
+    // printInfo(m_httpRequest.m_logLevel, QString("%1 error: %2").arg(reply->url().toString()).arg(error));
 
     if ( m_retriesRemaining-- > 0) {
         HttpRequest httpRequest = m_httpRequest;
         httpRequest.retry(m_retriesRemaining)
-                   .enabledRetry(true)
-                   .exec();
+            .enabledRetry(true)
+            .exec();
         reply->deleteLater();
         return;
     }
@@ -1568,9 +1594,9 @@ void HttpResponse::onError(QNetworkReply::NetworkError error)
 
     if (m_httpRequest.m_downloader.isEnabled) {
         QString error = QString("Url: %1 file: %2 error: %3")
-                .arg(m_httpRequest.m_request.url().toString()) // fixme
-                .arg(m_downloadFile.fileName())
-                .arg(errorString);
+        .arg(m_httpRequest.m_request.url().toString()) // fixme
+            .arg(m_downloadFile.fileName())
+            .arg(errorString);
 
         emit downloadFileError();
         emit downloadFileError(error);
@@ -1586,12 +1612,13 @@ void HttpResponse::onError(QNetworkReply::NetworkError error)
 
     emit this->error();
     emit this->error(error);
+    emit this->error(errorString);
     emit this->error(errorString.toLocal8Bit());
 
     if (--m_httpRequest.m_repeatCount > 0) {
         HttpRequest httpRequest = m_httpRequest;
         httpRequest.repeat(m_httpRequest.m_repeatCount)
-                   .exec();
+            .exec();
     }
     else {
         emit repeated();
@@ -1615,7 +1642,7 @@ void HttpResponse::onUploadProgress(qint64 bytesSent, qint64 bytesTotal)
 void HttpResponse::onTimeout()
 {
     QNetworkReply *reply = m_httpRequest.m_reply;
-    if (reply->isRunning()) {
+    if (reply && reply->isRunning()) {
         reply->abort();
 
         bool isAutoDelete = true;
@@ -1642,8 +1669,8 @@ void HttpResponse::onReadyRead()
             int size = m_downloadFile.write(reply->readAll());
             if (size == -1) {
                 QString error = QString("Url: %1 %2 Write failed!")
-                                .arg(m_httpRequest.m_request.url().toString())
-                                .arg(m_downloadFile.fileName());
+                .arg(m_httpRequest.m_request.url().toString())
+                    .arg(m_downloadFile.fileName());
                 emit downloadFileError();
                 emit downloadFileError(error);
             }
@@ -1684,8 +1711,8 @@ void HttpResponse::onReadOnceReplyHeader()
 
     if (!m_downloadFile.open(mode)) {
         QString error = QString("Url: %1 %2 Non-Writable")
-                .arg(m_httpRequest.m_request.url().toString())
-                .arg(m_downloadFile.fileName());
+        .arg(m_httpRequest.m_request.url().toString())
+            .arg(m_downloadFile.fileName());
         emit downloadFileError();
         emit downloadFileError(error);
     }
@@ -1765,7 +1792,7 @@ void HttpResponse::onHandleHead()
     QNetworkReply *reply = m_httpRequest.m_reply;
     if (this->receivers(SIGNAL(head(QList<QNetworkReply::RawHeaderPair>))) ||
         this->receivers(SIGNAL(head(QMap<QString, QString>)))
-       )
+        )
     {
         emit head(reply->rawHeaderPairs());
         QMap<QString, QString> map;
@@ -1798,7 +1825,7 @@ inline QString networkHeader2String(const QNetworkRequest &request)
         return "null";
     }
 
-    if (headerString.at(headerString.count()-1) == "\n") {
+    if (headerString.at(headerString.count()-1) == '\n') {
         headerString.chop(1);
     }
 
@@ -1817,7 +1844,7 @@ inline QString networkReplyHeader2String(const QNetworkReply *reply)
         return "null";
     }
 
-    if (headerString.at(headerString.count()-1) == "\n") {
+    if (headerString.at(headerString.count()-1) == '\n') {
         headerString.chop(1);
     }
 
@@ -1890,7 +1917,7 @@ inline QString networkBody2String(const QPair<HttpRequest::BodyType, QVariant> &
     bodyDataString = lineIndent(bodyDataString, "=>    ");
 
     QString bodyString = bodyTypeString + bodyDataString;
-    if (bodyString.at(bodyString.count()-1) == "\n") {
+    if (bodyString.at(bodyString.count()-1) == '\n') {
         bodyString.chop(1);
     }
 
@@ -1900,24 +1927,25 @@ inline QString networkBody2String(const QPair<HttpRequest::BodyType, QVariant> &
 inline QString networkOperation2String(QNetworkAccessManager::Operation o)
 {
     static QMap<QNetworkAccessManager::Operation, QByteArray> verbMap =
-    {
-        {QNetworkAccessManager::HeadOperation, "HEAD"},
-        {QNetworkAccessManager::GetOperation,  "GET"},
-        {QNetworkAccessManager::PostOperation, "POST"},
-        {QNetworkAccessManager::PutOperation,  "PUT"},
-    };
+        {
+         {QNetworkAccessManager::HeadOperation, "HEAD"},
+         {QNetworkAccessManager::GetOperation,  "GET"},
+         {QNetworkAccessManager::PostOperation, "POST"},
+         {QNetworkAccessManager::PutOperation,  "PUT"},
+         };
 
     return verbMap.value(o, "");
 }
 }
 
 #define HTTPRESPONSE_DECLARE_METATYPE(...) \
-    Q_DECLARE_METATYPE(std::function<void (__VA_ARGS__)>)
+Q_DECLARE_METATYPE(std::function<void (__VA_ARGS__)>)
 
 HTTPRESPONSE_DECLARE_METATYPE(void)
 HTTPRESPONSE_DECLARE_METATYPE(QByteArray)
 HTTPRESPONSE_DECLARE_METATYPE(QString)
 HTTPRESPONSE_DECLARE_METATYPE(QVariantMap)
+HTTPRESPONSE_DECLARE_METATYPE(QJsonObject)
 HTTPRESPONSE_DECLARE_METATYPE(QNetworkReply*)
 HTTPRESPONSE_DECLARE_METATYPE(qint64, qint64)
 HTTPRESPONSE_DECLARE_METATYPE(QNetworkReply::NetworkError)
