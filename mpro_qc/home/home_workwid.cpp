@@ -186,7 +186,7 @@ void Home_WorkWid::setWidEnabled(bool en)
 
 void Home_WorkWid::updateResult()
 {
-    QString style; mId = 1;
+    QString style; //mId = 1;
     QString str = tr("---");
     if(mResult) {
         str = tr("成功"); style = "background-color:green; color:rgb(255, 255, 255);";

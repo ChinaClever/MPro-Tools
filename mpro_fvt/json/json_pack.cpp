@@ -41,7 +41,7 @@ void Json_Pack::head(QJsonObject &obj)
     obj.insert("work_order", mPro->pn);
 
 
-    pduInfo(obj);
+    //pduInfo(obj);
 }
 
 // void Json_Pack::part_head(QJsonObject &obj)
@@ -57,34 +57,48 @@ void Json_Pack::part_head(QJsonObject &obj)
 
 
 }
-void Json_Pack::pduInfo(QJsonObject &obj)
+void Json_Pack::pduInfo(QJsonObject &obj,const int id)
 {
-    objData(obj);
+    objData(obj,id);
 }
 
 
 
-int Json_Pack::objData(QJsonObject &obj)
+int Json_Pack::objData(QJsonObject &Obj,const int id)
 {
     QJsonArray jsonArray;
     int num = mPro->uploadPass.size();
+    // qDebug() << num <<endl;
+    // qDebug() << "--- 容器大小检查 ---";
+    // qDebug() << "uploadPass 大小:" << mPro->uploadPass.size();
+    // qDebug() << "itemName 大小:  " << mPro->itemName.size();
+    // qDebug() << "testRequest 大小:" << mPro->testRequest.size();
+    // qDebug() << "testStep 大小:   " << mPro->testStep.size();
+    // qDebug() << "testItem 大小:   " << mPro->testItem.size();
+    // qDebug() << "-------------------";
     for(int i=0; i<num; ++i)
     {
         QJsonObject subObj;
         subObj.insert("no",QString::number(i+1));
-        subObj.insert("name", mPro->itemName.at(i));
-        subObj.insert("result", mPro->uploadPass.at(i)?1:0);
+        subObj.insert("testProcess", mPro->itemName.at(i));
+        subObj.insert("testResult", mPro->uploadPass.at(i)?1:0);
+
+        subObj.insert("testRequest", mPro->testRequest.at(i));
+        subObj.insert("testStep", mPro->testStep.at(i));
+        subObj.insert("testItem", mPro->testItem.at(i));
 
         jsonArray.append(subObj);
     }
-    obj.insert("testStep" ,QJsonValue(jsonArray));
+    Obj.insert("testData" ,QJsonValue(jsonArray));
 
     return num;
 }
 
-void Json_Pack::http_post(const QString &method, const QString &ip, int port)
+void Json_Pack::http_post(const QString &method, QJsonObject &json, const int id,const QString &ip,  int port)
 {
-    QJsonObject json; head(json);
+   // QJsonObject json; head(json);
+
+    pduInfo(json,id);
 
     AeaQt::HttpClient http;
     http.clearAccessCache();
@@ -93,34 +107,45 @@ void Json_Pack::http_post(const QString &method, const QString &ip, int port)
     QString url = "http://%1:%2/%3";
     http.post(url.arg(ip).arg(port).arg(method))
         .header("content-type", "application/json")
-        .onSuccess([&](QString result) {emit httpSig(result,true);})
-        .onFailed([&](QString error) {emit httpSig(error,false); })
-        .onTimeout([&](QNetworkReply *) {emit httpSig("http_post timeout",false); }) // 超时处理
+        .onSuccess([&](QString result) {emit httpSig(result,true,"","","");})
+        .onFailed([&](QString error) {emit httpSig(error,false,"","",""); })
+        .onTimeout([&](QNetworkReply *) {emit httpSig("http_post timeout",false,"","",""); }) // 超时处理
         .timeout(1000) // 1s超时
         .block()
         .body(json)
         .exec();
 
 }
-QString Json_Pack::http_get(const QString &method, const QString &ip, int port)
+QString Json_Pack::http_get(const QString &method, const QString &ip, QJsonObject &obj, int port)
 {
-    qDebug()<<"33333333";
-    QJsonObject json; part_head(json);
-    QString mac;
+    QString macResult; // 1. 外部变量准备接收值
     AeaQt::HttpClient http;
-    http.clearAccessCache();
-    http.clearConnectionCache();
-    QString url = "http://%1:%2/%3";
-    http.get(url.arg(ip).arg(port).arg(method))
+
+    // 自动将 json 转为 URL 参数
+    QUrlQuery query;
+    for (QString key : obj.keys()) {
+        query.addQueryItem(key, obj.value(key).toVariant().toString());
+    }
+
+    QString url = QString("http://%1:%2/%3?%4").arg(ip).arg(port).arg(method).arg(query.toString());
+
+    http.get(url)
         .header("content-type", "application/json")
-        .onSuccess([&](QString result) {qDebug()<<"11111111"<<result;mac = result;emit httpSig(result,true);})
-        .onFailed([&](QString error) {qDebug()<<"22222222"<<error; emit httpSig(error,false); })
-        .onTimeout([&](QNetworkReply *) {emit httpSig("http_get timeout",false); }) // 超时处理
-        .timeout(1000) // 1s超时
-        .block()
-        .body(json)
+        .onSuccess([&](QString result) {
+            // 关键：这里直接赋值！不再使用 QJsonDocument 解析
+            qDebug() << "Server Reply (Success):" << result;
+            macResult = result.trimmed(); // 去除两侧空格或换行符
+            // 移除引号（如果返回结果自带引号，如 ""00:A0:..."")
+            macResult.remove('\"');
+        })
+        .onFailed([&](QString error) {
+            qDebug() << "HTTP Failed:" << error;
+        })
+        .timeout(2000)
+        .block() // 必须有 block() 才能让函数停在这等结果
         .exec();
-    return mac;
+
+    return macResult; // 这里返回后，temp 就不再是空的了
 }
 // void Json_Pack::http_post_resve()
 // {

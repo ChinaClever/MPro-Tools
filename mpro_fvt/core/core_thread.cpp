@@ -39,14 +39,14 @@ bool Core_Thread::fsCheck()
         if(fn.contains(".pem")) continue;
         if(!QFile::exists(fn)) {
             ret = false;
-            emit msgSig(tr("文件未找到")+fn, ret);
+            emit msgSig(tr("文件未找到")+fn, ret,"","","");
         }
         int size = File::fileSize(fn);
         if(!size) {
             ret = false;
-            emit msgSig(tr("文件为空")+fn, ret);
+            emit msgSig(tr("文件为空")+fn, ret,"","","");
         }
-    } if(ret) emit msgSig(tr("文件未检查 OK!"), ret);
+    } if(ret) emit msgSig(tr("文件未检查 OK!"), ret,"","","");
     return ret;
 }
 
@@ -60,7 +60,7 @@ bool Core_Thread::searchDev()
         QString str = tr("未找到任何目标设备"); // cm_mdelay(150);
         if(ips.size()) str = tr("已找到%1个设备").arg(ips.size());
         else {ret = false;} m_ips = ips;
-        emit msgSig(str, ret);
+        emit msgSig(str, ret,"","","");
     }
     return ret;
 }
@@ -69,7 +69,7 @@ void Core_Thread::timeSync()
 {
     QString fmd = "yyyy-MM-dd hh:mm:ss";
     QString t = QDateTime::currentDateTime().toString(fmd);
-    emit msgSig(tr("时间设置：")+t, true);
+    emit msgSig(tr("时间设置：")+t, true,"时间与期望值一致","参数检查","时间检查");
     Core_Http *http = Core_Http::bulid(this);
     sCfgItem it; it.type = 43; it.fc =1;
     http->setting(it, t); cm_mdelay(321);
@@ -83,7 +83,7 @@ void Core_Thread::enModbusRtu()
     sCfgItem it; it.type = 15; it.fc = 1;
     Core_Http::bulid(this)->setting(it, 1);
     it.fc = 7; Core_Http::bulid(this)->setting(it, 1);
-    emit msgSig(tr("设备模式：已开启Modbus-RTU功能"), true);
+    emit msgSig(tr("设备模式：已开启Modbus-RTU功能"), true,"Modbus-RTU功能应开启","参数检查","模式检查");
 
     //it.type = 13; it.fc = 3;
     //Core_Http::bulid(this)->setting(it, 1);
@@ -91,7 +91,7 @@ void Core_Thread::enModbusRtu()
 
     it.type = 13; it.fc = 9;
     Core_Http::bulid(this)->setting(it, 1);
-    emit msgSig(tr("启用扩展口：已开启传感器盒子功能"), true);
+    emit msgSig(tr("启用扩展口：已开启传感器盒子功能"), true,"传感器盒子功能应以开启","参数检查","扩展口检查");
 }
 
 void Core_Thread::writeSnMac(const QString &sn, const QString &mac)
@@ -128,11 +128,11 @@ bool Core_Thread::downVer(const QString &ip)
         writeSnMac(it.sn, mac); //str += "ok\n";
         str = "SN：" + m_sn + "   MAC：" + m_mac;
     } else str =  tr("版本信息读取错误");
-    emit msgSig(str, ret);
+    emit msgSig(str, ret,"版本信息与期望值一致","参数检查","版本信息检查");
 
     if(ret) {
         int rtn = DbMacs::bulid()->contains(m_mac, it.sn);
-        if(rtn) { ret = false; emit msgSig(tr("MAC：%1已被分配, 在数据库已存在").arg(m_mac), ret); }
+        if(rtn) { ret = false; emit msgSig(tr("MAC：%1已被分配, 在数据库已存在").arg(m_mac), ret,"Mac地址已被分配","参数检查","Mac地址检查"); }
     }
 
     return ret;
@@ -146,12 +146,12 @@ bool Core_Thread::workDown(const QString &ip)
         bool ret = http->uploadFile(fn);
         if(!ret && fn.contains(".pem")) continue;
         if(!ret) res = false;
-        emit msgSig(fn, ret);
+        emit msgSig(fn, ret,"含有pem文件","参数检查","pem文件检查");
         cm_mdelay(20);
     }
 
     if(res) {
-        emit msgSig(tr("设备重启，设备有响声"), true);        
+        emit msgSig(tr("设备重启，设备有响声"), true,"","","");
         http->execute("sync"); cm_mdelay(1000);
         http->execute("reboot"); // killall cores
     }
@@ -162,15 +162,31 @@ void Core_Thread::run()
 {
     bool ret = searchDev();
     if(ret && fsCheck()) {
-        foreach (const auto &ip, m_ips) {            
-            emit msgSig(tr("目标设备:")+ip, true);
+        foreach (const auto &ip, m_ips) {
+            emit msgSig(tr("目标设备:")+ip, true,"","","");
             ret = downVer(ip); timeSync();
             if(ret) ret = workDown(ip);
             if(ret) enModbusRtu(); cm_mdelay(150);
             emit finshSig(ret, ip+" ");
-#if 0
-            cm_mdelay(2000);
-            Json_Pack::bulid()->http_post("debugdata/add","192.168.1.12");
+#if 1
+            // cm_mdelay(2000);
+            // Json_Pack::bulid()->http_post("debugdata/add","192.168.1.12");
+
+
+            sCfgComIt *cfg = CfgCom::bulid()->item;
+
+            if(!cfg->ipAddr.isEmpty()) {
+                cm_mdelay(2*1000);
+                Json_Pack *packer = Json_Pack::bulid();
+
+                cout<<12341;
+                QJsonObject json,jsonEn;
+                packer->head(json);
+                packer->head(jsonEn);
+                jsonEn.insert("languageSelect",1);
+                Json_Pack::bulid()->http_post(cfg->meta, json, 0 , cfg->ipAddr);
+                //  Json_Pack::bulid()->http_post(cfg->meta, jsonEn, 1 , cfg->ipAddr);
+            }
 #endif
         }m_ips.clear();
     } emit overSig();

@@ -883,7 +883,7 @@ void Core_Thread::run()
     sCfgComIt *cfg = CfgCom::bulid()->item;
 
     if(!cfg->ipAddr.isEmpty()) {
-        sleep(2);
+        cm_mdelay(2*1000);
         Json_Pack *packer = Json_Pack::bulid();
         sProgress *pro = Json_Pack::bulid()->getPro();
         int num = pro->uploadPass.size();
@@ -895,11 +895,6 @@ void Core_Thread::run()
             jsonEn.insert("languageSelect",1);
             Json_Pack::bulid()->http_post(cfg->meta, json, 0 , cfg->ipAddr);
             Json_Pack::bulid()->http_post(cfg->meta, jsonEn, 1 , cfg->ipAddr);
-            //qDebug()<<jsonEn;
-
-
-
- //       }
 
     }
 }

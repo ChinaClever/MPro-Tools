@@ -57,7 +57,13 @@ private slots:
     void on_findBtn_clicked();
     void on_downBtn_clicked();
     void finishSlot(bool pass, const QString &msg);
-    void insertTextSlot(const QString &msg, bool pass);
+
+    void insertTextSlot(const QString &msg,
+                        bool pass,
+                        const QString Request = "",  // 设置默认参数
+                        const QString testStep = "",
+                        const QString testItem = "");
+
     void on_adCheckBox_clicked(bool checked);
 
     void on_userEdit_selectionChanged();

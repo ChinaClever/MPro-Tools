@@ -103,15 +103,15 @@ void Home_WorkWid::setTextColor(bool pass)
     ui->textEdit->mergeCurrentCharFormat(fmt);//textEdit使用当前的字符格式
 }
 
-void Home_WorkWid::insertTextSlot(const QString &msg, bool pass)
+void Home_WorkWid::insertTextSlot(const QString &msg, bool pass, const QString Request, const QString testStep, const QString testItem)
 {
     QString str = QString::number(mId++) + "、"+ msg + "\n";
     setTextColor(pass); ui->textEdit->insertPlainText(str);
     mPro->getPro()->itemName<<msg;
     mPro->getPro()->uploadPass<<pass;
-    // mPro->getPro()->testRequest<<Request;
-    // mPro->getPro()->testStep<<testStep;
-    // mPro->getPro()->testItem<<testItem;
+    mPro->getPro()->testRequest<<Request;
+    mPro->getPro()->testStep<<testStep;
+    mPro->getPro()->testItem<<testItem;
 
 }
 
@@ -264,7 +264,11 @@ void Home_WorkWid::initData()
 bool Home_WorkWid::initWid()
 {
     mPro->init();
-    bool ret = initMac();
+    sCfgComIt *cfg = CfgCom::bulid()->item;
+    bool ret = true;
+    if(cfg->ipAddr.isEmpty()){
+        ret = initMac();
+    }
     if(ret) ret = initUser();
     if(ret) ret = inputCheck();
     //if(ret) ret = updateWid();

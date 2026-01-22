@@ -17,6 +17,8 @@ Setup_MainWid::Setup_MainWid(QWidget *parent) :
     groupBox_background_icon(this);
     QTimer::singleShot(rand()%13,this,SLOT(initFunSlot()));
     mItem = CfgCom::bulid()->item; initCfgMac();
+    ui->Meta->setHidden(true);ui->label_6->setHidden(true);
+
     //initSerial();
 }
 
@@ -34,6 +36,11 @@ void Setup_MainWid::initFunSlot()
     QTimer::singleShot(2*1000,this,SLOT(checkPcNumSlot()));
     QDate buildDate = QLocale(QLocale::English ).toDate( QString(__DATE__).replace("  ", " 0"), "MMM dd yyyy");
     ui->label_date->setText(buildDate.toString("yyyy-MM-dd"));
+
+    ui->LabelPrint->setChecked(mItem->labelPrint == 1);
+    ui->Meta->setText(mItem->meta);
+    ui->IpLine->setText(mItem->ipAddr);
+
 
     initMac();
     timer = new QTimer(this);
@@ -96,13 +103,24 @@ void Setup_MainWid::on_pcBtn_clicked()
         ret = false;
         writeLogCount();
         mItem->pcNum = ui->pcNumSpin->value();
-        CfgCom::bulid()->writeCfgCom();
+
+        mItem->pcNum = ui->pcNumSpin->value();
+        mItem->labelPrint = ui->LabelPrint->isChecked() ? 1 : 0; // 抓取勾选状态
+        mItem->meta = ui->Meta->text();                         // 抓取方法文本
+        mItem->ipAddr = ui->IpLine->text();                     // 抓取IP文本
+        // ----------------------------------------------
+
+        CfgCom::bulid()->writeCfgCom(); // 这步才会把新值写进硬盘
     } else {
         str = tr("保存");
     }
 
     ui->pcBtn->setText(str);
     ui->logCountSpin->setEnabled(ret);
+    ui->LabelPrint->setEnabled(ret);
+    ui->Meta->setEnabled(ret);
+    ui->IpLine->setEnabled(ret);
+
     if(mItem->pcNum) ret = false;
     ui->pcNumSpin->setEnabled(ret);
 }
@@ -126,13 +144,16 @@ void Setup_MainWid::initCfgMac()
 
 void Setup_MainWid::wirteCfgMac()
 {
-    sMac *it = MacAddr::bulid()->macItem;
-    CfgCom *cfg = CfgCom::bulid();
-    cfg->writeCfg("mac", it->mac, "Mac");
-    cfg->writeCfg("cnt", it->cntMac, "Mac");
-    cfg->writeCfg("start", it->startMac, "Mac");
-    cfg->writeCfg("end", it->endMac, "Mac");
-    //cout << it->mac << it->startMac << it->endMac;
+    sCfgComIt *csfg = CfgCom::bulid()->item;
+    if(csfg->ipAddr.isEmpty()){
+        sMac *it = MacAddr::bulid()->macItem;
+        CfgCom *cfg = CfgCom::bulid();
+        cfg->writeCfg("mac", it->mac, "Mac");
+        cfg->writeCfg("cnt", it->cntMac, "Mac");
+        cfg->writeCfg("start", it->startMac, "Mac");
+        cfg->writeCfg("end", it->endMac, "Mac");
+    cout << it->mac << it->startMac << it->endMac;
+    }
 }
 
 void Setup_MainWid::updateMac()
@@ -160,7 +181,10 @@ void Setup_MainWid::updateSlot(int,int)
 
 void Setup_MainWid::timeoutDone()
 {
-    updateMac();
+    sCfgComIt *csfg = CfgCom::bulid()->item;
+    //if(csfg->ipAddr.isEmpty()){
+        updateMac();
+    //}
 }
 
 //void Setup_MainWid::on_saveBtn_clicked()

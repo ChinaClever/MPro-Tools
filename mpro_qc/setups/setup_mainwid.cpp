@@ -15,6 +15,7 @@ Setup_MainWid::Setup_MainWid(QWidget *parent) :
     groupBox_background_icon(this);
     QTimer::singleShot(rand()%13,this,SLOT(initFunSlot()));
     mItem = CfgCom::bulid()->item; initSerial();
+        ui->Meta->setHidden(true);ui->label_2->setHidden(true);
 }
 
 Setup_MainWid::~Setup_MainWid()
