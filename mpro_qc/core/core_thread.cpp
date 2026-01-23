@@ -564,6 +564,9 @@ bool Core_Thread::fwCheck()
         emit msgSigEn(strEn.arg(i+1), ret,"The number of output bits in the loop is consistent with the expected value.","Parameter check","Loop output bit count check");
     }
 
+    sDataPacket* pro=sDataPacket::bulid(); pro->getPro()->outletSN.clear();
+    foreach (auto i, coreItem.actual.ver.opSn) pro->getPro()->outletSN += i.toString()+",";
+
     return res;
 }
 

@@ -179,7 +179,7 @@ struct sProgress
     QList<bool> uploadPassEn;
 
     uchar uploadPassResult;
-    QString pn,orderNum;
+    QString pn,orderNum, outletSN;
 
 };
 

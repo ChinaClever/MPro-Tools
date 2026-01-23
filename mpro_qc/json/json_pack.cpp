@@ -31,7 +31,6 @@ void Json_Pack::head(QJsonObject &obj)
     obj.insert("productType", mPro->productType);
     obj.insert("toolName","mPro_qc");
     obj.insert("moduleSn", mPro->moduleSn);
-    mPro->productSN = "1234567890";
     obj.insert("productSN",mPro->productSN);
     obj.insert("macAddress", mPro->macAddress);
     obj.insert("languageSelect",0);
@@ -44,7 +43,7 @@ void Json_Pack::head(QJsonObject &obj)
     obj.insert("testTime", mPro->testTime);
     obj.insert("orderId", mPro->pn);
     obj.insert("orderNum", mPro->orderNum);
-
+    obj.insert("outletSN", mPro->outletSN);
 
     //pduInfo(obj,id);
 }
