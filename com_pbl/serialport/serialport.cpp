@@ -110,7 +110,7 @@ void SerialPort::timeoutDone()
 {
     if(mWriteArrays.size()) {
         writeSlot();
-    } else {
+    } else if(--mCount>0) {
         recvSlot();
     }
 }
@@ -250,7 +250,7 @@ void SerialPort::reflush()
 int SerialPort::transmit(const QByteArray &witeArray, QByteArray &readArray, int msecs)
 {
     int ret = write(witeArray);
-    if(ret > 0) {
+    if(ret > 0) { mCount = 4;
         ret = read(readArray, msecs);
         if((ret < 0) || (ret > SERIAL_LEN)) {
             qDebug() << "SerialPort transmit read err"  << ret;

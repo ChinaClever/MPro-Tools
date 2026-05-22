@@ -46,6 +46,7 @@ private slots:
     void timeoutDone();
 
 private:
+    int mCount=0;
     bool isOpen;
     QTimer *timer;
     QSerialPort  *mSerial;
