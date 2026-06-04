@@ -472,10 +472,11 @@ bool Core_Thread::outletCheck()
     QVariantList tmpList; bool ret = true; QString str;
     QVariantList *desire = &coreItem.desire.rate.ops;
     QVariantList *actual = &coreItem.actual.rate.ops;
+    double outletCur = coreItem.desire.rate.outletCur;
     for(int i=0; i<48; ++i) tmpList << 10;
     for(int i=0; i<desire->size(); ++i) {
         int id = desire->at(i).toInt();
-        tmpList[id-1] = 16;
+        tmpList[id-1] = outletCur;
     }
 
     for(int i=0;i<actual->size(); ++i) {

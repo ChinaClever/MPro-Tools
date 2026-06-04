@@ -33,8 +33,9 @@ struct sThreshold
     double loopCur;
     double loopPow;
     double volValue; //电压参考值
+    double outletCur; //输出位电流额定值
     QVariantList ops; //输出位电流额定值
-    QVariantList outputVols;
+    QVariantList outputVols;    
 };
 
 struct sMonitorData

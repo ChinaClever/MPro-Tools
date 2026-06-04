@@ -121,6 +121,13 @@ void Home_DevWid::updateParams()
     ver->loopOutlets << ui->opBox_4->value();
     ver->loopOutlets << ui->opBox_5->value();
     ver->loopOutlets << ui->opBox_6->value();
+
+    ver->loopOutlets << ui->opBox_7->value();
+    ver->loopOutlets << ui->opBox_8->value();
+    ver->loopOutlets << ui->opBox_9->value();
+    ver->loopOutlets << ui->opBox_10->value();
+    ver->loopOutlets << ui->opBox_11->value();
+    ver->loopOutlets << ui->opBox_12->value();
 }
 
 void Home_DevWid::updateThresholds()
@@ -136,6 +143,7 @@ void Home_DevWid::updateThresholds()
 
 void Home_DevWid::updateOutlets()
 {
+    mIt->rate.outletCur = ui->outletSpinBox->value();
     QList<QCheckBox *> box = checkBoxFound();
     mIt->rate.ops.clear(); foreach (auto it, box) {
         if(it->isChecked()) {
