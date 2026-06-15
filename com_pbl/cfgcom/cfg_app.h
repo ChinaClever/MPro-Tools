@@ -12,6 +12,7 @@ struct sAppVerIt {
     QString sig; // 签名信息
     QString ver; // 版本号
     QString dev; // 设备类型
+    QString sha; // 校验码
     QString remark; // 发布说明
     QStringList apps; // 程序名称
     QString oldVersion; // 旧版本号

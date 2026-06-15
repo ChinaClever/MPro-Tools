@@ -16,6 +16,7 @@ struct sOtaFile {
 
 namespace File {
     QString md5(const QString &fn);
+    QString sha(const QString &fn);
     QStringList entryList(const QString &fn);
     uint fileSize(const QString &fn);
     bool CheckMd5(const sOtaFile &it);
