@@ -507,7 +507,7 @@ bool Core_Thread::outputVolCheck()
     int lineNum = coreItem.actual.param.lineNum;
     QVariantList vols = coreItem.actual.rate.outputVols;
 
-    if(spec > 1) {
+    if((spec == 2) || (spec == 4)) {
         int end = num / lineNum;
         for(int k = 0; k<lineNum; ++k) {
             int vol = coreItem.actual.rate.lineVolValues.at(k).toDouble() * 10.0;
