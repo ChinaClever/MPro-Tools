@@ -48,6 +48,7 @@ private slots:
 private:
     int mCount=0;
     bool isOpen;
+    bool mRecvBusy;
     QTimer *timer;
     QSerialPort  *mSerial;
     QReadWriteLock  mRwLock;

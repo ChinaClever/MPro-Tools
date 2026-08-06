@@ -8,7 +8,7 @@
 #include <QSerialPortInfo>
 #include <QApplication>
 #define SERIAL_TIMEOUT  100  // 100MS
-
+#include "print.h"
 
 SerialPort::SerialPort(QObject *parent) : QThread(parent)
 {
@@ -18,6 +18,7 @@ SerialPort::SerialPort(QObject *parent) : QThread(parent)
     timer = new QTimer(this);
     timer->start(SERIAL_TIMEOUT);
     connect(timer, SIGNAL(timeout()),this, SLOT(timeoutDone()));
+    mSerial = new QSerialPort(this);       //串口号，一定要对应好，大写！！！
 }
 
 SerialPort::~SerialPort()
@@ -38,7 +39,8 @@ bool SerialPort::open(const QString &name,qint32 baudRate)
 
     if(!isOpen)
     {
-        mSerial = new QSerialPort(name);       //串口号，一定要对应好，大写！！！
+        // mSerial = new QSerialPort(name);       //串口号，一定要对应好，大写！！！
+        mSerial->setPortName(name);
         ret = mSerial->open(QIODevice::ReadWrite);      //读写打开
         if(ret) {
             mSerial->setBaudRate(baudRate);  //波特率
@@ -171,24 +173,43 @@ void SerialPort::writeSlot()
  * @param array
  * @return 长度
  */
+static QByteArray readAvailableData(QSerialPort *serial)
+{
+    QByteArray data;
+    if (!serial) {
+        return data;
+    }
+    while (serial->bytesAvailable() > 0) {
+        data += serial->readAll(); cm_mdelay(15);
+    }
+    return data;
+}
+
 void SerialPort::recvSlot()
 {
-    if(isOpen && mSerial->bytesAvailable()) {
-        /* 处理所有还没有被处理的各类事件，主要是不用用户感觉到ka */
-        QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
-
-        QByteArray dataTemp;
-        while (!mSerial->atEnd()) {
-            dataTemp += mSerial->readAll();     //因为串口是不稳定的，也许读到的是部分数据而已，但也可能是全部数据
-        }
-
-        if(dataTemp.size()) {
-            //if(dataTemp.at(0) == (char)0x9F) dataTemp.clear();
-            //if(dataTemp.at(0) == (char)0xBF) dataTemp.clear();
-        }
-
-        mSerialData += dataTemp;
+    if (!isOpen || !mSerial || mRecvBusy) {
+        return;
     }
+    if (mSerial->bytesAvailable() <= 0) {
+        return;
+    }
+
+    mRecvBusy = true;
+
+    QByteArray dataTemp = readAvailableData(mSerial);
+    if (!dataTemp.isEmpty()) { cm_mdelay(45);
+        dataTemp += readAvailableData(mSerial);
+    }
+
+    if (!dataTemp.isEmpty()) {
+        QWriteLocker locker(&mRwLock);
+        mSerialData += dataTemp;
+        if (mCount > 0) {
+            mCount = 0;
+        }
+    }
+
+    mRecvBusy = false;
 }
 
 QByteArray SerialPort::readSerial(int msecs)
