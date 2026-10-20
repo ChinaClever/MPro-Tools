@@ -7,6 +7,14 @@ win32: {
 } else: {
 }
 
+# 默认用 QXlsx 写 xlsx，不依赖本机安装 Excel。
+# 改回 Windows OLE/QExcel：注释掉下一行后重新 qmake。
+DEFINES += EXCEL_USE_QXLSX
+
+QXLSX_PARENTPATH = $$PWD/QXlsx/
+QXLSX_HEADERPATH = $$PWD/QXlsx/header/
+QXLSX_SOURCEPATH = $$PWD/QXlsx/source/
+include($$PWD/QXlsx/QXlsx.pri)
 
 DEPENDPATH += $$PWD
 

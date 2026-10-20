@@ -43,7 +43,10 @@ QByteArray Net_Udp::readDatagram(QHostAddress *host)
 
 void Net_Udp::recvSlot()
 {
-    QHostAddress host;
-    QByteArray res = readDatagram(&host);
-    if(res.size()) emit recvSig(host.toString(), res);
+    while (udpSocket->hasPendingDatagrams()) {
+        QHostAddress host;
+        QByteArray res = readDatagram(&host);
+        if(res.isEmpty()) break;
+        emit recvSig(host.toString(), res);
+    }
 }

@@ -6,7 +6,9 @@
  */
 #include "excel_savethread.h"
 #include "msgbox.h"
-#ifdef Q_OS_WIN32
+#if defined(EXCEL_USE_QXLSX)
+#include "xlsxdocument.h"
+#elif defined(Q_OS_WIN32)
 #include <windows.h>   // OleInitialize, CoInitializeEx
 #include <objbase.h>   // S_OK, S_FALSE
 #endif
@@ -46,23 +48,36 @@ int Excel_SaveThread::getProgress()
 
 bool Excel_SaveThread::init()
 {
-    bool ret = true;
-#if defined(Q_OS_WIN32)
     mSize = mAllSize = 0;
+#if !defined(EXCEL_USE_QXLSX) && defined(Q_OS_WIN32)
     HRESULT r = OleInitialize(0);  // 增加头文件 #include <sapi.h>
     if (r != S_OK && r != S_FALSE)
     {
         qWarning("Qt:初始化Ole失败（error %x）",(unsigned int)r);
         MsgBox::critical(0, tr("Qt:初始化Ole失败"));
-        ret = false;
+        return false;
     }
 #endif
-    return ret;
+    return true;
 }
 
 void Excel_SaveThread::writeFile(QList<QStringList> &list)
 {
-#if defined(Q_OS_WIN32)
+#if defined(EXCEL_USE_QXLSX)
+    QXlsx::Document xlsx;
+    if (!xlsx.selectSheet(QStringLiteral("Sheet1")))
+        xlsx.addSheet(QStringLiteral("Sheet1"));
+
+    for (int i = 0; i < list.size(); ++i) {
+        const QStringList &row = list.at(i);
+        for (int j = 0; j < row.size(); ++j)
+            xlsx.write(i + 1, j + 1, row.at(j));
+        mSize++;
+    }
+
+    if (!xlsx.saveAs(mFileName + QStringLiteral(".xlsx")))
+        MsgBox::critical(0, tr("导出Excel失败"));
+#elif defined(Q_OS_WIN32)
     QExcel excel(this);
     bool ret = excel.createNewExcel(mFileName +".xlsx");
     if(ret) {
