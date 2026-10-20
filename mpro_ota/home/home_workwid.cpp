@@ -3,10 +3,22 @@
  *  Created on: 2021年1月1日
  *      Author: Lzy
  */
+#include "xlsxdocument.h"
+#include "xlsxcellrange.h"
 #include "home_workwid.h"
 #include "ui_home_workwid.h"
 #include <QFileDialog>
+#include <QFileInfo>
+#include <QDateTime>
+#include <QStandardPaths>
 #include "msgbox.h"
+
+enum {
+    SearchAll = 0,
+    SearchDev = 1,
+    SearchExcel = 2,
+    SearchRoom = 3
+};
 
 Home_WorkWid::Home_WorkWid(QWidget *parent) :
     QWidget(parent),
@@ -37,6 +49,7 @@ void Home_WorkWid::initLayout()
 void Home_WorkWid::initFunSlot()
 {
     initLayout(); isStart = false;
+    ui->excelBtn->setVisible(false);
     ui->targetEdit->setHidden(true);
     mSsdp = Ssdp_Core::bulid(this);
     mSender = Core_Sender::bulid(this);
@@ -55,6 +68,7 @@ void Home_WorkWid::upgradeError(const QString &host, const QString &msg)
 {
     QString str = host + tr(" 升级失败 ") ;
     mCnt.okCnt -= 1; mCnt.errCnt += 1;
+    markExcelIp(host, tr("升级失败：%1").arg(msg));
     insertTextSlot(false, str);
     if(!isStart) updateResult();
     MsgBox::critical(this, str+msg);
@@ -75,6 +89,8 @@ void Home_WorkWid::setTextColor(bool pass)
 
 void Home_WorkWid::insertTextSlot(bool pass, const QString &msg)
 {
+    if (!pass)
+        rememberExcelFail(msg);
     setTextColor(pass);
     if(!(mId%500)) ui->textEdit->clear();
     QString str = QString::number(mId++) + "、"+ msg + "\n";
@@ -92,6 +108,11 @@ void Home_WorkWid::finishSlot(bool pass, const QString &msg)
         str = tr(" 文件上传失败！");
     }
     insertTextSlot(pass, msg+str);
+    if (!excelMode())
+        return;
+    const QString result = pass ? tr("升级完成")
+                                : mExcelFail.value(msg, tr("升级失败：文件上传失败"));
+    markExcelIp(msg, result);
 }
 
 void Home_WorkWid::initCnt(int dst, int slave)
@@ -164,6 +185,7 @@ void Home_WorkWid::updateResult()
     ui->endLab->setText(str);
     mSender->stopRun();
     timer->stop();
+    writeExcelResult();
 }
 
 
@@ -225,12 +247,16 @@ bool Home_WorkWid::inputCheck()
     bool ret = false;
     QString str = ui->targetEdit->text();
     int index = ui->searchBox->currentIndex();
-    if(1 == index) {
-        if(str.isEmpty()) MsgBox::critical(this, tr("机房名称，未指定。")); else ret = true;
-    } else if(2 == index) {
+    if (index == SearchDev) {
         ret = cm_isIPaddress(str);
-        if(ret) ret = cm_pingNet(str);
-        if(!ret) MsgBox::critical(this, tr("目标设备IP出错！"));
+        if (ret) ret = cm_pingNet(str);
+        if (!ret) MsgBox::critical(this, tr("目标设备IP出错！"));
+    } else if (index == SearchExcel) {
+        if (mExcelIps.isEmpty()) MsgBox::critical(this, tr("请先导入包含IP的Excel文件。"));
+        else ret = true;
+    } else if (index == SearchRoom) {
+        if (str.isEmpty()) MsgBox::critical(this, tr("机房名称，未指定。"));
+        else ret = true;
     } else ret = true;
 
     return ret;
@@ -258,9 +284,10 @@ QStringList Home_WorkWid::getIpList()
 {
     QStringList ips; QString dst = ui->targetEdit->text();
     switch (ui->searchBox->currentIndex()) {
-    case 0: ips = mSsdp->searchAll(); break;
-    case 1: ips = mSsdp->searchDev(dst); break;
-    case 2: ips = mSsdp->searchRoom(dst); break;
+    case SearchAll: ips = mSsdp->searchAll(); break;
+    case SearchDev: ips = mSsdp->searchDev(dst); break;
+    case SearchExcel: ips = mExcelIps; break;
+    case SearchRoom: ips = mSsdp->searchRoom(dst); break;
     }
 
     return ips;
@@ -271,8 +298,18 @@ void Home_WorkWid::on_startBtn_clicked()
     if(isStart == false) {
         if(initWid()) {
             timer->start(500);
+            if (excelMode()) {
+                mExcelFail.clear();
+                const QString now = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+                for (sExcelIpRow &row : mExcelRows) {
+                    row.start = now;
+                    row.end.clear();
+                    row.result = tr("升级中");
+                }
+            }
             QStringList ips = getIpList();
-            initCnt(ips.size(), mSsdp->getSlaveNum());
+            int slaves = excelMode() ? 0 : mSsdp->getSlaveNum();
+            initCnt(ips.size(), slaves);
             mSender->sendFile(ips, ui->fnLab->text(), mFileIt);
         }
     } else {
@@ -331,10 +368,13 @@ void Home_WorkWid::on_searchBtn_clicked()
     if(!inputCheck()) return;
     QStringList res = getIpList();
     if(res.size()) {
-        QString str = tr("已找到%1个设备，包含%2个主机，%3个副机")
-                .arg(res.size() + mSsdp->getSlaveNum())
-                .arg(res.size()).arg(mSsdp->getSlaveNum());
-        if(res.size() + mSsdp->getSlaveNum() < 50) {
+        int slaves = excelMode() ? 0 : mSsdp->getSlaveNum();
+        QString str = excelMode()
+                ? tr("已导入%1个IP，将用于升级").arg(res.size())
+                : tr("已找到%1个设备，包含%2个主机，%3个副机")
+                .arg(res.size() + slaves)
+                .arg(res.size()).arg(slaves);
+        if(res.size() + slaves < 50) {
             for(int i=0; i<res.size(); i++) {
                 if(i%5) str += "\t"; else str += "\n";
                 str += res.at(i);
@@ -348,12 +388,186 @@ void Home_WorkWid::on_searchBtn_clicked()
 
 void Home_WorkWid::on_searchBox_currentIndexChanged(int index)
 {
-    ui->targetEdit->setHidden(!index);
+    const bool excel = index == SearchExcel;
+    ui->excelBtn->setVisible(excel);
+    ui->targetEdit->setVisible(index != SearchAll);
+    ui->targetEdit->setReadOnly(excel);
+    if (excel) {
+        ui->targetEdit->setText(QFileInfo(mExcelFile).fileName());
+        ui->targetEdit->setToolTip(mExcelFile);
+        ui->targetEdit->setPlaceholderText(tr("请导入Excel文件"));
+    } else if (index == SearchDev) {
+        ui->targetEdit->clear();
+        ui->targetEdit->setPlaceholderText(tr("请输入设备IP"));
+    } else if (index == SearchRoom) {
+        ui->targetEdit->clear();
+        ui->targetEdit->setPlaceholderText(tr("请输入机房名称"));
+    }
 }
 
 
 void Home_WorkWid::on_excelBtn_clicked()
 {
+    QString dir = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+    QString fn = QFileDialog::getOpenFileName(this, tr("选择IP列表"), dir, tr("Excel文件(*.xlsx)"));
+    if (fn.isEmpty()) return;
+    if (!loadExcelIps(fn)) return;
 
+    mExcelFile = fn;
+    ui->targetEdit->setText(QFileInfo(fn).fileName());
+    ui->targetEdit->setToolTip(fn);
+    MsgBox::information(this, tr("已导入%1个IP").arg(mExcelIps.size()));
+}
+
+bool Home_WorkWid::excelMode() const
+{
+    return ui->searchBox->currentIndex() == SearchExcel;
+}
+
+bool Home_WorkWid::loadExcelIps(const QString &fn)
+{
+    QXlsx::Document xlsx(fn);
+    if (xlsx.sheetNames().isEmpty()) {
+        MsgBox::critical(this, tr("无法打开Excel文件"));
+        return false;
+    }
+    const QXlsx::CellRange range = xlsx.dimension();
+    if (!range.isValid()) {
+        MsgBox::critical(this, tr("Excel文件是空的"));
+        return false;
+    }
+
+    int ipCol = 0;
+    int ipCount = 0;
+    for (int c = range.firstColumn(); c <= range.lastColumn(); ++c) {
+        int n = 0;
+        for (int r = range.firstRow(); r <= range.lastRow(); ++r) {
+            if (cm_isIPaddress(xlsx.read(r, c).toString().trimmed()))
+                ++n;
+        }
+        if (n > ipCount) {
+            ipCount = n;
+            ipCol = c;
+        }
+    }
+    if (!ipCol) {
+        MsgBox::critical(this, tr("Excel中没有找到IP地址"));
+        return false;
+    }
+
+    QList<sExcelIpRow> rows;
+    QStringList ips;
+    for (int r = range.firstRow(); r <= range.lastRow(); ++r) {
+        const QString ip = xlsx.read(r, ipCol).toString().trimmed();
+        if (!cm_isIPaddress(ip))
+            continue;
+        sExcelIpRow row;
+        row.row = r;
+        row.ip = ip;
+        rows.append(row);
+        if (!ips.contains(ip))
+            ips << ip;
+    }
+
+    int headerRow = 0;
+    const QString first = xlsx.read(range.firstRow(), ipCol).toString().trimmed();
+    if (!cm_isIPaddress(first))
+        headerRow = range.firstRow();
+
+    int colStart = 0, colEnd = 0, colResult = 0;
+    if (headerRow) {
+        for (int c = range.firstColumn(); c <= range.lastColumn(); ++c) {
+            const QString title = xlsx.read(headerRow, c).toString().trimmed();
+            if (title == tr("升级开始时间")) colStart = c;
+            else if (title == tr("升级完成时间")) colEnd = c;
+            else if (title == tr("升级结果")) colResult = c;
+        }
+    }
+    if (!colStart || !colEnd || !colResult) {
+        colStart = range.lastColumn() + 1;
+        colEnd = range.lastColumn() + 2;
+        colResult = range.lastColumn() + 3;
+    }
+
+    mExcelRows = rows;
+    mExcelIps = ips;
+    mExcelHeaderRow = headerRow;
+    mExcelIpCol = ipCol;
+    mColStart = colStart;
+    mColEnd = colEnd;
+    mColResult = colResult;
+    mExcelSheet = xlsx.currentSheet() ? xlsx.currentSheet()->sheetName() : QStringLiteral("Sheet1");
+    mExcelFail.clear();
+    return true;
+}
+
+void Home_WorkWid::rememberExcelFail(const QString &msg)
+{
+    if (!excelMode() || msg.contains(tr("文件上传失败")) || msg.contains(tr("升级失败")))
+        return;
+    for (const sExcelIpRow &row : mExcelRows) {
+        if (msg.contains(row.ip))
+            mExcelFail.insert(row.ip, tr("升级失败：%1").arg(msg));
+    }
+}
+
+void Home_WorkWid::markExcelIp(const QString &ip, const QString &result)
+{
+    if (!excelMode())
+        return;
+    const QString now = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+    for (sExcelIpRow &row : mExcelRows) {
+        if (row.ip != ip)
+            continue;
+        row.end = now;
+        row.result = result;
+    }
+}
+
+void Home_WorkWid::writeExcelResult()
+{
+    if (!excelMode() || mExcelFile.isEmpty() || mExcelRows.isEmpty())
+        return;
+
+    QXlsx::Document xlsx(mExcelFile);
+    if (xlsx.sheetNames().isEmpty() || !xlsx.selectSheet(mExcelSheet)) {
+        MsgBox::critical(this, tr("无法写回Excel文件"));
+        return;
+    }
+
+    if (mExcelHeaderRow <= 0) {
+        const QXlsx::CellRange range = xlsx.dimension();
+        if (range.isValid()) {
+            for (int r = range.lastRow(); r >= range.firstRow(); --r) {
+                for (int c = range.firstColumn(); c <= range.lastColumn(); ++c)
+                    xlsx.write(r + 1, c, xlsx.read(r, c));
+            }
+            for (int c = range.firstColumn(); c <= range.lastColumn(); ++c)
+                xlsx.write(range.firstRow(), c, QString());
+            for (sExcelIpRow &row : mExcelRows)
+                row.row += 1;
+            mExcelHeaderRow = range.firstRow();
+            xlsx.write(mExcelHeaderRow, mExcelIpCol, tr("IP"));
+        }
+    }
+    if (mExcelHeaderRow > 0) {
+        xlsx.write(mExcelHeaderRow, mColStart, tr("升级开始时间"));
+        xlsx.write(mExcelHeaderRow, mColEnd, tr("升级完成时间"));
+        xlsx.write(mExcelHeaderRow, mColResult, tr("升级结果"));
+    }
+
+    const QString now = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+    for (sExcelIpRow &row : mExcelRows) {
+        if (row.result.isEmpty() || row.result == tr("升级中")) {
+            row.end = now;
+            row.result = tr("升级失败：升级已终止");
+        }
+        xlsx.write(row.row, mColStart, row.start);
+        xlsx.write(row.row, mColEnd, row.end);
+        xlsx.write(row.row, mColResult, row.result);
+    }
+
+    if (!xlsx.save())
+        MsgBox::critical(this, tr("升级结果写入Excel失败，请确认文件未被占用"));
 }
 
