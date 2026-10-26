@@ -115,7 +115,8 @@ void Home_MainWid::devMode()
 
     int slaveNum = 0;
     v = ui->addrBox->value(); send(it, v);
-    if(v == 0) slaveNum = ui->slaveBox->value();
+    if(v == 0 && (ui->modeBox->currentIndex() <3))
+        slaveNum = ui->slaveBox->value();
     it.type = 12; it.fc = 5; send(it, slaveNum);
 }
 
