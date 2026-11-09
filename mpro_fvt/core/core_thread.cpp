@@ -61,6 +61,15 @@ bool Core_Thread::searchDev()
         if(ips.size()) str = tr("已找到%1个设备").arg(ips.size());
         else {ret = false;} m_ips = ips;
         emit msgSig(str, ret);
+    } else {
+        QString ip = m_ips.first();
+        for(int i=0; i<5; ++i) {
+            ret = cm_pingNet(ip);
+            if(ret == true) {
+                emit msgSig(tr("设备连接成功"), true);
+                break;
+            } else cm_mdelay(1*1000);
+        }
     }
     return ret;
 }
