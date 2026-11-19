@@ -22,7 +22,6 @@ include(snmpclient/snmpclient.pri)
 include(serialport/serialport.pri)
 include(backcolour/backcolour.pri)
 include(qtsingleapplication/qtsingleapplication.pri)
-include(openssl/openssl.pri)
 
 HEADERS += \
     $$PWD/print.h
